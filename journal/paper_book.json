@@ -1,0 +1,90 @@
+{
+  "started": "1794493800",
+  "cash": 1.0,
+  "equity": 1.0,
+  "positions": [
+    {
+      "symbol": "BAC",
+      "weight": 0.1,
+      "decided_ts": 1794493800,
+      "decided_price": 50.5099983215332,
+      "fill_price": null,
+      "fill_ts": null
+    },
+    {
+      "symbol": "F",
+      "weight": 0.1,
+      "decided_ts": 1794493800,
+      "decided_price": 11.899999618530273,
+      "fill_price": null,
+      "fill_ts": null
+    },
+    {
+      "symbol": "JNJ",
+      "weight": 0.1,
+      "decided_ts": 1794493800,
+      "decided_price": 283.5199890136719,
+      "fill_price": null,
+      "fill_ts": null
+    },
+    {
+      "symbol": "WFC",
+      "weight": 0.1,
+      "decided_ts": 1794493800,
+      "decided_price": 85.76000213623047,
+      "fill_price": null,
+      "fill_ts": null
+    },
+    {
+      "symbol": "JPM",
+      "weight": 0.1,
+      "decided_ts": 1794493800,
+      "decided_price": 342.82000732421875,
+      "fill_price": null,
+      "fill_ts": null
+    },
+    {
+      "symbol": "KO",
+      "weight": 0.1,
+      "decided_ts": 1794493800,
+      "decided_price": 97.44000244140625,
+      "fill_price": null,
+      "fill_ts": null
+    },
+    {
+      "symbol": "AMZN",
+      "weight": 0.1,
+      "decided_ts": 1794493800,
+      "decided_price": 267.44000244140625,
+      "fill_price": null,
+      "fill_ts": null
+    },
+    {
+      "symbol": "AAPL",
+      "weight": 0.1,
+      "decided_ts": 1794493800,
+      "decided_price": 354.8800048828125,
+      "fill_price": null,
+      "fill_ts": null
+    },
+    {
+      "symbol": "CSCO",
+      "weight": 0.1,
+      "decided_ts": 1794493800,
+      "decided_price": 102.01000213623047,
+      "fill_price": null,
+      "fill_ts": null
+    },
+    {
+      "symbol": "GOOGL",
+      "weight": 0.1,
+      "decided_ts": 1794493800,
+      "decided_price": 298.70001220703125,
+      "fill_price": null,
+      "fill_ts": null
+    }
+  ],
+  "slippage_bps": [],
+  "sessions": 5,
+  "expired": []
+}
