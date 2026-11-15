@@ -1,345 +1,610 @@
-"""Global Multi-Asset & Multi-Exchange Universe Registry (Institutional Edition).
+"""The global asset catalogue: classes, venues, contract units, hours and settlement.
 
-Covers:
-1. Global Exchanges & Indices (US, Europe, India, SE Asia, Middle East, Africa, Iran)
-2. Equities (Tiered: Liquid Top-100 Blue Chips across Global & Emerging Markets)
-3. Forex (Majors, Crosses, and Emerging Markets: INR, ZAR, TRY, BRL, KRW, AED, NGN, AZN, IRR)
-4. Metals & Precious Stones (Gold, Silver, Platinum, Palladium, LME Base Metals, Uranium, Lithium, Diamond)
-5. Agriculture & Softs (CBOT/ICE Grains, Oilseeds, Coffee, Orange Juice, Livestock, Lumber + IME Saffron, Pistachio, Cumin)
-6. Energy (WTI, Brent, Natural Gas, Heating Oil, RBOB Gasoline)
-7. Fixed Income & Bonds (US Treasuries 2Y/5Y/10Y/30Y/Ultra, German Bund, JGB, Iran Treasury Bills & Sukuk)
-8. ETFs & Mutual Funds (Index, Country-Specific, Sector, Commodity, Vanguard, Fidelity, Iran Gold & Fixed Income Funds)
-9. Cryptocurrencies (Layer-1s, DeFi, Stablecoins)
+"All markets" is a slogan until something knows what a market is. Before this module the
+system had a US-equity pipeline, a Yahoo fetch and a Tehran CSV reader, and no single place
+that answered three questions a real platform must answer for every instrument:
+
+  1. What is this, and on which venue does it trade?   (class, venue, currency)
+  2. What is one unit worth moving?                    (contract size, tick value)
+  3. When is it open, and when does the money settle?  (session, settlement)
+
+Design rules, deliberately institutional:
+- UNKNOWN IS A BUILD ERROR. `get()` raises on an unknown symbol instead of inventing a
+  default venue, because a default venue is how a strategy ends up pricing coffee with
+  equity hours.
+- EVERY ROW CARRIES `verified`. A contract size quoted from memory is an assumption, and
+  an assumption that is not labelled becomes a fact nobody checks. The coverage report
+  prints the split so the honest number is always visible.
+- NO PRICES LIVE HERE. This is a catalogue, not a feed: it stays correct when the internet
+  is cut, which is the offline requirement.
+- VENUE HOURS ARE LOCAL, with settlement as a plain T+n. Exchange holidays are NOT
+  modelled here beyond the US calendar in aurora.market_calendar, and the report says so.
 """
-from __future__ import annotations
-
 from dataclasses import dataclass, field
-from enum import Enum
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
+# ---------------------------------------------------------------- asset classes
+EQUITY = "equity"
+ETF = "etf"
+FUND = "fund"
+FIXED_INCOME = "fixed_income"
+FX = "fx"
+CRYPTO = "crypto"
+NFT = "nft"
+ENERGY = "energy"
+METALS = "metals"
+AGRI = "agri"
+INDEX = "index"
+METAVERSE = "metaverse"
 
-class AssetCategory(str, Enum):
-    FOREX = "forex"
-    PRECIOUS_METAL_STONE = "precious_metal_stone"
-    BASE_BATTERY_METAL = "base_battery_metal"
-    ENERGY = "energy"
-    AGRICULTURE = "agriculture"
-    EQUITY_GLOBAL = "equity_global"
-    EQUITY_EMERGING = "equity_emerging"
-    EQUITY_IRAN = "equity_iran"
-    INDEX = "index"
-    BOND_FIXED_INCOME = "bond_fixed_income"
-    ETF = "etf"
-    MUTUAL_FUND = "mutual_fund"
-    CRYPTO = "crypto"
+ASSET_CLASSES: Tuple[str, ...] = (
+    EQUITY, ETF, FUND, FIXED_INCOME, FX, CRYPTO, NFT,
+    ENERGY, METALS, AGRI, INDEX, METAVERSE,
+)
 
-
-class SubCategory(str, Enum):
-    # Forex
-    FX_MAJOR = "fx_major"
-    FX_CROSS = "fx_cross"
-    FX_EMERGING = "fx_emerging"
-    # Metals & Stones
-    PRECIOUS = "precious"
-    GEMSTONE = "gemstone"
-    LME_INDUSTRIAL = "lme_industrial"
-    BATTERY_NUCLEAR = "battery_nuclear"
-    # Agriculture
-    GRAINS_OILSEEDS = "grains_oilseeds"
-    SOFTS = "softs"
-    LIVESTOCK_LUMBER = "livestock_lumber"
-    IME_AGRI = "ime_agri"
-    # Fixed Income
-    SOVEREIGN_FUTURES = "sovereign_futures"
-    ISLAMIC_SUKUK_TBILL = "islamic_sukuk_tbill"
-    # Funds & ETFs
-    ETF_INDEX = "etf_index"
-    ETF_COUNTRY = "etf_country"
-    ETF_SECTOR_COMMODITY = "etf_sector_commodity"
-    FUND_GLOBAL = "fund_global"
-    FUND_IRAN = "fund_iran"
-    # General
-    REGIONAL_INDEX = "regional_index"
-    BLUE_CHIP = "blue_chip"
-    CRYPTO_SPOT = "crypto_spot"
-    ENERGY_FUTURES = "energy_futures"
+CLASS_LABELS: Dict[str, str] = {
+    EQUITY: "سهام", ETF: "ETF", FUND: "صندوق سرمایه‌گذاری",
+    FIXED_INCOME: "اوراق بهادار و درآمد ثابت", FX: "جفت‌ارز",
+    CRYPTO: "رمز ارز", NFT: "NFT", ENERGY: "انرژی",
+    METALS: "فلزات", AGRI: "کالای کشاورزی", INDEX: "شاخص",
+    METAVERSE: "متاورس",
+}
 
 
 @dataclass(frozen=True)
-class ExchangeInfo:
-    code: str
+class Venue:
+    code: str                 # short internal code, not a claim about the MIC
     name: str
     country: str
-    region: str
-    currency: str
     timezone: str
+    currency: str
+    open_local: str           # "HH:MM" local
+    close_local: str
+    days: str                 # "Mon-Fri", "Sat-Wed", "24/7"
+    settlement: str           # "T+2", "T+1", "instant", "T+0"
+    regulator: str
+    notes: str = ""
+    verified: bool = False    # hours and settlement read from the exchange, or assumed
+
+
+VENUES: Dict[str, Venue] = {
+    "XNYS": Venue("XNYS", "بورس نیویورک", "US", "America/New_York", "USD",
+                  "09:30", "16:00", "Mon-Fri", "T+1", "SEC",
+                  "ساعات و تسویه از سند رسمی بورس؛ تقویم تعطیلات در market_calendar", True),
+    "XNAS": Venue("XNAS", "نزدک", "US", "America/New_York", "USD",
+                  "09:30", "16:00", "Mon-Fri", "T+1", "SEC", "", True),
+    "XLON": Venue("XLON", "بورس لندن", "GB", "Europe/London", "GBP",
+                  "08:00", "16:30", "Mon-Fri", "T+2", "FCA", "", False),
+    "XETR": Venue("XETR", "بورس آلمان (Xetra)", "DE", "Europe/Berlin", "EUR",
+                  "09:00", "17:30", "Mon-Fri", "T+2", "BaFin", "", False),
+    "XTKS": Venue("XTKS", "بورس توکیو", "JP", "Asia/Tokyo", "JPY",
+                  "09:00", "15:00", "Mon-Fri", "T+2", "FSA Japan",
+                  "جلسه استراحت میان‌روز مدل نشده", False),
+    "XHKG": Venue("XHKG", "بورس هنگ‌کنگ", "HK", "Asia/Hong_Kong", "HKD",
+                  "09:30", "16:00", "Mon-Fri", "T+2", "SFC", "", False),
+    "XSHG": Venue("XSHG", "بورس شانگهای", "CN", "Asia/Shanghai", "CNY",
+                  "09:30", "15:00", "Mon-Fri", "T+1", "CSRC",
+                  "دسترسی خارجی محدود است؛ داده رایگان قابل اتکا نیست", False),
+    "XNSE": Venue("XNSE", "بورس ملی هند", "IN", "Asia/Kolkata", "INR",
+                  "09:15", "15:30", "Mon-Fri", "T+1", "SEBI", "", False),
+    "XTSE_IR": Venue("XTSE_IR", "بورس اوراق بهادار تهران", "IR", "Asia/Tehran", "IRR",
+                     "09:00", "12:30", "Sat-Wed", "T+2", "سازمان بورس و اوراق بهادار",
+                     "دامنه نوسان روزانه و حجم مبنا قواعد خاص خود را دارند", False),
+    "IFB_IR": Venue("IFB_IR", "فرابورس ایران", "IR", "Asia/Tehran", "IRR",
+                    "09:00", "12:30", "Sat-Wed", "T+2", "سازمان بورس و اوراق بهادار", "", False),
+    "IME_IR": Venue("IME_IR", "بورس کالای ایران", "IR", "Asia/Tehran", "IRR",
+                    "10:00", "17:00", "Sat-Thu", "T+2", "سازمان بورس و اوراق بهادار",
+                    "زعفران، پسته، زیره و محصولات پتروشیمی؛ مشخصات قرارداد نیازمند تأیید", False),
+    "XCME": Venue("XCME", "CME", "US", "America/Chicago", "USD",
+                  "17:00", "16:00", "Sun-Fri", "T+1", "CFTC",
+                  "جلسه تقریباً ۲۴ ساعته؛ ساعات باید از تقویم محصول تأیید شود", False),
+    "XNYM": Venue("XNYM", "NYMEX", "US", "America/New_York", "USD",
+                  "18:00", "17:00", "Sun-Fri", "T+1", "CFTC", "", False),
+    "XCOM": Venue("XCOM", "COMEX", "US", "America/New_York", "USD",
+                  "18:00", "17:00", "Sun-Fri", "T+1", "CFTC", "", False),
+    "XCBT": Venue("XCBT", "CBOT", "US", "America/Chicago", "USD",
+                  "19:00", "14:20", "Sun-Fri", "T+1", "CFTC", "", False),
+    "XICE": Venue("XICE", "ICE Futures", "US", "America/New_York", "USD",
+                  "03:00", "14:30", "Mon-Fri", "T+1", "CFTC", "ساعات محصول‌به‌محصول متفاوت است", False),
+    "XCRYPTO": Venue("XCRYPTO", "صرافی‌های رمزارز (تجمیعی)", "XX", "UTC", "USDT",
+                     "00:00", "24:00", "24/7", "instant", "خودتنظیم",
+                     "۲۴ ساعته و بدون تسویه سنتی؛ ریسک نگهداری جداگانه بررسی می‌شود", False),
+    "XMATIF": Venue("XMATIF", "یورونکست پاریس (MATIF)", "FR", "Europe/Paris", "EUR",
+                     "10:45", "18:30", "Mon-Fri", "T+2", "AMF",
+                     "گندم، ذرت و کلزا اروپا", False),
+    "XBMD": Venue("XBMD", "بورس مالزی (BMD)", "MY", "Asia/Kuala_Lumpur", "MYR",
+                  "10:30", "18:00", "Mon-Fri", "T+1", "SC",
+                  "روغن نخل؛ ساعات و قرارداد نیازمند تأیید", False),
+    "XSHFE": Venue("XSHFE", "بورس آتی شانگهای", "CN", "Asia/Shanghai", "CNY",
+                   "09:00", "15:00", "Mon-Fri", "T+1", "CSRC",
+                   "دسترسی خارجی محدود؛ فولاد و فلزات صنعتی", False),
+    "XTOCOM": Venue("XTOCOM", "بورس کالای توکیو", "JP", "Asia/Tokyo", "JPY",
+                    "09:00", "15:15", "Mon-Fri", "T+1", "FSA Japan",
+                    "لاستیک و پلاتین؛ نقدینگی محدود", False),
+    "XEUREX": Venue("XEUREX", "یورکس (Eurex)", "DE", "Europe/Berlin", "EUR",
+                    "09:00", "17:30", "Mon-Fri", "T+2", "BaFin",
+                    "باند آلمان و مشتقات نرخ بهره اروپا", False),
+    "XLME": Venue("XLME", "بورس فلزات لندن (LME)", "GB", "Europe/London", "USD",
+                  "01:00", "19:00", "Mon-Fri", "T+2", "FCA",
+                  "بازار خارج از بورس با تسویه روزانه؛ فید رایگان ناقص است", False),
+    "XOSE": Venue("XOSE", "بورس اوراق و مشتقات اوساکا", "JP", "Asia/Tokyo", "JPY",
+                  "09:00", "15:15", "Mon-Fri", "T+1", "FSA Japan",
+                  "قرارداد آتی اوراق ژاپن (JGB)", False),
+    "XFX": Venue("XFX", "بازار جهانی ارز (OTC)", "XX", "UTC", "USD",
+                 "00:00", "24:00", "Mon-Fri", "T+2", "خودتنظیم",
+                 "بازار خارج از بورس؛ بهترين قيمت از تجمیع چند منبع", False),
+}
 
 
 @dataclass(frozen=True)
-class AssetSpec:
+class Instrument:
     symbol: str
     name: str
-    category: AssetCategory
-    sub_category: SubCategory
-    exchange: str
-    region: str
+    asset_class: str
+    venue: str
+    unit: str                 # what one contract/lot moves
+    size: float               # units per contract, 1 for spot equities
+    size_unit: str            # "share", "oz", "bbl", "bushel", "lb", "kg", "MMBtu"
     currency: str
-    tick_size: float
-    contract_size: float = 1.0
-    min_lot: float = 0.01
-    margin_rate: float = 1.0
-    data_provider: str = "yahoo"
-    execution_venue: str = "manual"
-    tags: List[str] = field(default_factory=list)
+    verified: bool = False
+    note: str = ""
 
 
-class AssetUniverse:
-    """Centralized, searchable registry of global exchanges and multi-asset instruments."""
+def _i(*rows) -> List[Instrument]:
+    return [Instrument(*r) for r in rows]
 
-    def __init__(self) -> None:
-        self.exchanges: Dict[str, ExchangeInfo] = {}
-        self._assets: Dict[str, AssetSpec] = {}
-        self._load_exchanges()
-        self._load_full_catalog()
 
-    # ---- Registration & Query API -----------------------------------------
-    def register_exchange(self, info: ExchangeInfo) -> None:
-        self.exchanges[info.code.upper()] = info
+INSTRUMENTS: List[Instrument] = _i(
+    # --- US equities: the pipeline that already exists
+    ("AAPL", "اپل", EQUITY, "XNAS", "سهم", 1, "share", "USD", True),
+    ("MSFT", "مایکروسافت", EQUITY, "XNAS", "سهم", 1, "share", "USD", True),
+    ("JPM", "جی‌پی مورگان", EQUITY, "XNYS", "سهم", 1, "share", "USD", True),
+    ("KO", "کوکاکولا", EQUITY, "XNYS", "سهم", 1, "share", "USD", True),
+    ("JNJ", "جانسون اند جانسون", EQUITY, "XNYS", "سهم", 1, "share", "USD", True),
+    ("AMZN", "آمازون", EQUITY, "XNAS", "سهم", 1, "share", "USD", True),
+    ("GOOGL", "آلفابت", EQUITY, "XNAS", "سهم", 1, "share", "USD", True),
+    ("META", "متا", EQUITY, "XNAS", "سهم", 1, "share", "USD", True),
+    ("NVDA", "انویدیا", EQUITY, "XNAS", "سهم", 1, "share", "USD", True),
+    ("CSCO", "سیسکو", EQUITY, "XNAS", "سهم", 1, "share", "USD", True),
+    ("INTC", "اینتل", EQUITY, "XNAS", "سهم", 1, "share", "USD", True),
+    ("ORCL", "اوراکل", EQUITY, "XNYS", "سهم", 1, "share", "USD", True),
+    ("IBM", "آی‌بی‌ام", EQUITY, "XNYS", "سهم", 1, "share", "USD", True),
+    ("CAT", "کاترپیلار", EQUITY, "XNYS", "سهم", 1, "share", "USD", True),
+    ("GE", "جنرال الکتریک", EQUITY, "XNYS", "سهم", 1, "share", "USD", True),
+    ("WMT", "والمارت", EQUITY, "XNYS", "سهم", 1, "share", "USD", True),
+    ("PG", "پروکتر اند گمبل", EQUITY, "XNYS", "سهم", 1, "share", "USD", True),
+    ("WFC", "ولز فارگو", EQUITY, "XNYS", "سهم", 1, "share", "USD", True),
+    ("BAC", "بنک آو امریکا", EQUITY, "XNYS", "سهم", 1, "share", "USD", True),
+    ("F", "فورد", EQUITY, "XNYS", "سهم", 1, "share", "USD", True),
+    ("EFA", "ETF سهام توسعه‌یافته", ETF, "XNYS", "واحد", 1, "share", "USD", True),
+    ("EEM", "ETF سهام بازارهای نوظهور", ETF, "XNYS", "واحد", 1, "share", "USD", True),
+    ("DBC", "ETF سبد کالا", ETF, "XNYS", "واحد", 1, "share", "USD", True),
+    ("CL=F", "نفت خام WTI (قرارداد پیوسته)", ENERGY, "XNYM", "بشکه", 1000, "bbl", "USD", True),
+    ("ZC=F", "ذرت (قرارداد پیوسته)", AGRI, "XCBT", "بوشل", 5000, "bushel", "USD", True),
+    ("GC=F", "طلا (قرارداد پیوسته)", METALS, "XCOM", "اونس", 100, "oz", "USD", True),
+    # --- ETFs and funds
+    ("SPY", "ETF اس‌اند‌پی ۵۰۰", ETF, "XNYS", "واحد", 1, "share", "USD", True),
+    ("VTSAX", "صندوق شاخص کل بازار", FUND, "XNAS", "واحد", 1, "share", "USD", True),
+    ("صندوق_طلا", "صندوق طلای بورس تهران", FUND, "XTSE_IR", "واحد", 1, "share", "IRR", False),
+    ("صندوق_اهرم", "صندوق اهرمی بورس تهران", FUND, "XTSE_IR", "واحد", 1, "share", "IRR", False,
+     "اهرم صندوق قاعده پذیره‌نویسی و ضامن دارد؛ پیش از معامله باید بررسی شود"),
+    ("TLT", "ETF اوراق خزانه بلندمدت", ETF, "XNAS", "واحد", 1, "share", "USD", True),
+    ("GLD", "ETF طلا", ETF, "XNYS", "واحد", 1, "share", "USD", True),
+    ("XAUUSD", "انس طلا در برابر دلار", METALS, "XFX", "اونس", 1, "oz", "USD", True),
+    ("XAGUSD", "نقره در برابر دلار", METALS, "XFX", "اونس", 1, "oz", "USD", True),
+    ("XPTUSD", "پلاتین در برابر دلار", METALS, "XFX", "اونس", 1, "oz", "USD", False),
+    # --- energy
+    ("CL", "نفت خام وست تگزاس (آتی)", ENERGY, "XNYM", "بشکه", 1000, "bbl", "USD", True),
+    ("BZ", "نفت برنت (آتی)", ENERGY, "XICE", "بشکه", 1000, "bbl", "USD", False),
+    ("NG", "گاز طبیعی (آتی)", ENERGY, "XNYM", "MMBtu", 10000, "MMBtu", "USD", True),
+    # --- metals futures
+    ("GC", "طلا (آتی)", METALS, "XCOM", "اونس", 100, "oz", "USD", True),
+    ("SI", "نقره (آتی)", METALS, "XCOM", "اونس", 5000, "oz", "USD", True),
+    ("HG", "مس (آتی)", METALS, "XCOM", "پوند", 25000, "lb", "USD", False),
+    # --- agriculture
+    ("ZC", "ذرت (آتی)", AGRI, "XCBT", "بوشل", 5000, "bushel", "USD", True),
+    ("ZW", "گندم شیکاگو (آتی)", AGRI, "XCBT", "بوشل", 5000, "bushel", "USD", True),
+    ("ZS", "سویا (آتی)", AGRI, "XCBT", "بوشل", 5000, "bushel", "USD", True),
+    ("KC", "قهوه عربیکا (آتی)", AGRI, "XICE", "پوند", 37500, "lb", "USD", True),
+    ("SB", "شکر (آتی)", AGRI, "XICE", "پوند", 112000, "lb", "USD", False),
+    ("CC", "کاکائو (آتی)", AGRI, "XICE", "تن متریک", 10, "kg", "USD", False),
+    ("CT", "پنبه (آتی)", AGRI, "XICE", "پوند", 50000, "lb", "USD", False),
+    # --- Iran: equities and the exchange's own agricultural complex
+    ("فولاد", "فولاد مبارکه", EQUITY, "XTSE_IR", "سهم", 1, "share", "IRR", False),
+    ("خودرو", "ایران خودرو", EQUITY, "XTSE_IR", "سهم", 1, "share", "IRR", False),
+    ("شپنا", "پالایش نفت اصفهان", EQUITY, "XTSE_IR", "سهم", 1, "share", "IRR", False),
+    ("زعفران_نگین", "زعفران نگین (آتی بورس کالا)", AGRI, "IME_IR", "کیلوگرم", 1, "kg", "IRR", False,
+     "مشخصات قرارداد باید از سند بورس کالای ایران تأیید شود"),
+    ("زعفران_پوشال", "زعفران پوشال (آتی بورس کالا)", AGRI, "IME_IR", "کیلوگرم", 1, "kg", "IRR", False,
+     "مشخصات قرارداد باید از سند بورس کالای ایران تأیید شود"),
+    ("پسته", "پسته (بورس کالا)", AGRI, "IME_IR", "کیلوگرم", 1, "kg", "IRR", False),
+    # --- FX: the majors and the crosses a platform is expected to quote
+    ("EURUSD", "یورو/دلار", FX, "XFX", "واحد", 100000, "unit", "USD", True),
+    ("GBPUSD", "پوند/دلار", FX, "XFX", "واحد", 100000, "unit", "USD", True),
+    ("USDJPY", "دلار/ین", FX, "XFX", "واحد", 100000, "unit", "JPY", True),
+    ("USDCHF", "دلار/فرانک", FX, "XFX", "واحد", 100000, "unit", "CHF", False),
+    ("AUDUSD", "دلار استرالیا/دلار", FX, "XFX", "واحد", 100000, "unit", "USD", False),
+    ("USDCAD", "دلار/دلار کانادا", FX, "XFX", "واحد", 100000, "unit", "CAD", False),
+    ("NZDUSD", "دلار نیوزيلند/دلار", FX, "XFX", "واحد", 100000, "unit", "USD", False),
+    ("EURGBP", "یورو/پوند", FX, "XFX", "واحد", 100000, "unit", "GBP", False),
+    ("USDIRR", "دلار/ریال", FX, "XFX", "واحد", 1, "unit", "IRR", False,
+     "نرخ رسمی و بازار آزاد دو چیز متفاوت‌اند؛ منبع باید صریح باشد"),
+    # --- crypto
+    ("BTC-USD", "بیت‌کوین", CRYPTO, "XCRYPTO", "واحد", 1, "coin", "USD", True),
+    ("ETH-USD", "اتریوم", CRYPTO, "XCRYPTO", "واحد", 1, "coin", "USD", True),
+    ("SOL-USD", "سولانا", CRYPTO, "XCRYPTO", "واحد", 1, "coin", "USD", False),
+    # --- indices
+    ("ES", "S&P 500 (آتی)", INDEX, "XCME", "شاخص", 50, "index", "USD", True),
+    ("NQ", "نزدک ۱۰۰ (آتی)", INDEX, "XCME", "شاخص", 20, "index", "USD", True),
+    # --- fixed income
+    ("ZN", "اوراق خزانه ۱۰ ساله (آتی)", FIXED_INCOME, "XCBT", "صورت", 100000, "face", "USD", False),
+    ("BND", "ETF اوراق کل بازار", FIXED_INCOME, "XNAS", "واحد", 1, "share", "USD", False),
+    # --- instruments that exist but are NOT yet investable here, declared on purpose
+    ("NFT-BAYC", "مجموعه‌های NFT (نمونه)", NFT, "XCRYPTO", "توکن", 1, "token", "ETH", False,
+     "داده قیمت نهادی رایگان ندارد؛ بدون API معتبر وارد تصمیم نمی‌شود"),
+    ("SAND-USD", "سندباکس (متاورس)", METAVERSE, "XCRYPTO", "توکن", 1, "token", "USD", False),
+    ('EURJPY', 'EUR/JPY', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', True, ''),
+    ('EURCHF', 'EUR/CHF', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', True, ''),
+    ('EURAUD', 'EUR/AUD', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', True, ''),
+    ('EURCAD', 'EUR/CAD', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', True, ''),
+    ('EURNZD', 'EUR/NZD', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', True, ''),
+    ('GBPJPY', 'GBP/JPY', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', True, ''),
+    ('GBPCHF', 'GBP/CHF', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', True, ''),
+    ('GBPAUD', 'GBP/AUD', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', True, ''),
+    ('GBPCAD', 'GBP/CAD', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', True, ''),
+    ('GBPNZD', 'GBP/NZD', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', True, ''),
+    ('AUDJPY', 'AUD/JPY', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', True, ''),
+    ('AUDCAD', 'AUD/CAD', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', True, ''),
+    ('AUDCHF', 'AUD/CHF', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', True, ''),
+    ('AUDNZD', 'AUD/NZD', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', True, ''),
+    ('CADJPY', 'CAD/JPY', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', True, ''),
+    ('CADCHF', 'CAD/CHF', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', True, ''),
+    ('CHFJPY', 'CHF/JPY', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', True, ''),
+    ('NZDJPY', 'NZD/JPY', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', True, ''),
+    ('NZDCAD', 'NZD/CAD', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', True, ''),
+    ('NZDCHF', 'NZD/CHF', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', True, ''),
+    ('EURSEK', 'EUR/SEK', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', True, ''),
+    ('EURNOK', 'EUR/NOK', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', True, ''),
+    ('EURPLN', 'EUR/PLN', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', True, ''),
+    ('EURTRY', 'EUR/TRY', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', True, ''),
+    ('EURHUF', 'EUR/HUF', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', True, ''),
+    ('EURCZK', 'EUR/CZK', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', True, ''),
+    ('USDCNH', 'USD/CNH', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDMXN', 'USD/MXN', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDBRL', 'USD/BRL', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDZAR', 'USD/ZAR', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDTRY', 'USD/TRY', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDINR', 'USD/INR', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDKRW', 'USD/KRW', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDSGD', 'USD/SGD', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDHKD', 'USD/HKD', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDSEK', 'USD/SEK', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDNOK', 'USD/NOK', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDDKK', 'USD/DKK', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDPLN', 'USD/PLN', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDHUF', 'USD/HUF', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDCZK', 'USD/CZK', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDILS', 'USD/ILS', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDTHB', 'USD/THB', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDIDR', 'USD/IDR', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDPHP', 'USD/PHP', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDTWD', 'USD/TWD', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDCLP', 'USD/CLP', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDCOP', 'USD/COP', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDPEN', 'USD/PEN', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDARS', 'USD/ARS', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDSAR', 'USD/SAR', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDAED', 'USD/AED', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDPKR', 'USD/PKR', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDBDT', 'USD/BDT', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDLKR', 'USD/LKR', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDNGN', 'USD/NGN', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDKES', 'USD/KES', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDMAD', 'USD/MAD', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDEGP', 'USD/EGP', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('USDVND', 'USD/VND', 'fx', 'XFX', 'واحد ارز پایه', 1, 'unit', 'USD', False, 'جفت\u200cارز بازار نوظهور؛ نقدینگی و اسپرد باید جدا سنجیده شود'),
+    ('XPDUSD', 'پالادیوم (اسپات)', 'metals', 'XFX', 'oz', 1, 'oz', 'USD', False, ''),
+    ('SI=F', 'نقره (آتی COMEX)', 'metals', 'XCOM', 'oz', 5000, 'oz', 'USD', True, ''),
+    ('PL=F', 'پلاتین (آتی)', 'metals', 'XNYM', 'oz', 50, 'oz', 'USD', False, ''),
+    ('PA=F', 'پالادیوم (آتی)', 'metals', 'XNYM', 'oz', 100, 'oz', 'USD', False, ''),
+    ('HG=F', 'مس (آتی COMEX)', 'metals', 'XCOM', 'lb', 25000, 'lb', 'USD', True, ''),
+    ('ALI=F', 'آلومینیوم (آتی)', 'metals', 'XCOM', 'tonne', 25, 'tonne', 'USD', False, ''),
+    ('LME_AL', 'آلومینیوم LME', 'metals', 'XLME', 'tonne', 25, 'tonne', 'USD', False, ''),
+    ('LME_CU', 'مس LME', 'metals', 'XLME', 'tonne', 25, 'tonne', 'USD', False, ''),
+    ('LME_NI', 'نیکل LME', 'metals', 'XLME', 'tonne', 6, 'tonne', 'USD', False, ''),
+    ('LME_ZN', 'روی LME', 'metals', 'XLME', 'tonne', 25, 'tonne', 'USD', False, ''),
+    ('LME_PB', 'سرب LME', 'metals', 'XLME', 'tonne', 25, 'tonne', 'USD', False, ''),
+    ('LME_SN', 'قلع LME', 'metals', 'XLME', 'tonne', 5, 'tonne', 'USD', False, ''),
+    ('IRON_ORE', 'سنگ آهن (SGX)', 'metals', 'XFX', 'tonne', 100, 'tonne', 'USD', False, 'قرارداد SGX؛ دسترسی داده محدود'),
+    ('URANIUM', 'اورانیوم U3O8', 'metals', 'XFX', 'lb', 250, 'lb', 'USD', False, 'بازار غیربورسی؛ شاخص قیمت است نه قرارداد'),
+    ('LITHIUM', 'لیتیوم (کربنات)', 'metals', 'XFX', 'tonne', 1, 'tonne', 'USD', False, 'بازار غیربورسی؛ شاخص قیمت'),
+    ('ZW=F', 'گندم شیکاگو', 'agri', 'XCBT', 'bushel', 5000, 'bushel', 'USD', True, ''),
+    ('KE=F', 'گندم کانزاس', 'agri', 'XCBT', 'bushel', 5000, 'bushel', 'USD', True, ''),
+    ('ZS=F', 'سویا', 'agri', 'XCBT', 'bushel', 5000, 'bushel', 'USD', True, ''),
+    ('ZM=F', 'کنجاله سویا', 'agri', 'XCBT', 'short ton', 100, 'short ton', 'USD', True, ''),
+    ('ZL=F', 'روغن سویا', 'agri', 'XCBT', 'lb', 60000, 'lb', 'USD', True, ''),
+    ('ZO=F', 'جو دوسر', 'agri', 'XCBT', 'bushel', 5000, 'bushel', 'USD', False, ''),
+    ('ZR=F', 'برنج', 'agri', 'XCBT', 'cwt', 2000, 'cwt', 'USD', False, ''),
+    ('KC=F', 'قهوه عربیکا', 'agri', 'XICE', 'lb', 37500, 'lb', 'USD', True, ''),
+    ('RC=F', 'قهوه روبوستا', 'agri', 'XICE', 'tonne', 10, 'tonne', 'USD', False, ''),
+    ('SB=F', 'شکر', 'agri', 'XICE', 'lb', 112000, 'lb', 'USD', True, ''),
+    ('CC=F', 'کاکائو', 'agri', 'XICE', 'tonne', 10, 'tonne', 'USD', True, ''),
+    ('CT=F', 'پنبه', 'agri', 'XICE', 'lb', 50000, 'lb', 'USD', True, ''),
+    ('OJ=F', 'آب پرتقال', 'agri', 'XICE', 'lb', 15000, 'lb', 'USD', False, ''),
+    ('LE=F', 'گاو زنده', 'agri', 'XCME', 'lb', 40000, 'lb', 'USD', False, ''),
+    ('HE=F', 'خوک', 'agri', 'XCME', 'lb', 40000, 'lb', 'USD', False, ''),
+    ('GF=F', 'گاو پرواری', 'agri', 'XCME', 'lb', 50000, 'lb', 'USD', False, ''),
+    ('RS=F', 'کانولا', 'agri', 'XICE', 'tonne', 20, 'tonne', 'USD', False, ''),
+    ('LBS=F', 'چوب', 'agri', 'XCME', 'board foot', 27500, 'board foot', 'USD', False, ''),
+    ('زیره', 'زیره سبز (بورس کالا)', 'agri', 'IME_IR', 'کیلوگرم', 1, 'کیلوگرم', 'IRR', False, ''),
+    ('IVV', 'آی\u200cشیرز اس\u200cاند\u200cپی ۵۰۰', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('VOO', 'ونگارد اس\u200cاند\u200cپی ۵۰۰', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('VTI', 'ونگارد کل بازار', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('QQQ', 'اینوِسکو نزدک ۱۰۰', 'etf', 'XNAS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('QQQM', 'نزدک ۱۰۰ کم\u200cهزینه', 'etf', 'XNAS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('IWM', 'راسل ۲۰۰۰', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('DIA', 'دیاموندز داو جونز', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('MDY', 'اس\u200cاند\u200cپی میدکپ', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('IJR', 'اس\u200cاند\u200cپی اسمال\u200cکپ', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('VGK', 'اروپا', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('EWJ', 'ژاپن', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('EWG', 'آلمان', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('EWQ', 'فرانسه', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('EWU', 'بریتانیا', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('EWC', 'کانادا', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('EWA', 'استرالیا', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('EWZ', 'برزیل', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('EWW', 'مکزیک', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('INDA', 'هند', 'etf', 'XNAS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('FXI', 'چین بزرگ', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('EWT', 'تایوان', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('EWY', 'کره', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('TUR', 'ترکیه', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('EZA', 'آفریقای جنوبی', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('KSA', 'عربستان', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('EGPT', 'مصر', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('IEF', 'خزانه ۷-۱۰ ساله', 'etf', 'XNAS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('SHY', 'خزانه ۱-۳ ساله', 'etf', 'XNAS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('TIP', 'اوراق تورمی', 'etf', 'XNAS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('LQD', 'اوراق شرکتی درجه سرمایه\u200cگذاری', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('HYG', 'اوراق پرریسک', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('JNK', 'اوراق پرریسک SPDR', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('AGG', 'سبد اوراق کل بازار', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('BNDX', 'اوراق بین\u200cالمللی', 'etf', 'XNAS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('EMB', 'اوراق بازار نوظهور', 'etf', 'XNAS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('GOVT', 'خزانه آمریکا کل سررسید', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('MUB', 'اوراق شهرداری', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('IAU', 'طلا آی\u200cشیرز', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('SLV', 'نقره', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('GDX', 'معادن طلا', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('GDXJ', 'معادن طلای کوچک', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('PPLT', 'پلاتین', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('PALL', 'پالادیوم', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('DBA', 'سبد کشاورزی', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('USO', 'نفت خام', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('UNG', 'گاز طبیعی', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('XLE', 'انرژی', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('XOP', 'نفت و گاز اکتشاف', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('XLU', 'آب و برق', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('XLF', 'مالی', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('XLK', 'فناوری', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('XLV', 'سلامت', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('XLI', 'صنعت', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('XLY', 'مصرف اختیاری', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('XLP', 'مصرف ضروری', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('XLB', 'مواد اولیه', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('XLRE', 'املاک', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('SMH', 'نیمه\u200cهادی', 'etf', 'XNAS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('XBI', 'زیست\u200cفناوری', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('IBB', 'زیست\u200cفناوری آی\u200cشیرز', 'etf', 'XNAS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('ARKK', 'نوآوری آرک', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('VNQ', 'املاک آمریکا', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('IBIT', 'بیت\u200cکوین بلک\u200cراک', 'etf', 'XNAS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('IGLT', 'اوراق دولتی بریتانیا', 'etf', 'XLON', 'واحد', 1, 'share', 'GBP', False, ''),
+    ('VFIAX', 'صندوق ۵۰۰ ونگارد', 'fund', 'XNAS', 'واحد', 1, 'share', 'USD', True, 'صندوق مشاع؛ قیمت پایان روز'),
+    ('VTIAX', 'صندوق بین\u200cالمللی ونگارد', 'fund', 'XNAS', 'واحد', 1, 'share', 'USD', True, 'صندوق مشاع؛ قیمت پایان روز'),
+    ('VBTLX', 'صندوق اوراق ونگارد', 'fund', 'XNAS', 'واحد', 1, 'share', 'USD', True, 'صندوق مشاع؛ قیمت پایان روز'),
+    ('VWELX', 'صندوق متوازن وینزور', 'fund', 'XNYS', 'واحد', 1, 'share', 'USD', False, 'صندوق مشاع؛ قیمت پایان روز'),
+    ('FFFEX', 'صندوق آزادی فیدلیتی', 'fund', 'XNYS', 'واحد', 1, 'share', 'USD', False, 'صندوق مشاع؛ قیمت پایان روز'),
+    ('صندوق_درآمد_ثابت', 'صندوق درآمد ثابت (فرابورس)', 'fund', 'IFB_IR', 'واحد', 1, 'share', 'IRR', False, 'بازده اسمی اعلامی؛ نقدشوندگی و قیمت\u200cگذاری باید بررسی شود'),
+    ('ZT=F', 'آتی خزانه ۲ ساله', 'fixed_income', 'XCBT', 'واحد', 1000, 'unit', 'USD', True, ''),
+    ('ZF=F', 'آتی خزانه ۵ ساله', 'fixed_income', 'XCBT', 'واحد', 1000, 'unit', 'USD', True, ''),
+    ('ZN=F', 'آتی خزانه ۱۰ ساله', 'fixed_income', 'XCBT', 'واحد', 1000, 'unit', 'USD', True, ''),
+    ('ZB=F', 'آتی خزانه ۳۰ ساله', 'fixed_income', 'XCBT', 'واحد', 1000, 'unit', 'USD', True, ''),
+    ('UB=F', 'آتی اولترا خزانه', 'fixed_income', 'XCBT', 'واحد', 1000, 'unit', 'USD', False, 'مشخصات قرارداد یا سررسید نیازمند تأیید'),
+    ('FBTP', 'آتی باند آلمان Euro-Bund', 'fixed_income', 'XEUREX', 'واحد', 100000, 'unit', 'EUR', False, 'مشخصات قرارداد یا سررسید نیازمند تأیید'),
+    ('FBTP_5Y', 'آتی باند ۵ ساله آلمان', 'fixed_income', 'XEUREX', 'واحد', 100000, 'unit', 'EUR', False, 'مشخصات قرارداد یا سررسید نیازمند تأیید'),
+    ('JBTP', 'آتی اوراق ۱۰ ساله ژاپن', 'fixed_income', 'XOSE', 'واحد', 100000000, 'unit', 'JPY', False, 'مشخصات قرارداد یا سررسید نیازمند تأیید'),
+    ('اخزا', 'اسناد خزانه اسلامی (فرابورس)', 'fixed_income', 'IFB_IR', 'واحد', 1, 'unit', 'IRR', False, 'مشخصات قرارداد یا سررسید نیازمند تأیید'),
+    ('صکوک_اجاره', 'صکوک اجاره (فرابورس)', 'fixed_income', 'IFB_IR', 'واحد', 1, 'unit', 'IRR', False, 'مشخصات قرارداد یا سررسید نیازمند تأیید'),
+    ('MWE=F', 'گندم بهاره (مینیاپولیس)', 'agri', 'XCME', 'bushel', 5000, 'bushel', 'USD', False, ''),
+    ('EBM', 'گندم آسیابانی اروپا (MATIF)', 'agri', 'XMATIF', 'tonne', 50, 'tonne', 'EUR', False, ''),
+    ('EMA', 'ذرت اروپا (MATIF)', 'agri', 'XMATIF', 'tonne', 50, 'tonne', 'EUR', False, ''),
+    ('ECO', 'کلزای اروپا (MATIF)', 'agri', 'XMATIF', 'tonne', 50, 'tonne', 'EUR', False, ''),
+    ('FCPO', 'روغن نخل (BMD)', 'agri', 'XBMD', 'tonne', 25, 'tonne', 'MYR', False, 'قرارداد به رینگیت؛ نیازمند تأیید'),
+    ('TFCOM_RSS3', 'لاستیک RSS3 (توکیو)', 'agri', 'XTOCOM', 'kg', 5000, 'kg', 'JPY', False, ''),
+    ('SF=F', 'شکر ۱۶ (ICE)', 'agri', 'XICE', 'lb', 112000, 'lb', 'USD', False, ''),
+    ('DC=F', 'شیر کلاس ۳ (CME)', 'agri', 'XCME', 'cwt', 200000, 'cwt', 'USD', False, ''),
+    ('GDK', 'شیر کلاس ۴ (CME)', 'agri', 'XCME', 'cwt', 200000, 'cwt', 'USD', False, ''),
+    ('CB=F', 'کره (CME)', 'agri', 'XCME', 'lb', 20000, 'lb', 'USD', False, ''),
+    ('CSC=F', 'پنیر چدار (CME)', 'agri', 'XCME', 'lb', 40000, 'lb', 'USD', False, ''),
+    ('GNF=F', 'شیر خشک بدون چربی (CME)', 'agri', 'XCME', 'lb', 44000, 'lb', 'USD', False, ''),
+    ('PRK=F', 'پولک خوک منجمد (CME)', 'agri', 'XCME', 'lb', 40000, 'lb', 'USD', False, ''),
+    ('BJ=F', 'سوخت زیستی دیزل (CME)', 'agri', 'XCME', 'gallon', 42000, 'gallon', 'USD', False, ''),
+    ('PLT', 'سیب\u200cزمینی (ICE)', 'agri', 'XICE', 'lb', 50000, 'lb', 'USD', False, 'نقدینگی بسیار کم'),
+    ('پنبه_ایران', 'پنبه (بورس کالا)', 'agri', 'IME_IR', 'کیلوگرم', 1, 'کیلوگرم', 'IRR', False, ''),
+    ('جو_ایران', 'جو (بورس کالا)', 'agri', 'IME_IR', 'کیلوگرم', 1, 'کیلوگرم', 'IRR', False, ''),
+    ('ذرت_ایران', 'ذرت دامی (بورس کالا)', 'agri', 'IME_IR', 'کیلوگرم', 1, 'کیلوگرم', 'IRR', False, ''),
+    ('کنجاله_سویا_ایران', 'کنجاله سویا (بورس کالا)', 'agri', 'IME_IR', 'کیلوگرم', 1, 'کیلوگرم', 'IRR', False, ''),
+    ('روغن_خام_نخل', 'روغن خام نخل (بورس کالا)', 'agri', 'IME_IR', 'کیلوگرم', 1, 'کیلوگرم', 'IRR', False, ''),
+    ('LME_CO', 'کبالت LME', 'metals', 'XLME', 'tonne', 1, 'tonne', 'USD', False, ''),
+    ('LME_MO', 'مولیبدن LME', 'metals', 'XLME', 'tonne', 2, 'tonne', 'USD', False, ''),
+    ('LME_AA', 'آلیاژ آلومینیوم LME', 'metals', 'XLME', 'tonne', 25, 'tonne', 'USD', False, ''),
+    ('LME_NASAAC', 'آلیاژ آلومینیوم ثانویه LME', 'metals', 'XLME', 'tonne', 25, 'tonne', 'USD', False, ''),
+    ('SHFE_REBAR', 'میلگرد (SHFE)', 'metals', 'XSHFE', 'tonne', 10, 'tonne', 'CNY', False, ''),
+    ('SHFE_HRC', 'ورق گرم (SHFE)', 'metals', 'XSHFE', 'tonne', 10, 'tonne', 'CNY', False, ''),
+    ('SHFE_CU', 'مس (SHFE)', 'metals', 'XSHFE', 'tonne', 5, 'tonne', 'CNY', False, ''),
+    ('SHFE_AL', 'آلومینیوم (SHFE)', 'metals', 'XSHFE', 'tonne', 5, 'tonne', 'CNY', False, ''),
+    ('ALUMINA', 'آلومینا (SHFE)', 'metals', 'XSHFE', 'tonne', 20, 'tonne', 'CNY', False, ''),
+    ('ANTIMONY', 'آنتی\u200cموني (SHFE)', 'metals', 'XSHFE', 'tonne', 5, 'tonne', 'CNY', False, ''),
+    ('MAGNESIUM', 'منیزیم (غیربورسی)', 'metals', 'XFX', 'tonne', 1, 'tonne', 'USD', False, 'شاخص قیمت، نه قرارداد'),
+    ('TITANIUM', 'تیتانیوم (غیربورسی)', 'metals', 'XFX', 'tonne', 1, 'tonne', 'USD', False, 'شاخص قیمت'),
+    ('PLATINUM_JPY', 'پلاتین (توکیو)', 'metals', 'XTOCOM', 'gram', 500, 'gram', 'JPY', False, ''),
+    ('VEA', 'توسعه\u200cیافته خارج آمریکا (ونگارد)', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('VWO', 'بازار نوظهور (ونگارد)', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('SCHD', 'سود سهامی آمریکا', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', True, ''),
+    ('VIG', 'رشد سود سهامی', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('VYM', 'سود بالا', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('SOXX', 'نیمه\u200cهادی (آی\u200cشیرز)', 'etf', 'XNAS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('XLC', 'ارتباطات', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('ITOT', 'کل بازار آمریکا (آی\u200cشیرز)', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('ACWI', 'کل جهان (آی\u200cشیرز)', 'etf', 'XNAS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('URTH', 'کل جهان (MSCI)', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('IEFA', 'توسعه\u200cیافته (آی\u200cشیرز)', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('IEMG', 'بازار نوظهور (آی\u200cشیرز)', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('TLH', 'خزانه ۱۰-۲۰ ساله', 'etf', 'XNAS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('BIL', 'اسناد خزانه یک\u200cماهه', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('SHV', 'اسناد خزانه کوتاه\u200cمدت', 'etf', 'XNAS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('IGSB', 'اوراق شرکتی کوتاه\u200cمدت', 'etf', 'XNAS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('VCIT', 'اوراق شرکتی میان\u200cمدت (ونگارد)', 'etf', 'XNAS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('VCSH', 'اوراق شرکتی کوتاه (ونگارد)', 'etf', 'XNAS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('HYLB', 'اوراق پرریسک کم\u200cهزینه', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('IBND', 'اوراق بین\u200cالمللی (SPDR)', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('IAU_GLD', 'طلا (آی\u200cشیرز)', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('SGOL', 'طلا (ابردین)', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('SIVR', 'نقره (ابردین)', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('CPER', 'مس', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('PICK', 'فلزات و معدن', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('REMX', 'فلزات نادر خاکی', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('LIT', 'لیتیوم و باتری', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('URA', 'اورانیوم', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('MOO', 'کشاورزی', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('WEAT', 'گندم', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('CORN', 'ذرت', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('SOYB', 'سویا', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('CANE', 'شکر', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('JO', 'قهوه', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('NIB', 'کاکائو', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('COW', 'دام', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('WOOD', 'چوب و جنگل', 'etf', 'XNAS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('VNQI', 'املاک بین\u200cالمللی', 'etf', 'XNAS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('IYR', 'املاک آمریکا (آی\u200cشیرز)', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('IBB_Q', 'زیست\u200cفناوری (آی\u200cشیرز)', 'etf', 'XNAS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('ICLN', 'انرژی پاک', 'etf', 'XNAS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('TAN', 'انرژی خورشیدی', 'etf', 'XNYS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('ESGU', 'سرمایه\u200cگذاری مسئولانه', 'etf', 'XNAS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('ESGV', 'مسئولانه (ونگارد)', 'etf', 'XNAS', 'واحد', 1, 'share', 'USD', False, ''),
+    ('VIMAX', 'صندوق میدکپ ونگارد', 'fund', 'XNAS', 'واحد', 1, 'share', 'USD', False, 'مشخصات صندوق نیازمند بررسی'),
+    ('VSMAX', 'صندوق اسمال\u200cکپ ونگارد', 'fund', 'XNAS', 'واحد', 1, 'share', 'USD', False, 'مشخصات صندوق نیازمند بررسی'),
+    ('VFWAX', 'صندوق کل جهان به\u200cجز آمریکا', 'fund', 'XNAS', 'واحد', 1, 'share', 'USD', False, 'مشخصات صندوق نیازمند بررسی'),
+    ('VFSUX', 'صندوق اوراق کوتاه\u200cمدت ونگارد', 'fund', 'XNAS', 'واحد', 1, 'share', 'USD', False, 'مشخصات صندوق نیازمند بررسی'),
+    ('VBILX', 'صندوق اوراق میان\u200cمدت ونگارد', 'fund', 'XNAS', 'واحد', 1, 'share', 'USD', False, 'مشخصات صندوق نیازمند بررسی'),
+    ('VFIAX_2', 'صندوق شاخص ۵۰۰ (کلاس ادمیرال)', 'fund', 'XNAS', 'واحد', 1, 'share', 'USD', False, 'مشخصات صندوق نیازمند بررسی'),
+    ('SWTSX', 'صندوق کل بازار چارلز شواب', 'fund', 'XNAS', 'واحد', 1, 'share', 'USD', False, 'مشخصات صندوق نیازمند بررسی'),
+    ('SWISX', 'صندوق بین\u200cالمللی شواب', 'fund', 'XNAS', 'واحد', 1, 'share', 'USD', False, 'مشخصات صندوق نیازمند بررسی'),
+    ('FXAIX', 'صندوق ۵۰۰ فیدلیتی', 'fund', 'XNAS', 'واحد', 1, 'share', 'USD', False, 'مشخصات صندوق نیازمند بررسی'),
+    ('FSPSX', 'صندوق بین\u200cالمللی فیدلیتی', 'fund', 'XNAS', 'واحد', 1, 'share', 'USD', False, 'مشخصات صندوق نیازمند بررسی'),
+    ('صندوق_شاخصی_تهران', 'صندوق شاخصی بورس تهران', 'fund', 'IFB_IR', 'واحد', 1, 'share', 'IRR', False, 'مشخصات صندوق نیازمند بررسی'),
+    ('صندوق_کالایی_طلا', 'صندوق کالایی مبتنی بر طلا', 'fund', 'IFB_IR', 'واحد', 1, 'share', 'IRR', False, 'مشخصات صندوق نیازمند بررسی'),
+)
 
-    def register(self, spec: AssetSpec) -> None:
-        self._assets[spec.symbol.upper()] = spec
+_BY_SYMBOL: Dict[str, Instrument] = {i.symbol: i for i in INSTRUMENTS}
 
-    def get(self, symbol: str) -> Optional[AssetSpec]:
-        return self._assets.get(symbol.upper())
 
-    def by_category(self, category: AssetCategory) -> List[AssetSpec]:
-        return [a for a in self._assets.values() if a.category == category]
+class UnknownInstrument(KeyError):
+    """Raised instead of guessing a venue, a size or a settlement rule."""
 
-    def by_sub_category(self, sub_category: SubCategory) -> List[AssetSpec]:
-        return [a for a in self._assets.values() if a.sub_category == sub_category]
 
-    def by_region(self, region: str) -> List[AssetSpec]:
-        r = region.lower()
-        return [a for a in self._assets.values() if a.region.lower() == r]
+def get(symbol: str) -> Instrument:
+    try:
+        return _BY_SYMBOL[symbol]
+    except KeyError:
+        raise UnknownInstrument(
+            f"{symbol} در کاتالوگ نیست؛ حدس‌زدن کلاس و بورس مجاز نیست") from None
 
-    def by_exchange(self, exchange_code: str) -> List[AssetSpec]:
-        ex = exchange_code.upper()
-        return [a for a in self._assets.values() if a.exchange.upper() == ex]
 
-    def search_by_tag(self, tag: str) -> List[AssetSpec]:
-        t = tag.lower()
-        return [a for a in self._assets.values() if t in [x.lower() for x in a.tags]]
+def exists(symbol: str) -> bool:
+    return symbol in _BY_SYMBOL
 
-    def summary_counts(self) -> Dict[str, int]:
-        counts: Dict[str, int] = {}
-        for asset in self._assets.values():
-            counts[asset.category.value] = counts.get(asset.category.value, 0) + 1
-        return counts
 
-    def all_symbols(self) -> List[str]:
-        return list(self._assets.keys())
+def by_class(asset_class: str) -> List[Instrument]:
+    return [i for i in INSTRUMENTS if i.asset_class == asset_class]
 
-    # ---- Global Exchanges Catalog -----------------------------------------
-    def _load_exchanges(self) -> None:
-        exchanges = [
-            # North America
-            ExchangeInfo("NYSE", "New York Stock Exchange", "USA", "North America", "USD", "America/New_York"),
-            ExchangeInfo("NASDAQ", "NASDAQ Stock Market", "USA", "North America", "USD", "America/New_York"),
-            ExchangeInfo("CME", "Chicago Mercantile Exchange", "USA", "North America", "USD", "America/Chicago"),
-            ExchangeInfo("CBOT", "Chicago Board of Trade", "USA", "North America", "USD", "America/Chicago"),
-            ExchangeInfo("NYMEX", "New York Mercantile Exchange", "USA", "North America", "USD", "America/New_York"),
-            ExchangeInfo("ICE", "Intercontinental Exchange", "USA/UK", "Global", "USD", "America/New_York"),
-            ExchangeInfo("TSX", "Toronto Stock Exchange", "Canada", "North America", "CAD", "America/Toronto"),
-            # Europe
-            ExchangeInfo("LSE", "London Stock Exchange", "UK", "Europe", "GBP", "Europe/London"),
-            ExchangeInfo("LME", "London Metal Exchange", "UK", "Europe", "USD", "Europe/London"),
-            ExchangeInfo("XETRA", "Deutsche Börse Xetra", "Germany", "Europe", "EUR", "Europe/Berlin"),
-            ExchangeInfo("EUREX", "Eurex Derivatives Exchange", "Germany", "Europe", "EUR", "Europe/Berlin"),
-            ExchangeInfo("EURONEXT", "Euronext Paris/Amsterdam", "EU", "Europe", "EUR", "Europe/Paris"),
-            # Asia-Pacific & India
-            ExchangeInfo("NSE", "National Stock Exchange of India", "India", "South Asia", "INR", "Asia/Kolkata"),
-            ExchangeInfo("BSE", "Bombay Stock Exchange", "India", "South Asia", "INR", "Asia/Kolkata"),
-            ExchangeInfo("TSE", "Tokyo Stock Exchange", "Japan", "East Asia", "JPY", "Asia/Tokyo"),
-            ExchangeInfo("HKEX", "Hong Kong Exchanges", "Hong Kong", "East Asia", "HKD", "Asia/Hong_Kong"),
-            ExchangeInfo("KRX", "Korea Exchange", "South Korea", "East Asia", "KRW", "Asia/Seoul"),
-            ExchangeInfo("SGX", "Singapore Exchange", "Singapore", "SE Asia", "SGD", "Asia/Singapore"),
-            ExchangeInfo("IDX", "Indonesia Stock Exchange", "Indonesia", "SE Asia", "IDR", "Asia/Jakarta"),
-            ExchangeInfo("SET", "Stock Exchange of Thailand", "Thailand", "SE Asia", "THB", "Asia/Bangkok"),
-            ExchangeInfo("ASX", "Australian Securities Exchange", "Australia", "Oceania", "AUD", "Australia/Sydney"),
-            # Middle East & Iran
-            ExchangeInfo("TSETMC", "Tehran Stock Exchange", "Iran", "Middle East", "IRR", "Asia/Tehran"),
-            ExchangeInfo("IME", "Iran Mercantile Exchange", "Iran", "Middle East", "IRR", "Asia/Tehran"),
-            ExchangeInfo("IFB", "Iran Fara Bourse", "Iran", "Middle East", "IRR", "Asia/Tehran"),
-            ExchangeInfo("TADAWUL", "Saudi Exchange", "Saudi Arabia", "Middle East", "SAR", "Asia/Riyadh"),
-            ExchangeInfo("DFM", "Dubai Financial Market", "UAE", "Middle East", "AED", "Asia/Dubai"),
-            ExchangeInfo("BIST", "Borsa Istanbul", "Turkey", "Middle East", "TRY", "Europe/Istanbul"),
-            # Africa & Latin America
-            ExchangeInfo("JSE", "Johannesburg Stock Exchange", "South Africa", "Africa", "ZAR", "Africa/Johannesburg"),
-            ExchangeInfo("EGX", "Egyptian Exchange", "Egypt", "Africa", "EGP", "Africa/Cairo"),
-            ExchangeInfo("NGX", "Nigerian Exchange Group", "Nigeria", "Africa", "NGN", "Africa/Lagos"),
-            ExchangeInfo("B3", "Brasil Bolsa Balcão", "Brazil", "Latin America", "BRL", "America/Sao_Paulo"),
-            # OTC & Crypto
-            ExchangeInfo("OTC", "Global Interbank FX/Spot", "Global", "Global", "USD", "UTC"),
-            ExchangeInfo("BINANCE", "Binance Global Spot/Futures", "Global", "Global", "USDT", "UTC"),
-        ]
-        for ex in exchanges:
-            self.register_exchange(ex)
 
-    # ---- Full Multi-Asset Catalog -----------------------------------------
-    def _load_full_catalog(self) -> None:
-        items: List[AssetSpec] = [
-            # =================================================================
-            # 1. GLOBAL INDICES (US, Europe, Asia, India, ME, Africa)
-            # =================================================================
-            AssetSpec("US30", "Dow Jones Industrial Average", AssetCategory.INDEX, SubCategory.REGIONAL_INDEX, "NYSE", "North America", "USD", 0.1, 1.0, 0.1, 0.02, "mt5", "mt5", ["us", "dow"]),
-            AssetSpec("US500", "S&P 500 Index", AssetCategory.INDEX, SubCategory.REGIONAL_INDEX, "CME", "North America", "USD", 0.25, 1.0, 0.1, 0.02, "mt5", "mt5", ["us", "sp500"]),
-            AssetSpec("NAS100", "NASDAQ 100 Index", AssetCategory.INDEX, SubCategory.REGIONAL_INDEX, "NASDAQ", "North America", "USD", 0.25, 1.0, 0.1, 0.02, "mt5", "mt5", ["us", "tech", "nasdaq"]),
-            AssetSpec("DE40", "DAX 40 Performance Index", AssetCategory.INDEX, SubCategory.REGIONAL_INDEX, "XETRA", "Europe", "EUR", 0.5, 1.0, 0.1, 0.02, "mt5", "mt5", ["germany", "dax"]),
-            AssetSpec("UK100", "FTSE 100 Index", AssetCategory.INDEX, SubCategory.REGIONAL_INDEX, "LSE", "Europe", "GBP", 0.5, 1.0, 0.1, 0.02, "mt5", "mt5", ["uk", "ftse"]),
-            AssetSpec("FR40", "CAC 40 Index", AssetCategory.INDEX, SubCategory.REGIONAL_INDEX, "EURONEXT", "Europe", "EUR", 0.5, 1.0, 0.1, 0.02, "yahoo", "mt5", ["france", "cac40"]),
-            AssetSpec("JP225", "Nikkei 225 Index", AssetCategory.INDEX, SubCategory.REGIONAL_INDEX, "TSE", "East Asia", "JPY", 5.0, 1.0, 0.1, 0.02, "mt5", "mt5", ["japan", "nikkei"]),
-            AssetSpec("HK50", "Hang Seng Index", AssetCategory.INDEX, SubCategory.REGIONAL_INDEX, "HKEX", "East Asia", "HKD", 1.0, 1.0, 0.1, 0.02, "mt5", "mt5", ["hongkong", "hsi"]),
-            AssetSpec("NIFTY50", "NSE Nifty 50 Index", AssetCategory.INDEX, SubCategory.REGIONAL_INDEX, "NSE", "South Asia", "INR", 0.05, 1.0, 1.0, 0.05, "yahoo", "interactive_brokers", ["india", "nifty"]),
-            AssetSpec("SENSEX", "BSE Sensex 30 Index", AssetCategory.INDEX, SubCategory.REGIONAL_INDEX, "BSE", "South Asia", "INR", 0.05, 1.0, 1.0, 0.05, "yahoo", "interactive_brokers", ["india", "sensex"]),
-            AssetSpec("STI", "Straits Times Index", AssetCategory.INDEX, SubCategory.REGIONAL_INDEX, "SGX", "SE Asia", "SGD", 0.1, 1.0, 1.0, 0.05, "yahoo", "interactive_brokers", ["singapore", "asean"]),
-            AssetSpec("IDX_COMP", "IDX Composite Index", AssetCategory.INDEX, SubCategory.REGIONAL_INDEX, "IDX", "SE Asia", "IDR", 1.0, 1.0, 1.0, 0.1, "yahoo", "interactive_brokers", ["indonesia", "asean"]),
-            AssetSpec("TEDPIX", "Tehran Stock Exchange Overall Index", AssetCategory.INDEX, SubCategory.REGIONAL_INDEX, "TSETMC", "Middle East", "IRR", 1.0, 1.0, 1.0, 1.0, "tsetmc", "iran_broker", ["iran", "tedpix"]),
-            AssetSpec("TASI", "Tadawul All Share Index", AssetCategory.INDEX, SubCategory.REGIONAL_INDEX, "TADAWUL", "Middle East", "SAR", 0.01, 1.0, 1.0, 0.1, "yahoo", "interactive_brokers", ["saudi", "gcc"]),
-            AssetSpec("JTOPI", "FTSE/JSE Top 40 Index", AssetCategory.INDEX, SubCategory.REGIONAL_INDEX, "JSE", "Africa", "ZAR", 1.0, 1.0, 1.0, 0.05, "yahoo", "interactive_brokers", ["south_africa", "africa"]),
+def by_venue(code: str) -> List[Instrument]:
+    return [i for i in INSTRUMENTS if i.venue == code]
 
-            # =================================================================
-            # 2. FOREX (Majors, Crosses, Emerging Markets)
-            # =================================================================
-            # Majors
-            AssetSpec("EURUSD", "Euro / US Dollar", AssetCategory.FOREX, SubCategory.FX_MAJOR, "OTC", "Global", "USD", 0.00001, 100000, 0.01, 0.01, "mt5", "mt5", ["major"]),
-            AssetSpec("GBPUSD", "British Pound / US Dollar", AssetCategory.FOREX, SubCategory.FX_MAJOR, "OTC", "Global", "USD", 0.00001, 100000, 0.01, 0.01, "mt5", "mt5", ["major"]),
-            AssetSpec("USDJPY", "US Dollar / Japanese Yen", AssetCategory.FOREX, SubCategory.FX_MAJOR, "OTC", "Global", "JPY", 0.001, 100000, 0.01, 0.01, "mt5", "mt5", ["major"]),
-            AssetSpec("USDCHF", "US Dollar / Swiss Franc", AssetCategory.FOREX, SubCategory.FX_MAJOR, "OTC", "Global", "CHF", 0.00001, 100000, 0.01, 0.01, "mt5", "mt5", ["major"]),
-            AssetSpec("USDCAD", "US Dollar / Canadian Dollar", AssetCategory.FOREX, SubCategory.FX_MAJOR, "OTC", "Global", "CAD", 0.00001, 100000, 0.01, 0.01, "mt5", "mt5", ["major"]),
-            AssetSpec("AUDUSD", "Australian Dollar / US Dollar", AssetCategory.FOREX, SubCategory.FX_MAJOR, "OTC", "Global", "USD", 0.00001, 100000, 0.01, 0.01, "mt5", "mt5", ["major"]),
-            AssetSpec("NZDUSD", "New Zealand Dollar / US Dollar", AssetCategory.FOREX, SubCategory.FX_MAJOR, "OTC", "Global", "USD", 0.00001, 100000, 0.01, 0.01, "mt5", "mt5", ["major"]),
-            # Key Crosses
-            AssetSpec("EURJPY", "Euro / Japanese Yen", AssetCategory.FOREX, SubCategory.FX_CROSS, "OTC", "Global", "JPY", 0.001, 100000, 0.01, 0.01, "mt5", "mt5", ["cross"]),
-            AssetSpec("GBPJPY", "British Pound / Japanese Yen", AssetCategory.FOREX, SubCategory.FX_CROSS, "OTC", "Global", "JPY", 0.001, 100000, 0.01, 0.01, "mt5", "mt5", ["cross"]),
-            AssetSpec("EURGBP", "Euro / British Pound", AssetCategory.FOREX, SubCategory.FX_CROSS, "OTC", "Global", "GBP", 0.00001, 100000, 0.01, 0.01, "mt5", "mt5", ["cross"]),
-            AssetSpec("AUDCAD", "Australian Dollar / Canadian Dollar", AssetCategory.FOREX, SubCategory.FX_CROSS, "OTC", "Global", "CAD", 0.00001, 100000, 0.01, 0.01, "mt5", "mt5", ["cross"]),
-            # Emerging Markets FX (Rupee, Rand, Lira, Real, Won, Dirham, Naira, Manat)
-            AssetSpec("USDINR", "US Dollar / Indian Rupee", AssetCategory.FOREX, SubCategory.FX_EMERGING, "OTC", "South Asia", "INR", 0.001, 100000, 0.01, 0.05, "yahoo", "mt5", ["em", "india", "rupee"]),
-            AssetSpec("USDZAR", "US Dollar / South African Rand", AssetCategory.FOREX, SubCategory.FX_EMERGING, "OTC", "Africa", "ZAR", 0.0001, 100000, 0.01, 0.05, "mt5", "mt5", ["em", "africa", "rand"]),
-            AssetSpec("USDTRY", "US Dollar / Turkish Lira", AssetCategory.FOREX, SubCategory.FX_EMERGING, "OTC", "Middle East", "TRY", 0.0001, 100000, 0.01, 0.05, "mt5", "mt5", ["em", "turkey", "lira"]),
-            AssetSpec("USDBRL", "US Dollar / Brazilian Real", AssetCategory.FOREX, SubCategory.FX_EMERGING, "OTC", "Latin America", "BRL", 0.0001, 100000, 0.01, 0.05, "yahoo", "mt5", ["em", "brazil", "real"]),
-            AssetSpec("USDKRW", "US Dollar / South Korean Won", AssetCategory.FOREX, SubCategory.FX_EMERGING, "OTC", "East Asia", "KRW", 0.01, 100000, 0.01, 0.05, "yahoo", "mt5", ["em", "korea", "won"]),
-            AssetSpec("USDAED", "US Dollar / UAE Dirham", AssetCategory.FOREX, SubCategory.FX_EMERGING, "OTC", "Middle East", "AED", 0.0001, 100000, 0.01, 0.05, "yahoo", "mt5", ["em", "uae", "dirham"]),
-            AssetSpec("USDNGN", "US Dollar / Nigerian Naira", AssetCategory.FOREX, SubCategory.FX_EMERGING, "OTC", "Africa", "NGN", 0.01, 100000, 0.01, 0.1, "yahoo", "manual", ["em", "nigeria", "naira"]),
-            AssetSpec("USDAZN", "US Dollar / Azerbaijani Manat", AssetCategory.FOREX, SubCategory.FX_EMERGING, "OTC", "Caucasus", "AZN", 0.0001, 100000, 0.01, 0.1, "yahoo", "manual", ["em", "azerbaijan", "manat"]),
 
-            # =================================================================
-            # 3. METALS, PRECIOUS STONES & BATTERY/NUCLEAR
-            # =================================================================
-            AssetSpec("XAUUSD", "Spot Gold", AssetCategory.PRECIOUS_METAL_STONE, SubCategory.PRECIOUS, "OTC", "Global", "USD", 0.01, 100, 0.01, 0.01, "mt5", "mt5", ["gold", "safe_haven"]),
-            AssetSpec("XAGUSD", "Spot Silver", AssetCategory.PRECIOUS_METAL_STONE, SubCategory.PRECIOUS, "OTC", "Global", "USD", 0.001, 5000, 0.01, 0.02, "mt5", "mt5", ["silver", "precious"]),
-            AssetSpec("XPTUSD", "Spot Platinum", AssetCategory.PRECIOUS_METAL_STONE, SubCategory.PRECIOUS, "NYMEX", "Global", "USD", 0.1, 50, 0.01, 0.02, "mt5", "mt5", ["platinum", "pgm"]),
-            AssetSpec("XPDUSD", "Spot Palladium", AssetCategory.PRECIOUS_METAL_STONE, SubCategory.PRECIOUS, "NYMEX", "Global", "USD", 0.1, 100, 0.01, 0.03, "mt5", "mt5", ["palladium", "pgm"]),
-            AssetSpec("DIAMOND_IDX", "Polished Diamond Index / Rough Carat", AssetCategory.PRECIOUS_METAL_STONE, SubCategory.GEMSTONE, "OTC", "Global", "USD", 1.0, 1.0, 1.0, 0.2, "custom_feed", "manual", ["diamond", "gemstone"]),
-            # LME Industrial & Battery Metals
-            AssetSpec("COPPER", "High Grade Copper", AssetCategory.BASE_BATTERY_METAL, SubCategory.LME_INDUSTRIAL, "LME", "Global", "USD", 0.0005, 25000, 0.01, 0.03, "yahoo", "mt5", ["copper", "lme"]),
-            AssetSpec("ALUMINUM", "LME Primary Aluminium", AssetCategory.BASE_BATTERY_METAL, SubCategory.LME_INDUSTRIAL, "LME", "Global", "USD", 0.5, 25, 0.1, 0.05, "yahoo", "interactive_brokers", ["aluminum", "lme"]),
-            AssetSpec("NICKEL", "LME Primary Nickel", AssetCategory.BASE_BATTERY_METAL, SubCategory.LME_INDUSTRIAL, "LME", "Global", "USD", 5.0, 6, 0.1, 0.05, "yahoo", "interactive_brokers", ["nickel", "lme", "ev"]),
-            AssetSpec("ZINC", "LME Special High Grade Zinc", AssetCategory.BASE_BATTERY_METAL, SubCategory.LME_INDUSTRIAL, "LME", "Global", "USD", 0.5, 25, 0.1, 0.05, "yahoo", "interactive_brokers", ["zinc", "lme"]),
-            AssetSpec("LEAD", "LME Standard Lead", AssetCategory.BASE_BATTERY_METAL, SubCategory.LME_INDUSTRIAL, "LME", "Global", "USD", 0.5, 25, 0.1, 0.05, "yahoo", "interactive_brokers", ["lead", "lme"]),
-            AssetSpec("TIN", "LME Refined Tin", AssetCategory.BASE_BATTERY_METAL, SubCategory.LME_INDUSTRIAL, "LME", "Global", "USD", 5.0, 5, 0.1, 0.05, "yahoo", "interactive_brokers", ["tin", "lme"]),
-            AssetSpec("IRON_ORE", "SGX TSI Iron Ore 62% Fe", AssetCategory.BASE_BATTERY_METAL, SubCategory.LME_INDUSTRIAL, "SGX", "Asia", "USD", 0.05, 100, 0.1, 0.05, "yahoo", "interactive_brokers", ["iron_ore", "steel"]),
-            AssetSpec("URANIUM", "U3O8 Uranium Futures", AssetCategory.BASE_BATTERY_METAL, SubCategory.BATTERY_NUCLEAR, "NYMEX", "Global", "USD", 0.05, 250, 0.1, 0.1, "yahoo", "interactive_brokers", ["uranium", "nuclear"]),
-            AssetSpec("LITHIUM", "Lithium Hydroxide CIF CJK", AssetCategory.BASE_BATTERY_METAL, SubCategory.BATTERY_NUCLEAR, "CME", "Global", "USD", 0.01, 1000, 0.1, 0.1, "yahoo", "interactive_brokers", ["lithium", "battery", "ev"]),
+def venue(code: str) -> Venue:
+    try:
+        return VENUES[code]
+    except KeyError:
+        raise UnknownInstrument(f"بورس ناشناخته: {code}") from None
 
-            # =================================================================
-            # 4. ENERGY
-            # =================================================================
-            AssetSpec("WTI", "Crude Oil WTI", AssetCategory.ENERGY, SubCategory.ENERGY_FUTURES, "NYMEX", "Global", "USD", 0.01, 100, 0.01, 0.02, "mt5", "mt5", ["oil", "wti"]),
-            AssetSpec("BRENT", "Brent Crude Oil", AssetCategory.ENERGY, SubCategory.ENERGY_FUTURES, "ICE", "Global", "USD", 0.01, 100, 0.01, 0.02, "mt5", "mt5", ["oil", "brent"]),
-            AssetSpec("NATGAS", "Henry Hub Natural Gas", AssetCategory.ENERGY, SubCategory.ENERGY_FUTURES, "NYMEX", "Global", "USD", 0.001, 1000, 0.01, 0.05, "mt5", "mt5", ["gas", "natgas"]),
 
-            # =================================================================
-            # 5. AGRICULTURE (Global CBOT/ICE + Iran Mercantile Exchange IME)
-            # =================================================================
-            AssetSpec("ZW_WHEAT", "Chicago SRW Wheat", AssetCategory.AGRICULTURE, SubCategory.GRAINS_OILSEEDS, "CBOT", "Global", "USD", 0.25, 50, 0.1, 0.05, "yahoo", "mt5", ["wheat", "grain"]),
-            AssetSpec("KE_WHEAT", "Kansas HRW Wheat", AssetCategory.AGRICULTURE, SubCategory.GRAINS_OILSEEDS, "CBOT", "Global", "USD", 0.25, 50, 0.1, 0.05, "yahoo", "interactive_brokers", ["kansas_wheat", "grain"]),
-            AssetSpec("ZS_SOYBEAN", "Soybeans Futures", AssetCategory.AGRICULTURE, SubCategory.GRAINS_OILSEEDS, "CBOT", "Global", "USD", 0.25, 50, 0.1, 0.05, "yahoo", "mt5", ["soybean"]),
-            AssetSpec("ZM_SOYMEAL", "Soybean Meal Futures", AssetCategory.AGRICULTURE, SubCategory.GRAINS_OILSEEDS, "CBOT", "Global", "USD", 0.1, 100, 0.1, 0.05, "yahoo", "interactive_brokers", ["soymeal"]),
-            AssetSpec("ZL_SOYOIL", "Soybean Oil Futures", AssetCategory.AGRICULTURE, SubCategory.GRAINS_OILSEEDS, "CBOT", "Global", "USD", 0.01, 600, 0.1, 0.05, "yahoo", "interactive_brokers", ["soyoil"]),
-            AssetSpec("ZR_RICE", "Rough Rice Futures", AssetCategory.AGRICULTURE, SubCategory.GRAINS_OILSEEDS, "CBOT", "Global", "USD", 0.005, 2000, 0.1, 0.05, "yahoo", "interactive_brokers", ["rice"]),
-            AssetSpec("ZO_OATS", "Oats Futures", AssetCategory.AGRICULTURE, SubCategory.GRAINS_OILSEEDS, "CBOT", "Global", "USD", 0.25, 50, 0.1, 0.05, "yahoo", "interactive_brokers", ["oats"]),
-            AssetSpec("RS_CANOLA", "ICE Canola Futures", AssetCategory.AGRICULTURE, SubCategory.GRAINS_OILSEEDS, "ICE", "North America", "CAD", 0.1, 20, 0.1, 0.05, "yahoo", "interactive_brokers", ["canola"]),
-            AssetSpec("KC_ARABICA", "Coffee C Arabica", AssetCategory.AGRICULTURE, SubCategory.SOFTS, "ICE", "Global", "USD", 0.05, 375, 0.1, 0.05, "yahoo", "mt5", ["coffee", "arabica"]),
-            AssetSpec("RC_ROBUSTA", "Robusta Coffee Futures", AssetCategory.AGRICULTURE, SubCategory.SOFTS, "ICE", "Europe", "USD", 1.0, 10, 0.1, 0.05, "yahoo", "interactive_brokers", ["coffee", "robusta"]),
-            AssetSpec("OJ_ORANGE", "Frozen Concentrated Orange Juice", AssetCategory.AGRICULTURE, SubCategory.SOFTS, "ICE", "Global", "USD", 0.05, 150, 0.1, 0.05, "yahoo", "interactive_brokers", ["orange_juice"]),
-            AssetSpec("LE_CATTLE", "Live Cattle Futures", AssetCategory.AGRICULTURE, SubCategory.LIVESTOCK_LUMBER, "CME", "North America", "USD", 0.025, 400, 0.1, 0.05, "yahoo", "interactive_brokers", ["livestock", "cattle"]),
-            AssetSpec("LBR_LUMBER", "Random Length Lumber", AssetCategory.AGRICULTURE, SubCategory.LIVESTOCK_LUMBER, "CME", "North America", "USD", 0.5, 27.5, 0.1, 0.05, "yahoo", "interactive_brokers", ["lumber"]),
-            # Iran Mercantile Exchange (IME) Strategic Agri
-            AssetSpec("SAFFRON_IME", "IME Negin Saffron Futures/CD", AssetCategory.AGRICULTURE, SubCategory.IME_AGRI, "IME", "Iran", "IRR", 100.0, 1.0, 1.0, 0.2, "tsetmc", "iran_broker", ["saffron", "iran", "ime"]),
-            AssetSpec("PISTACHIO_IME", "IME Pistachio Certificate of Deposit", AssetCategory.AGRICULTURE, SubCategory.IME_AGRI, "IME", "Iran", "IRR", 100.0, 1.0, 1.0, 1.0, "tsetmc", "iran_broker", ["pistachio", "iran", "ime"]),
-            AssetSpec("CUMIN_IME", "IME Green Cumin Certificate", AssetCategory.AGRICULTURE, SubCategory.IME_AGRI, "IME", "Iran", "IRR", 100.0, 1.0, 1.0, 1.0, "tsetmc", "iran_broker", ["cumin", "iran", "ime"]),
+def search(text: str) -> List[Instrument]:
+    needle = text.strip().lower()
+    if not needle:
+        return []
+    return [i for i in INSTRUMENTS
+            if needle in i.symbol.lower() or needle in i.name.lower()]
 
-            # =================================================================
-            # 6. BONDS & FIXED INCOME (US, EU, Japan, Iran)
-            # =================================================================
-            AssetSpec("ZT_2Y", "US 2-Year T-Note Futures", AssetCategory.BOND_FIXED_INCOME, SubCategory.SOVEREIGN_FUTURES, "CBOT", "North America", "USD", 0.0078125, 2000, 0.1, 0.02, "yahoo", "interactive_brokers", ["bond", "us2y"]),
-            AssetSpec("ZF_5Y", "US 5-Year T-Note Futures", AssetCategory.BOND_FIXED_INCOME, SubCategory.SOVEREIGN_FUTURES, "CBOT", "North America", "USD", 0.0078125, 1000, 0.1, 0.02, "yahoo", "interactive_brokers", ["bond", "us5y"]),
-            AssetSpec("ZN_10Y", "US 10-Year T-Note Futures", AssetCategory.BOND_FIXED_INCOME, SubCategory.SOVEREIGN_FUTURES, "CBOT", "North America", "USD", 0.015625, 1000, 0.1, 0.02, "yahoo", "interactive_brokers", ["bond", "us10y"]),
-            AssetSpec("ZB_30Y", "US 30-Year T-Bond Futures", AssetCategory.BOND_FIXED_INCOME, SubCategory.SOVEREIGN_FUTURES, "CBOT", "North America", "USD", 0.03125, 1000, 0.1, 0.02, "yahoo", "interactive_brokers", ["bond", "us30y"]),
-            AssetSpec("UB_ULTRA", "US Ultra T-Bond Futures", AssetCategory.BOND_FIXED_INCOME, SubCategory.SOVEREIGN_FUTURES, "CBOT", "North America", "USD", 0.03125, 1000, 0.1, 0.02, "yahoo", "interactive_brokers", ["bond", "ultra"]),
-            AssetSpec("FGBL_BUND", "Euro-Bund 10Y German Bond", AssetCategory.BOND_FIXED_INCOME, SubCategory.SOVEREIGN_FUTURES, "EUREX", "Europe", "EUR", 0.01, 1000, 0.1, 0.02, "yahoo", "interactive_brokers", ["bond", "germany", "bund"]),
-            AssetSpec("FGBM_BOBL", "Euro-Bobl 5Y German Bond", AssetCategory.BOND_FIXED_INCOME, SubCategory.SOVEREIGN_FUTURES, "EUREX", "Europe", "EUR", 0.01, 1000, 0.1, 0.02, "yahoo", "interactive_brokers", ["bond", "germany", "bobl"]),
-            AssetSpec("JGB_10Y", "10-Year Japanese Gov Bond", AssetCategory.BOND_FIXED_INCOME, SubCategory.SOVEREIGN_FUTURES, "TSE", "East Asia", "JPY", 0.01, 1000000, 0.1, 0.02, "yahoo", "interactive_brokers", ["bond", "japan", "jgb"]),
-            AssetSpec("AKHAZA_IR", "Iran Islamic Treasury Bills (Akhaza)", AssetCategory.BOND_FIXED_INCOME, SubCategory.ISLAMIC_SUKUK_TBILL, "IFB", "Iran", "IRR", 1.0, 1.0, 1.0, 1.0, "tsetmc", "iran_broker", ["tbill", "iran", "fixed_income"]),
-            AssetSpec("SUKUK_IJARA", "Iran Corporate Ijara Sukuk", AssetCategory.BOND_FIXED_INCOME, SubCategory.ISLAMIC_SUKUK_TBILL, "IFB", "Iran", "IRR", 1.0, 1.0, 1.0, 1.0, "tsetmc", "iran_broker", ["sukuk", "iran", "fixed_income"]),
 
-            # =================================================================
-            # 7. GLOBAL & EMERGING EQUITIES (Tiered Liquid Leaders)
-            # =================================================================
-            AssetSpec("NVDA", "NVIDIA Corp", AssetCategory.EQUITY_GLOBAL, SubCategory.BLUE_CHIP, "NASDAQ", "North America", "USD", 0.01, 1.0, 1.0, 0.5, "yahoo", "alpaca", ["us", "ai"]),
-            AssetSpec("AAPL", "Apple Inc", AssetCategory.EQUITY_GLOBAL, SubCategory.BLUE_CHIP, "NASDAQ", "North America", "USD", 0.01, 1.0, 1.0, 0.5, "yahoo", "alpaca", ["us", "tech"]),
-            AssetSpec("SAP", "SAP SE", AssetCategory.EQUITY_GLOBAL, SubCategory.BLUE_CHIP, "XETRA", "Europe", "EUR", 0.01, 1.0, 1.0, 0.5, "yahoo", "interactive_brokers", ["europe", "germany"]),
-            AssetSpec("RELIANCE", "Reliance Industries Ltd", AssetCategory.EQUITY_EMERGING, SubCategory.BLUE_CHIP, "NSE", "South Asia", "INR", 0.05, 1.0, 1.0, 0.5, "yahoo", "interactive_brokers", ["india", "nifty50"]),
-            AssetSpec("TCS", "Tata Consultancy Services", AssetCategory.EQUITY_EMERGING, SubCategory.BLUE_CHIP, "NSE", "South Asia", "INR", 0.05, 1.0, 1.0, 0.5, "yahoo", "interactive_brokers", ["india", "it"]),
-            AssetSpec("DBS", "DBS Group Holdings", AssetCategory.EQUITY_EMERGING, SubCategory.BLUE_CHIP, "SGX", "SE Asia", "SGD", 0.01, 1.0, 1.0, 0.5, "yahoo", "interactive_brokers", ["singapore", "asean"]),
-            AssetSpec("BBCA", "Bank Central Asia Tbk", AssetCategory.EQUITY_EMERGING, SubCategory.BLUE_CHIP, "IDX", "SE Asia", "IDR", 25.0, 100.0, 1.0, 1.0, "yahoo", "interactive_brokers", ["indonesia", "asean"]),
-            AssetSpec("NPN", "Naspers Ltd", AssetCategory.EQUITY_EMERGING, SubCategory.BLUE_CHIP, "JSE", "Africa", "ZAR", 1.0, 1.0, 1.0, 0.5, "yahoo", "interactive_brokers", ["south_africa", "africa"]),
-            AssetSpec("ARAMCO", "Saudi Arabian Oil Co", AssetCategory.EQUITY_EMERGING, SubCategory.BLUE_CHIP, "TADAWUL", "Middle East", "SAR", 0.05, 1.0, 1.0, 1.0, "yahoo", "interactive_brokers", ["saudi", "oil"]),
-            AssetSpec("FOOLAD", "Mobarakeh Steel Co", AssetCategory.EQUITY_IRAN, SubCategory.BLUE_CHIP, "TSETMC", "Iran", "IRR", 1.0, 1.0, 1.0, 1.0, "tsetmc", "iran_broker", ["iran", "steel"]),
-            AssetSpec("FEMELI", "National Iranian Copper Ind.", AssetCategory.EQUITY_IRAN, SubCategory.BLUE_CHIP, "TSETMC", "Iran", "IRR", 1.0, 1.0, 1.0, 1.0, "tsetmc", "iran_broker", ["iran", "copper"]),
+def contract_value(symbol: str, price: float) -> float:
+    """Cash value of one contract at a price, in the instrument's own currency."""
+    inst = get(symbol)
+    if price <= 0:
+        raise ValueError("قیمت باید مثبت باشد")
+    return inst.size * float(price)
 
-            # =================================================================
-            # 8. ETFs & MUTUAL FUNDS (Global, Country, Commodity, Vanguard, Iran)
-            # =================================================================
-            # Index & Commodity ETFs
-            AssetSpec("SPY", "SPDR S&P 500 ETF Trust", AssetCategory.ETF, SubCategory.ETF_INDEX, "NYSE", "North America", "USD", 0.01, 1.0, 1.0, 0.5, "yahoo", "alpaca", ["etf", "index"]),
-            AssetSpec("GLD", "SPDR Gold Shares ETF", AssetCategory.ETF, SubCategory.ETF_SECTOR_COMMODITY, "NYSE", "Global", "USD", 0.01, 1.0, 1.0, 0.5, "yahoo", "alpaca", ["etf", "gold"]),
-            AssetSpec("SLV", "iShares Silver Trust ETF", AssetCategory.ETF, SubCategory.ETF_SECTOR_COMMODITY, "NYSE", "Global", "USD", 0.01, 1.0, 1.0, 0.5, "yahoo", "alpaca", ["etf", "silver"]),
-            # Country ETFs (India, Japan, Brazil, Turkey, Egypt, Saudi Arabia)
-            AssetSpec("INDA", "iShares MSCI India ETF", AssetCategory.ETF, SubCategory.ETF_COUNTRY, "NYSE", "South Asia", "USD", 0.01, 1.0, 1.0, 0.5, "yahoo", "alpaca", ["etf", "india"]),
-            AssetSpec("EWJ", "iShares MSCI Japan ETF", AssetCategory.ETF, SubCategory.ETF_COUNTRY, "NYSE", "East Asia", "USD", 0.01, 1.0, 1.0, 0.5, "yahoo", "alpaca", ["etf", "japan"]),
-            AssetSpec("EWZ", "iShares MSCI Brazil ETF", AssetCategory.ETF, SubCategory.ETF_COUNTRY, "NYSE", "Latin America", "USD", 0.01, 1.0, 1.0, 0.5, "yahoo", "alpaca", ["etf", "brazil"]),
-            AssetSpec("TUR", "iShares MSCI Turkey ETF", AssetCategory.ETF, SubCategory.ETF_COUNTRY, "NASDAQ", "Middle East", "USD", 0.01, 1.0, 1.0, 0.5, "yahoo", "alpaca", ["etf", "turkey"]),
-            AssetSpec("EGPT", "VanEck Egypt Index ETF", AssetCategory.ETF, SubCategory.ETF_COUNTRY, "NYSE", "Africa", "USD", 0.01, 1.0, 1.0, 0.5, "yahoo", "alpaca", ["etf", "egypt", "africa"]),
-            AssetSpec("KSA", "iShares MSCI Saudi Arabia ETF", AssetCategory.ETF, SubCategory.ETF_COUNTRY, "NYSE", "Middle East", "USD", 0.01, 1.0, 1.0, 0.5, "yahoo", "alpaca", ["etf", "saudi"]),
-            # Mutual Funds (Vanguard, Fidelity, Iran ETFs/Funds)
-            AssetSpec("VTI", "Vanguard Total Stock Market", AssetCategory.MUTUAL_FUND, SubCategory.FUND_GLOBAL, "NYSE", "North America", "USD", 0.01, 1.0, 1.0, 1.0, "yahoo", "alpaca", ["vanguard", "total_market"]),
-            AssetSpec("VOO", "Vanguard S&P 500 Index Fund", AssetCategory.MUTUAL_FUND, SubCategory.FUND_GLOBAL, "NYSE", "North America", "USD", 0.01, 1.0, 1.0, 1.0, "yahoo", "alpaca", ["vanguard", "sp500"]),
-            AssetSpec("VXUS", "Vanguard Total International Stock", AssetCategory.MUTUAL_FUND, SubCategory.FUND_GLOBAL, "NASDAQ", "Global", "USD", 0.01, 1.0, 1.0, 1.0, "yahoo", "alpaca", ["vanguard", "international"]),
-            AssetSpec("BND", "Vanguard Total Bond Market", AssetCategory.MUTUAL_FUND, SubCategory.FUND_GLOBAL, "NASDAQ", "North America", "USD", 0.01, 1.0, 1.0, 1.0, "yahoo", "alpaca", ["vanguard", "bond"]),
-            AssetSpec("VWNDX", "Vanguard Windsor Fund", AssetCategory.MUTUAL_FUND, SubCategory.FUND_GLOBAL, "NASDAQ", "North America", "USD", 0.01, 1.0, 1.0, 1.0, "yahoo", "interactive_brokers", ["vanguard", "windsor"]),
-            AssetSpec("FXAIX", "Fidelity 500 Index Fund", AssetCategory.MUTUAL_FUND, SubCategory.FUND_GLOBAL, "NASDAQ", "North America", "USD", 0.01, 1.0, 1.0, 1.0, "yahoo", "interactive_brokers", ["fidelity", "sp500"]),
-            AssetSpec("AYAR", "Mofid Gold Bullion ETF", AssetCategory.MUTUAL_FUND, SubCategory.FUND_IRAN, "TSETMC", "Iran", "IRR", 1.0, 1.0, 1.0, 1.0, "tsetmc", "iran_broker", ["iran", "gold_etf"]),
-            AssetSpec("KAMAND", "Kamand Fixed Income ETF", AssetCategory.MUTUAL_FUND, SubCategory.FUND_IRAN, "IFB", "Iran", "IRR", 1.0, 1.0, 1.0, 1.0, "tsetmc", "iran_broker", ["iran", "fixed_income"]),
 
-            # =================================================================
-            # 9. CRYPTOCURRENCIES
-            # =================================================================
-            AssetSpec("BTCUSDT", "Bitcoin / Tether", AssetCategory.CRYPTO, SubCategory.CRYPTO_SPOT, "BINANCE", "Global", "USDT", 0.01, 1.0, 0.001, 0.1, "ccxt", "ccxt", ["crypto", "btc"]),
-            AssetSpec("ETHUSDT", "Ethereum / Tether", AssetCategory.CRYPTO, SubCategory.CRYPTO_SPOT, "BINANCE", "Global", "USDT", 0.01, 1.0, 0.01, 0.1, "ccxt", "ccxt", ["crypto", "eth"]),
-            AssetSpec("SOLUSDT", "Solana / Tether", AssetCategory.CRYPTO, SubCategory.CRYPTO_SPOT, "BINANCE", "Global", "USDT", 0.01, 1.0, 0.1, 0.1, "ccxt", "ccxt", ["crypto", "sol"]),
-            AssetSpec("XAU_PAXG", "PAX Gold Tokenized Gold", AssetCategory.CRYPTO, SubCategory.CRYPTO_SPOT, "BINANCE", "Global", "USDT", 0.1, 1.0, 0.01, 0.2, "ccxt", "ccxt", ["crypto", "gold"]),
-        ]
-        for item in items:
-            self.register(item)
+def coverage() -> Dict[str, object]:
+    """The honest picture: what is covered, and how much of it is actually verified."""
+    classes = {}
+    for inst in INSTRUMENTS:
+        classes[inst.asset_class] = classes.get(inst.asset_class, 0) + 1
+    venues_used = sorted({i.venue for i in INSTRUMENTS})
+    verified = sum(1 for i in INSTRUMENTS if i.verified)
+    missing = [c for c in ASSET_CLASSES if c not in classes]
+    return {
+        "instruments": len(INSTRUMENTS),
+        "verified": verified,
+        "unverified": len(INSTRUMENTS) - verified,
+        "classes_covered": len(classes),
+        "classes_missing": missing,
+        "venues_used": venues_used,
+        "venues_declared": len(VENUES),
+        "per_class": dict(sorted(classes.items())),
+    }
+
+
+def coverage_line() -> str:
+    c = coverage()
+    return (f"{c['instruments']} ابزار در {c['classes_covered']} کلاس و "
+            f"{len(c['venues_used'])} بورس · تأییدشده {c['verified']} · "
+            f"فرض {c['unverified']}")
+
+
+# ---------------------------------------------------------------- self audit
+def audit() -> List[str]:
+    """Structural problems in the catalogue itself. Empty list means it is sound."""
+    problems: List[str] = []
+    seen: Dict[str, int] = {}
+    for inst in INSTRUMENTS:
+        seen[inst.symbol] = seen.get(inst.symbol, 0) + 1
+        if inst.venue not in VENUES:
+            problems.append(f"{inst.symbol}: بورس {inst.venue} تعریف نشده")
+        if inst.asset_class not in ASSET_CLASSES:
+            problems.append(f"{inst.symbol}: کلاس {inst.asset_class} تعریف نشده")
+        if inst.size <= 0:
+            problems.append(f"{inst.symbol}: اندازه قرارداد نامعتبر")
+        if not inst.size_unit:
+            problems.append(f"{inst.symbol}: واحد اندازه خالی است")
+        # a venue may legitimately quote several currencies only where it is an OTC or
+        # multi-venue aggregate; anywhere else a mismatch is a data error, not a choice
+        multi_currency = {"XFX", "XCRYPTO"}
+        if inst.venue in VENUES and inst.venue not in multi_currency \
+                and inst.currency != VENUES[inst.venue].currency:
+            problems.append(f"{inst.symbol}: ارز با ارز بورس نمی‌خواند")
+    problems += [f"{s}: نماد تکراری ({n} بار)" for s, n in seen.items() if n > 1]
+    return problems

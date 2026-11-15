@@ -1,5 +1,9 @@
-"""Portfolio-Wide Risk Management and Exposure Controller for Aurora Platform.
-Calculates aggregate exposure, correlation risk, and total portfolio drawdown constraints.
+"""Portfolio-wide risk gate: exposure, concentration and drawdown.
+
+What this module does NOT do: it does not compute correlation or parametric VaR. The gate
+works on open positions and realised unrealised PnL only. Correlation-based risk lives in
+``aurora.portfolio.risk_budget`` (ERC weights from a shrunk covariance) and the crisis replay
+in ``aurora.portfolio.scenarios``; claiming otherwise here made the docstring lie to readers.
 """
 from __future__ import annotations
 

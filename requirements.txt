@@ -1,0 +1,5 @@
+# AURORA Quant Platform - runtime dependencies
+# The analytical core (aurora/**) is pure standard library; only the SaaS layer needs these.
+fastapi>=0.110,<1.0     # aurora/saas/backend_api.py
+uvicorn>=0.27           # to serve the API
+pydantic>=2.5           # FastAPI request models
