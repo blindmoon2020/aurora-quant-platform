@@ -1,0 +1,257 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aurora Quant Platform | پلتفرم هوشمند مدیریت ثروت و تحلیل نهادی</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Vazirmatn', sans-serif; background-color: #07090e; color: #f3f4f6; }
+        .glass-panel { background: rgba(13, 17, 23, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .sidebar-item:hover { background: rgba(56, 189, 248, 0.1); color: #38bdf8; border-right: 3px solid #38bdf8; }
+    </style>
+</head>
+<body class="min-h-screen flex">
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-64 glass-panel border-l border-gray-800 hidden md:flex flex-col justify-between p-6 z-20">
+        <div>
+            <!-- Logo -->
+            <div class="flex items-center space-x-3 space-x-reverse mb-10">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center font-bold text-xl text-white shadow-lg shadow-cyan-500/30">A</div>
+                <div>
+                    <h1 class="font-bold text-base tracking-wide text-white">AURORA <span class="text-cyan-400">QUANT</span></h1>
+                    <p class="text-[10px] text-gray-400">Institutional Wealth Tech</p>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="space-y-2 text-sm font-medium">
+                <a href="#" class="flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl bg-cyan-500/10 text-cyan-400 border-r-4 border-cyan-400">
+                    <span>📊</span>
+                    <span>داشبورد مدیریت ثروت</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl text-gray-400 sidebar-item transition">
+                    <span>⚡</span>
+                    <span>تحلیل اسمارت‌مانی (SMC)</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl text-gray-400 sidebar-item transition">
+                    <span>🤖</span>
+                    <span>سبدگردان هوشمند (Robo)</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl text-gray-400 sidebar-item transition">
+                    <span>📈</span>
+                    <span>ژورنال معاملات</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl text-gray-400 sidebar-item transition">
+                    <span>🔒</span>
+                    <span>گاوصندوق امنیتی و 2FA</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Subscription Badge in Sidebar -->
+        <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800 text-center">
+            <span class="inline-block px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded-full font-bold mb-2">پلن سازمانی (Active)</span>
+            <p class="text-xs text-gray-400">بروزرسانی ابری: فعال</p>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col min-h-screen overflow-y-auto">
+
+        <!-- Top Header -->
+        <header class="glass-panel border-b border-gray-800 px-8 py-4 flex justify-between items-center sticky top-0 z-10">
+            <div class="flex items-center space-x-4 space-x-reverse">
+                <span class="text-xs text-gray-400">وضعیت بازار: <strong class="text-emerald-400">● آنلاین (Live Feed)</strong></span>
+            </div>
+            <div class="flex items-center space-x-4 space-x-reverse">
+                <button class="p-2 rounded-xl bg-gray-800/60 hover:bg-gray-800 text-gray-300 transition text-sm">🔔</button>
+                <div class="flex items-center space-x-3 space-x-reverse border-r border-gray-800 pr-4">
+                    <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-cyan-600 to-blue-700 flex items-center justify-center font-bold text-white text-sm">AT</div>
+                    <div class="text-right hidden sm:block">
+                        <p class="text-xs font-bold text-white">امیرحسین انصاری</p>
+                        <p class="text-[10px] text-cyan-400">مدیر پورتفوی</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Body -->
+        <main class="flex-1 p-8 space-y-8 max-w-7xl w-full mx-auto">
+
+            <!-- Top Metric Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- AAV Card -->
+                <div class="glass-panel rounded-2xl p-6 relative overflow-hidden shadow-xl">
+                    <div class="absolute -left-6 -top-6 w-24 h-24 bg-cyan-500/10 rounded-full blur-xl"></div>
+                    <p class="text-gray-400 text-xs font-medium">ارزش خالص دارایی‌ها (AAV)</p>
+                    <div class="text-3xl font-bold text-white mt-2">$50,000.00</div>
+                    <div class="mt-4 flex items-center justify-between text-xs border-t border-gray-800 pt-3">
+                        <span class="text-gray-400">بازدهی ماهانه:</span>
+                        <span class="text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded">+4.2% (+$2,100)</span>
+                    </div>
+                </div>
+
+                <!-- Risk & Sharpe Card -->
+                <div class="glass-panel rounded-2xl p-6 relative overflow-hidden shadow-xl">
+                    <p class="text-gray-400 text-xs font-medium">شاخص‌های عملکرد ریسک</p>
+                    <div class="grid grid-cols-2 gap-4 mt-3">
+                        <div>
+                            <span class="text-[11px] text-gray-400">نسبت شارپ (Sharpe)</span>
+                            <p class="text-xl font-bold text-cyan-400 mt-1">1.85</p>
+                        </div>
+                        <div>
+                            <span class="text-[11px] text-gray-400">امتیاز روانشناسی</span>
+                            <p class="text-xl font-bold text-emerald-400 mt-1">8/10</p>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-[11px] text-gray-400 border-t border-gray-800 pt-2">سطح ریسک: تعادل پویا (Growth)</div>
+                </div>
+
+                <!-- Intermarket Macro Card -->
+                <div class="glass-panel rounded-2xl p-6 relative overflow-hidden shadow-xl">
+                    <p class="text-gray-400 text-xs font-medium">تحلیل همبستگی کلان (DXY)</p>
+                    <div class="mt-2 flex items-center justify-between">
+                        <span class="text-sm font-bold text-white">رژیم بازار: معکوس نرمال</span>
+                        <span class="px-2 py-1 bg-blue-500/10 text-blue-400 text-[10px] rounded font-mono">-0.65 DXY</span>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-3 leading-relaxed">جریان نقدینگی نهادی به سمت طلا و رمزارز هدایت شده است.</p>
+                </div>
+            </div>
+
+            <!-- Middle Section: Robo-Advisor Portfolio Allocation -->
+            <div class="glass-panel rounded-2xl p-6 shadow-xl">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                    <div>
+                        <h3 class="text-white font-bold text-lg">سبد اختصاصی پیشنهادی (Robo-Advisor Rebalancing)</h3>
+                        <p class="text-xs text-gray-400">تخصیص هوشمند دارایی‌ها بر اساس مدل برابری ریسک و پرایس‌اکشن</p>
+                    </div>
+                    <button class="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-cyan-500/20 transition cursor-pointer">
+                        ⚡ اجرای خودکار بازتوزیع (Rebalance)
+                    </button>
+                </div>
+
+                <!-- Portfolio Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right text-sm">
+                        <thead class="text-xs text-gray-400 uppercase border-b border-gray-800">
+                            <tr>
+                                <th class="pb-3">نماد / دارایی</th>
+                                <th class="pb-3">وزن هدف</th>
+                                <th class="pb-3">وضعیت عمل</th>
+                                <th class="pb-3">پیشرفت تخصیص</th>
+                                <th class="pb-3 text-left">مبلغ تعدیل ($)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-800/60 text-gray-300">
+                            <tr>
+                                <td class="py-4 font-semibold text-white flex items-center space-x-2 space-x-reverse">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                                    <span>NVDA (سهم تکنولوژی)</span>
+                                </td>
+                                <td class="py-4 font-mono">30.0%</td>
+                                <td class="py-4"><span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded-lg font-bold">خرید (BUY)</span></td>
+                                <td class="py-4 w-32">
+                                    <div class="w-full bg-gray-800 rounded-full h-1.5"><div class="bg-emerald-400 h-1.5 rounded-full" style="width: 80%"></div></div>
+                                </td>
+                                <td class="py-4 text-left font-mono text-emerald-400 font-bold">+$15,000.00</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 font-semibold text-white flex items-center space-x-2 space-x-reverse">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                                    <span>NAS100 (شاخص فناوری)</span>
+                                </td>
+                                <td class="py-4 font-mono">30.0%</td>
+                                <td class="py-4"><span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded-lg font-bold">خرید (BUY)</span></td>
+                                <td class="py-4 w-32">
+                                    <div class="w-full bg-gray-800 rounded-full h-1.5"><div class="bg-emerald-400 h-1.5 rounded-full" style="width: 75%"></div></div>
+                                </td>
+                                <td class="py-4 text-left font-mono text-emerald-400 font-bold">+$15,000.00</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 font-semibold text-white flex items-center space-x-2 space-x-reverse">
+                                    <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+                                    <span>BTCUSDT (رمزارز مرجع)</span>
+                                </td>
+                                <td class="py-4 font-mono">20.0%</td>
+                                <td class="py-4"><span class="px-2.5 py-1 bg-cyan-500/10 text-cyan-400 text-xs rounded-lg font-bold">حفظ (HOLD)</span></td>
+                                <td class="py-4 w-32">
+                                    <div class="w-full bg-gray-800 rounded-full h-1.5"><div class="bg-cyan-400 h-1.5 rounded-full" style="width: 100%"></div></div>
+                                </td>
+                                <td class="py-4 text-left font-mono text-gray-400 font-bold">$0.00</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4 font-semibold text-white flex items-center space-x-2 space-x-reverse">
+                                    <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+                                    <span>XAUUSD (طلای جهانی)</span>
+                                </td>
+                                <td class="py-4 font-mono">20.0%</td>
+                                <td class="py-4"><span class="px-2.5 py-1 bg-blue-500/10 text-blue-400 text-xs rounded-lg font-bold">تعدیل وزن</span></td>
+                                <td class="py-4 w-32">
+                                    <div class="w-full bg-gray-800 rounded-full h-1.5"><div class="bg-blue-400 h-1.5 rounded-full" style="width: 60%"></div></div>
+                                </td>
+                                <td class="py-4 text-left font-mono text-blue-400 font-bold">+$10,000.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Bottom Grid: Live SMC Signals & AI Report Preview -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- SMC Signals -->
+                <div class="glass-panel rounded-2xl p-6 shadow-xl">
+                    <h4 class="text-white font-semibold mb-4 flex items-center justify-between">
+                        <span>سیگنال‌های زنده اسمارت‌مانی (SMC)</span>
+                        <span class="text-xs text-cyan-400">بروزرسانی لحظه‌ای</span>
+                    </h4>
+                    <div class="space-y-4">
+                        <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-cyan-400">XAUUSD (طلا)</span>
+                                <span class="text-[10px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-mono">CHOCH_BULLISH</span>
+                            </div>
+                            <p class="text-xs text-gray-400 leading-relaxed">تشخیص تغییر کاراکتر صعودی در محدوده عرضه. نقطه کنترل حجمی (POC): <strong class="text-white">$2,030.50</strong></p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-purple-400">US30 (داو جونز)</span>
+                                <span class="text-[10px] bg-purple-500/10 text-purple-400 px-2 py-0.5 rounded font-mono">LIQUIDITY SWEEP</span>
+                            </div>
+                            <p class="text-xs text-gray-400 leading-relaxed">شناسایی تله اسمارت‌مانی بالای سقف قبلی و جمع‌آوری سفارش‌های فروش‌ستاپ (Sell-stops).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI LLM Market Report -->
+                <div class="glass-panel rounded-2xl p-6 shadow-xl">
+                    <h4 class="text-white font-semibold mb-4 flex items-center justify-between">
+                        <span>گزارش هوش مصنوعی (AI Quant Report)</span>
+                        <span class="text-xs text-emerald-400">Claude / GPT-4 Bridge</span>
+                    </h4>
+                    <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800 space-y-3">
+                        <p class="text-xs text-cyan-300 font-semibold">خلاصه اجرایی مدیریت سرمایه:</p>
+                        <p class="text-xs text-gray-300 leading-relaxed">
+                            ساختار بازار در وضعیت انباشت و تاییدیه نهادی قرار دارد. به دلیل افت شاخص دلار (DXY)، ریسک سیستماتیک کاهش یافته و تخصیص سرمایه به سمت دارایی‌های رشدپذیر (Tech & Gold) با ضریب اطمینان ۱.۸۵ توصیه می‌شود.
+                        </p>
+                        <div class="pt-2 border-t border-gray-800 flex justify-between text-[11px] text-gray-400">
+                            <span>وضعیت امنیتی: AES-256 Secured</span>
+                            <span class="text-emerald-400">گزارش تایید شد</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="text-center py-6 text-xs text-gray-500 border-t border-gray-800 mt-auto">
+            &copy; 2026 Aurora Quant Platform. تمامی حقوق محفوظ است. طراحی شده برای سرمایه‌گذاران نهادی و حرفه‌ای.
+        </footer>
+
+    </div>
+
+</body>
+</html>
