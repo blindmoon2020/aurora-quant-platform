@@ -1,0 +1,23 @@
+name: Aurora Cloud Backtest Verification
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Aurora Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Cloud Python Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Execute Backtest & Performance Engine
+        env:
+          PYTHONPATH: .
+        run: python aurora/backtest_runner.py
