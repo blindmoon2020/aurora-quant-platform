@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="page-title">Aurora Quant Platform | پلتفرم هوشمند مدیریت ثروت</title>
+    <title id="page-title">Aurora Quant Platform | پلتفرم هوشمند مدیریت ثروت و تحلیل نهادی</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Vazirmatn', sans-serif; background-color: #07090e; color: #f3f4f6; }
-        .glass-panel { background: rgba(13, 17, 23, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        body { font-family: 'Vazirmatn', sans-serif; background-color: #05070b; color: #f3f4f6; }
+        .glass-panel { background: rgba(13, 17, 23, 0.9); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
         .sidebar-item:hover { background: rgba(56, 189, 248, 0.1); color: #38bdf8; border-right: 3px solid #38bdf8; }
     </style>
 </head>
@@ -41,8 +41,8 @@
                     <span data-i18n="nav_robo">سبدگردان هوشمند (Robo)</span>
                 </a>
                 <a href="#" class="flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl text-gray-400 sidebar-item transition">
-                    <span>📈</span>
-                    <span data-i18n="nav_journal">ژورنال معاملات</span>
+                    <span>🛡️</span>
+                    <span data-i18n="nav_stress">سناریوی بحران (Stress Test)</span>
                 </a>
                 <a href="#" class="flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl text-gray-400 sidebar-item transition">
                     <span>🔒</span>
@@ -64,7 +64,7 @@
         <!-- Top Header with Language Switcher -->
         <header class="glass-panel border-b border-gray-800 px-8 py-4 flex justify-between items-center sticky top-0 z-10">
             <div class="flex items-center space-x-4 space-x-reverse">
-                <span class="text-xs text-gray-400"><span data-i18n="market_status">وضعیت بازار:</span> <strong class="text-emerald-400">● آنلاین (Live Feed)</strong></span>
+                <span class="text-xs text-gray-400"><span data-i18n="market_status">وضعیت بازار:</span> <strong class="text-emerald-400">● آنلاین (Aladdin & Bloomberg Sync)</strong></span>
             </div>
             
             <div class="flex items-center space-x-4 space-x-reverse">
@@ -81,7 +81,7 @@
                     <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-cyan-600 to-blue-700 flex items-center justify-center font-bold text-white text-sm">AT</div>
                     <div class="text-right hidden sm:block">
                         <p class="text-xs font-bold text-white">امیرحسین انصاری</p>
-                        <p class="text-[10px] text-cyan-400" data-i18n="user_role">مدیر پورتفوی</p>
+                        <p class="text-[10px] text-cyan-400" data-i18n="user_role">مدیر ارشد ثروت (CEO)</p>
                     </div>
                 </div>
             </div>
@@ -90,13 +90,13 @@
         <!-- Dashboard Body -->
         <main class="flex-1 p-8 space-y-8 max-w-7xl w-full mx-auto">
 
-            <!-- Notification Banner for Interactive Actions -->
+            <!-- Interactive Notification Banner -->
             <div id="action-alert" class="hidden p-4 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs flex justify-between items-center animate-pulse">
                 <span id="alert-text">عملیات با موفقیت انجام شد.</span>
                 <button onclick="document.getElementById('action-alert').classList.add('hidden')" class="text-cyan-400 font-bold px-2">✕</button>
             </div>
 
-            <!-- Top Metric Cards Grid -->
+            <!-- Top Metric Cards Grid (Aladdin & Barra Style) -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="glass-panel rounded-2xl p-6 relative overflow-hidden shadow-xl">
                     <p class="text-gray-400 text-xs font-medium" data-i18n="card_aav">ارزش خالص دارایی‌ها (AAV)</p>
@@ -108,7 +108,7 @@
                 </div>
 
                 <div class="glass-panel rounded-2xl p-6 relative overflow-hidden shadow-xl">
-                    <p class="text-gray-400 text-xs font-medium" data-i18n="card_risk">شاخص‌های عملکرد ریسک</p>
+                    <p class="text-gray-400 text-xs font-medium" data-i18n="card_risk">شاخص‌های ریسک و شارپ (QuantConnect Style)</p>
                     <div class="grid grid-cols-2 gap-4 mt-3">
                         <div>
                             <span class="text-[11px] text-gray-400" data-i18n="sharpe_label">نسبت شارپ (Sharpe)</span>
@@ -119,11 +119,11 @@
                             <p class="text-xl font-bold text-emerald-400 mt-1">8/10</p>
                         </div>
                     </div>
-                    <div class="mt-3 text-[11px] text-gray-400 border-t border-gray-800 pt-2" data-i18n="risk_level">سطح ریسک: تعادل پویا (Growth)</div>
+                    <div class="mt-3 text-[11px] text-gray-400 border-t border-gray-800 pt-2" data-i18n="risk_level">مقاومت پرتفوی در برابر بحران: ایمن</div>
                 </div>
 
                 <div class="glass-panel rounded-2xl p-6 relative overflow-hidden shadow-xl">
-                    <p class="text-gray-400 text-xs font-medium" data-i18n="card_dxy">تحلیل همبستگی کلان (DXY)</p>
+                    <p class="text-gray-400 text-xs font-medium" data-i18n="card_dxy">همبستگی کلان (DXY & Bloomberg AIM)</p>
                     <div class="mt-2 flex items-center justify-between">
                         <span class="text-sm font-bold text-white" data-i18n="dxy_regime">رژیم بازار: معکوس نرمال</span>
                         <span class="px-2 py-1 bg-blue-500/10 text-blue-400 text-[10px] rounded font-mono">-0.65 DXY</span>
@@ -206,7 +206,7 @@
 
         <!-- Footer -->
         <footer class="text-center py-6 text-xs text-gray-500 border-t border-gray-800 mt-auto" data-i18n="footer">
-            &copy; 2026 Aurora Quant Platform. تمامی حقوق محفوظ است. طراحی شده برای سرمایه‌گذاران نهادی و حرفه‌ای.
+            &copy; 2026 Aurora Quant Platform. تمامی حقوق محفوظ است. الهام گرفته از استانداردهای بلک‌راک و بلومبرگ.
         </footer>
 
     </div>
@@ -219,19 +219,19 @@
                 nav_dashboard: "داشبورد مدیریت ثروت",
                 nav_smc: "تحلیل اسمارت‌مانی (SMC)",
                 nav_robo: "سبدگردان هوشمند (Robo)",
-                nav_journal: "ژورنال معاملات",
+                nav_stress: "سناریوی بحران (Stress Test)",
                 nav_vault: "گاوصندوق امنیتی و 2FA",
                 sub_active: "پلن سازمانی (Active)",
                 cloud_status: "بروزرسانی ابری: فعال",
                 market_status: "وضعیت بازار:",
-                user_role: "مدیر پورتفوی",
+                user_role: "مدیر ارشد ثروت (CEO)",
                 card_aav: "ارزش خالص دارایی‌ها (AAV)",
                 monthly_return: "بازدهی ماهانه:",
-                card_risk: "شاخص‌های عملکرد ریسک",
+                card_risk: "شاخص‌های ریسک و شارپ (QuantConnect Style)",
                 sharpe_label: "نسبت شارپ (Sharpe)",
                 psych_label: "امتیاز روانشناسی",
-                risk_level: "سطح ریسک: تعادل پویا (Growth)",
-                card_dxy: "تحلیل همبستگی کلان (DXY)",
+                risk_level: "مقاومت پرتفوی در برابر بحران: ایمن",
+                card_dxy: "همبستگی کلان (DXY & Bloomberg AIM)",
                 dxy_regime: "رژیم بازار: معکوس نرمال",
                 dxy_desc: "جریان نقدینگی نهادی به سمت طلا و رمزارز هدایت شده است.",
                 robo_title: "سبد اختصاصی پیشنهادی (Robo-Advisor Rebalancing)",
@@ -245,7 +245,7 @@
                 badge_buy: "خرید (BUY)",
                 badge_hold: "حفظ (HOLD)",
                 badge_adjust: "تعدیل وزن",
-                footer: "© 2026 Aurora Quant Platform. تمامی حقوق محفوظ است. طراحی شده برای سرمایه‌گذاران نهادی و حرفه‌ای.",
+                footer: "© 2026 Aurora Quant Platform. تمامی حقوق محفوظ است. الهام گرفته از استانداردهای بلک‌راک و بلومبرگ.",
                 alert_success: "موتور سبدگردان: بازتوزیع پرتفوی با موفقیت روی گره‌های ابری اعمال شد!"
             },
             en: {
@@ -253,19 +253,19 @@
                 nav_dashboard: "Wealth Dashboard",
                 nav_smc: "Smart Money (SMC)",
                 nav_robo: "Robo-Advisor",
-                nav_journal: "Trading Journal",
+                nav_stress: "Stress Test Scenario",
                 nav_vault: "Security Vault & 2FA",
                 sub_active: "Enterprise Plan (Active)",
                 cloud_status: "Cloud Sync: Active",
                 market_status: "Market Status:",
-                user_role: "Portfolio Manager",
+                user_role: "Chief Wealth Officer (CEO)",
                 card_aav: "Net Asset Value (AAV)",
                 monthly_return: "Monthly Return:",
-                card_risk: "Risk Performance Metrics",
+                card_risk: "Risk & Sharpe Metrics (QuantConnect Style)",
                 sharpe_label: "Sharpe Ratio",
                 psych_label: "Psychometric Score",
-                risk_level: "Risk Level: Dynamic Growth",
-                card_dxy: "Macro Correlation (DXY)",
+                risk_level: "Portfolio Stress Resilience: Safe",
+                card_dxy: "Macro Correlation (DXY & Bloomberg AIM)",
                 dxy_regime: "Regime: Normal Inverse",
                 dxy_desc: "Institutional liquidity is shifting towards gold and crypto.",
                 robo_title: "Robo-Advisor Portfolio Rebalancing",
@@ -279,7 +279,7 @@
                 badge_buy: "BUY",
                 badge_hold: "HOLD",
                 badge_adjust: "ADJUST",
-                footer: "© 2026 Aurora Quant Platform. All rights reserved. Designed for institutional investors.",
+                footer: "© 2026 Aurora Quant Platform. All rights reserved. Inspired by BlackRock & Bloomberg standards.",
                 alert_success: "Robo Engine: Portfolio successfully rebalanced across cloud nodes!"
             },
             ar: {
@@ -287,18 +287,18 @@
                 nav_dashboard: "لوحة تحكم الثروة",
                 nav_smc: "تحليل الأموال الذكية",
                 nav_robo: "المستشار الآلي",
-                nav_journal: "سجل التداول",
+                nav_stress: "اختبار الإجهاد",
                 nav_vault: "خزنة الأمان و 2FA",
                 sub_active: "خطة المؤسسات (نشط)",
                 cloud_status: "مزامنة السحابة: نشط",
                 market_status: "حالة السوق:",
-                user_role: "مدير المحفظة",
+                user_role: "رئيس تنفيذ الثروة",
                 card_aav: "صافي قيمة الأصول (AAV)",
                 monthly_return: "العائد الشهري:",
-                card_risk: "مقاييس الأداء والمخاطر",
-                sharpe_label: "نسبة شارب",
+                card_risk: "مقاييس المخاطر وشارپ",
+                sharpe_label: "نسبة شارپ",
                 psych_label: "نقاط السلوك النفسي",
-                risk_level: "مستوى المخاطر: نمو ديناميكي",
+                risk_level: "مرونة المحفظة ضد الأزمات: آمن",
                 card_dxy: "ارتباط مؤشر الدولار (DXY)",
                 dxy_regime: "النظام: عكسي طبيعي",
                 dxy_desc: "تتدفق السيولة المؤسسية نحو الذهب والعملات الرقمية.",
@@ -321,19 +321,19 @@
                 nav_dashboard: "Varlık Yönetim Paneli",
                 nav_smc: "Akıllı Para Analizi (SMC)",
                 nav_robo: "Robot Danışman (Robo)",
-                nav_journal: "İşlem Günlüğü",
+                nav_stress: "Stres Testi Senaryosu",
                 nav_vault: "Güvenlik Kasası ve 2FA",
                 sub_active: "Kurumsal Plan (Aktif)",
                 cloud_status: "Bulut Senkronizasyonu: Aktif",
                 market_status: "Piyasa Durumu:",
-                user_role: "Portföy Yöneticisi",
+                user_role: "Baş Varlık Yöneticisi (CEO)",
                 card_aav: "Net Varlık Değeri (AAV)",
                 monthly_return: "Aylık Getiri:",
-                card_risk: "Risk Performans Metrikleri",
+                card_risk: "Risk ve Sharpe Metrikleri",
                 sharpe_label: "Sharpe Oranı",
                 psych_label: "Psikometrik Skor",
-                risk_level: "Risk Seviyesi: Dinamik Büyüme",
-                card_dxy: "Makro Korelasyon (DXY)",
+                risk_level: "Portföy Kriz Direnci: Güvenli",
+                card_dxy: "Makro Korelasyon (DXY & Bloomberg)",
                 dxy_regime: "Rejim: Normal Ters",
                 dxy_desc: "Kurumsal likidite altın ve kriptoya yöneliyor.",
                 robo_title: "Robot Danışman Portföy Dengelemesi",
@@ -347,7 +347,7 @@
                 badge_buy: "AL",
                 badge_hold: "TUT",
                 badge_adjust: "AYARLA",
-                footer: "© 2026 Aurora Quant Platform. Tüm hakları saklıdır.",
+                footer: "© 2026 Aurora Quant Platform. Tüm hakları saklıdır. BlackRock ve Bloomberg standartlarından ilham alınmıştır.",
                 alert_success: "Robo Motoru: Portföy bulut düğümleri üzerinden başarıyla dengeledi!"
             },
             es: {
@@ -355,18 +355,18 @@
                 nav_dashboard: "Panel de Riqueza",
                 nav_smc: "Dinero Inteligente (SMC)",
                 nav_robo: "Robo-Asesor",
-                nav_journal: "Diario de Trading",
+                nav_stress: "Prueba de Estrés",
                 nav_vault: "Bóveda de Seguridad y 2FA",
                 sub_active: "Plan Empresarial (Activo)",
                 cloud_status: "Sincronización en la nube: Activa",
                 market_status: "Estado del Mercado:",
-                user_role: "Gestor de Portafolio",
+                user_role: "Director de Riqueza (CEO)",
                 card_aav: "Valor Neto de Activos (AAV)",
                 monthly_return: "Retorno Mensual:",
-                card_risk: "Métricas de Rendimiento de Riesgo",
+                card_risk: "Métricas de Riesgo y Sharpe",
                 sharpe_label: "Ratio de Sharpe",
                 psych_label: "Puntuación Psicológica",
-                risk_level: "Nivel de Riesgo: Crecimiento Dinámico",
+                risk_level: "Resiliencia ante crisis: Segura",
                 card_dxy: "Correlación Macro (DXY)",
                 dxy_regime: "Régimen: Inverso Normal",
                 dxy_desc: "La liquidez institucional se dirige hacia el oro y las criptomonedas.",
@@ -390,7 +390,6 @@
             const t = translations[lang];
             if (!t) return;
 
-            // Update text for all elements with data-i18n attribute
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (t[key]) {
@@ -398,7 +397,6 @@
                 }
             });
 
-            // Adjust text direction (RTL for Persian/Arabic, LTR for others)
             const htmlRoot = document.getElementById('html-root');
             if (lang === 'fa' || lang === 'ar') {
                 htmlRoot.setAttribute('dir', 'rtl');
@@ -415,7 +413,6 @@
             alertText.textContent = translations[currentLang].alert_success;
             alertBox.classList.remove('hidden');
 
-            // Auto hide after 5 seconds
             setTimeout(() => {
                 alertBox.classList.add('hidden');
             }, 5000);
