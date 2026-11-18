@@ -1,5 +1,20 @@
-# AURORA Quant Platform - runtime dependencies
-# The analytical core (aurora/**) is pure standard library; only the SaaS layer needs these.
+# ==========================================
+# AURORA Quant Platform - Unified Requirements
+# ==========================================
+
+# --- Core Analytical & Standard Library Dependencies ---
 fastapi>=0.110,<1.0     # aurora/saas/backend_api.py
 uvicorn>=0.27           # to serve the API
 pydantic>=2.5           # FastAPI request models
+
+# --- Enterprise Database & Vault Security Dependencies ---
+sqlalchemy==2.0.28      # ORM for Secure PostgreSQL / TDE
+psycopg2-binary==2.9.9  # PostgreSQL Database Adapter
+
+# --- Distributed Caching & Asynchronous Queue Processing (Celery & Redis) ---
+redis==5.0.2            # Real-time data caching & message broker
+celery==5.3.8           # Background task queue for automated portfolio rebalancing
+
+# --- Advanced Quant & Mathematical Engine ---
+numpy==1.26.4           # High-performance matrix calculations for Markowitz & Risk Parity
+cryptography==42.0.5    # AES-256 Vault Encryption & Secure Institutional Storage
