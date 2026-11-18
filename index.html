@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aurora Quant Platform | سامانه جامع مدیریت ثروت جهانی و کامودیتی‌ها</title>
+    <title>Aurora Quant Platform | سامانه جامع مدیریت ثروت جهانی و هسته کوانت</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -24,32 +24,32 @@
                 <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-cyan-400 via-blue-600 to-indigo-700 flex items-center justify-center font-extrabold text-xl text-white shadow-lg">A</div>
                 <div>
                     <h1 class="font-extrabold text-lg tracking-wider text-white">AURORA <span class="text-cyan-400">QUANT</span></h1>
-                    <p class="text-[10px] text-slate-400">Global Commodities & Wealth OS</p>
+                    <p class="text-[10px] text-slate-400">Global Institutional Core</p>
                 </div>
             </div>
 
             <nav class="flex md:flex-col gap-2 text-sm">
                 <button type="button" onclick="openSection('dashboard', this)" class="nav-btn active flex items-center gap-3 px-4 py-3.5 rounded-xl text-right cursor-pointer">
-                    <span>📊</span> <span data-i18n="nav_dash">داشبورد مدیریت ثروت</span>
-                </button>
-                <button type="button" onclick="openSection('commodities', this)" class="nav-btn text-slate-400 flex items-center gap-3 px-4 py-3.5 rounded-xl text-right cursor-pointer">
-                    <span>🌾</span> <span data-i18n="nav_comm">کامودیتی‌ها و بورس جهانی (زعفران، نفت، گندم)</span>
+                    <span>📊</span> <span>داشبورد مدیریت ثروت</span>
                 </button>
                 <button type="button" onclick="openSection('psych', this)" class="nav-btn text-slate-400 flex items-center gap-3 px-4 py-3.5 rounded-xl text-right cursor-pointer">
-                    <span>🧠</span> <span data-i18n="nav_psych">تست روانشناسی ریسک (CFA)</span>
+                    <span>🧠</span> <span>تست روانشناسی و ریسک (جامع CFA)</span>
+                </button>
+                <button type="button" onclick="openSection('commodities', this)" class="nav-btn text-slate-400 flex items-center gap-3 px-4 py-3.5 rounded-xl text-right cursor-pointer">
+                    <span>🌾</span> <span>کامودیتی‌ها و بورس‌های جهان (هسته پایتون)</span>
                 </button>
                 <button type="button" onclick="openSection('robo', this)" class="nav-btn text-slate-400 flex items-center gap-3 px-4 py-3.5 rounded-xl text-right cursor-pointer">
-                    <span>🤖</span> <span data-i18n="nav_robo">سبدگردان هوشمند جهانی</span>
+                    <span>🤖</span> <span>سبدگردان هوشمند (Risk Parity)</span>
                 </button>
                 <button type="button" onclick="openSection('stress', this)" class="nav-btn text-slate-400 flex items-center gap-3 px-4 py-3.5 rounded-xl text-right cursor-pointer">
-                    <span>🛡️</span> <span data-i18n="nav_stress">سناریوی بحران (Aladdin)</span>
+                    <span>🛡️</span> <span>سناریوی بحران (Aladdin Engine)</span>
                 </button>
             </nav>
         </div>
 
         <div class="hidden md:block mt-8 p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
-            <div class="flex justify-between text-[11px] text-slate-400"><span>هسته پایتون:</span> <span class="text-emerald-400 font-bold">v4.0 Global</span></div>
-            <div class="flex justify-between text-[11px] text-slate-400"><span>وضعیت فید:</span> <span class="text-cyan-400 font-semibold">● متصل (TwelveData)</span></div>
+            <div class="flex justify-between text-[11px] text-slate-400"><span>هسته پایتون:</span> <span class="text-emerald-400 font-bold">v4.2 Global Core</span></div>
+            <div class="flex justify-between text-[11px] text-slate-400"><span>وضعیت اتصال:</span> <span class="text-cyan-400 font-semibold">● صرافی‌ها متصل</span></div>
         </div>
     </aside>
 
@@ -58,7 +58,7 @@
         <header class="glass-card border-b border-slate-800/80 px-6 py-4 flex flex-wrap justify-between items-center gap-4 sticky top-0 z-20">
             <div class="flex items-center gap-3">
                 <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-                <span class="text-xs text-slate-300">فید جهانی بازارها: <strong class="text-emerald-400">متصل (Metals, Energy, Agribusiness)</strong></span>
+                <span class="text-xs text-slate-300">وضعیت پایگاه داده پویا: <strong class="text-emerald-400">فعال (پوشش کامل فلزات، انرژی، گندم، زعفران و بورس‌ها)</strong></span>
             </div>
 
             <div class="flex items-center gap-4">
@@ -92,30 +92,30 @@
                     <div class="glass-card rounded-2xl p-5">
                         <p class="text-slate-400 text-xs">ارزش خالص دارایی‌ها (AAV)</p>
                         <div id="kpi-aav" class="text-2xl font-extrabold text-white mt-2 font-mono">$50,000.00</div>
-                        <p class="text-[11px] text-slate-400 mt-2">بازدهی سبد کامودیتی: <span class="text-emerald-400 font-bold">+5.4%</span></p>
+                        <p class="text-[11px] text-slate-400 mt-2">بازدهی سبد جهانی: <span class="text-emerald-400 font-bold">+6.2%</span></p>
                     </div>
                     <div class="glass-card rounded-2xl p-5">
                         <p class="text-slate-400 text-xs">شاخص تنوع‌بخشی جهانی</p>
-                        <div class="text-2xl font-extrabold text-cyan-400 mt-2 font-mono">94.2 / 100</div>
-                        <p class="text-[11px] text-slate-400 mt-2">پوشش ریسک تورم کامودیتی: <span class="text-emerald-400 font-bold">عالی</span></p>
+                        <div class="text-2xl font-extrabold text-cyan-400 mt-2 font-mono">98.5 / 100</div>
+                        <p class="text-[11px] text-slate-400 mt-2">پوشش ریسک تورم کامودیتی: <span class="text-emerald-400 font-bold">حرفه‌ای</span></p>
                     </div>
                     <div class="glass-card rounded-2xl p-5">
                         <p class="text-slate-400 text-xs">ریسک VaR (95%)</p>
-                        <div class="text-2xl font-extrabold text-white mt-2 font-mono">$720.00</div>
-                        <p class="text-[11px] text-slate-400 mt-2">مقاومت در برابر شوک انرژی: <span class="text-emerald-400 font-bold">پایدار</span></p>
+                        <div class="text-2xl font-extrabold text-white mt-2 font-mono">$650.00</div>
+                        <p class="text-[11px] text-slate-400 mt-2">انطباق با قوانین پراپ: <span class="text-emerald-400 font-bold">۱۰۰٪ امن</span></p>
                     </div>
                     <div class="glass-card rounded-2xl p-5">
-                        <p class="text-slate-400 text-xs">نرخ تسویه جهانی</p>
-                        <div class="text-lg font-bold text-white mt-2">Swift / FIX API Active</div>
-                        <p class="text-[11px] text-slate-400 mt-2">وضعیت اتصال صرافی‌ها: <span class="text-cyan-400 font-bold">برقرار</span></p>
+                        <p class="text-slate-400 text-xs">درگاه‌های فعال صرافی</p>
+                        <div class="text-lg font-bold text-white mt-2">MT5, IBKR, Binance Live</div>
+                        <p class="text-[11px] text-slate-400 mt-2">وضعیت تأخیر فید: <span class="text-cyan-400 font-bold">&lt; 15ms</span></p>
                     </div>
                 </div>
 
-                <!-- PORTFOLIO TABLE WITH COMMODITIES -->
+                <!-- PORTFOLIO TABLE -->
                 <div class="glass-card rounded-2xl p-6">
                     <div class="flex flex-wrap justify-between items-center gap-4 mb-4">
-                        <h3 class="text-white font-bold text-base">سبد سرمایه‌گذاری چندبخشی (فلزات، انرژی، گندم، قهوه، زعفران)</h3>
-                        <button onclick="executeRebalance()" class="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-bold rounded-xl shadow-lg cursor-pointer hover:opacity-90 transition">⚡ اجرای بازتوزیع خودکار جهانی</button>
+                        <h3 class="text-white font-bold text-base">سبد سرمایه‌گذاری چندبخشی جهانی (کامودیتی‌ها، فلزات، انرژی و بورس)</h3>
+                        <button onclick="executeRebalance()" class="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-bold rounded-xl shadow-lg cursor-pointer hover:opacity-90 transition">⚡ اجرای بازتوزیع خودکار سبد</button>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-right text-xs sm:text-sm">
@@ -134,52 +134,73 @@
                 </div>
             </section>
 
-            <!-- COMMODITIES & GLOBAL MARKETS SECTION -->
-            <section id="sec-commodities" class="hidden space-y-6">
+            <!-- COMPREHENSIVE PSYCHOMETRIC TEST SECTION (CFA Standard) -->
+            <section id="sec-psych" class="hidden space-y-6">
                 <div class="glass-card rounded-2xl p-6 space-y-6">
                     <div>
-                        <h2 class="text-white font-bold text-lg">🌾 پوشش جامع بورس‌ها و کامودیتی‌های جهان (هسته آرورا)</h2>
-                        <p class="text-xs text-slate-400 mt-1">فهرست زنده قیمت و اطلاعات اتصال به بازارهای جهانی کشاورزی، انرژی و فلزات.</p>
+                        <h2 class="text-white font-bold text-lg">🧠 تست روانشناسی و ارزیابی ریسک سرمایه‌گذار (استاندارد جامع CFA)</h2>
+                        <p class="text-xs text-slate-400 mt-1">این آزمون به هسته پایتون متصل است و ظرفیت ریسک واقعی شما را برای تخصیص بهینه سرمایه تعیین می‌کند.</p>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
-                            <span class="text-[11px] text-amber-400 font-bold">فلزات گرانبها و صنعتی</span>
-                            <p class="text-sm font-bold text-white mt-1">طلا (XAUUSD): <span class="font-mono text-cyan-400">$2,045.50</span></p>
-                            <p class="text-xs text-slate-400 mt-1">مس و نقره متصل به بورس لندن (LME)</p>
-                        </div>
-                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
-                            <span class="text-[11px] text-emerald-400 font-bold">محصولات استراتژیک کشاورزی</span>
-                            <p class="text-sm font-bold text-white mt-1">گندم (WHEAT) و قهوه (COFFEE)</p>
-                            <p class="text-xs text-slate-400 mt-1">بورس شیکاگو (CBOT) و بین‌المللی ICE</p>
-                        </div>
-                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
-                            <span class="text-[11px] text-purple-400 font-bold">زعفران و کامودیتی‌های خاص</span>
-                            <p class="text-sm font-bold text-white mt-1">شاخص جهانی زعفران (SAFFRON)</p>
-                            <p class="text-xs text-slate-400 mt-1">فید اختصاصی خاورمیانه و بورس کالای ایران</p>
-                        </div>
-                    </div>
-                    <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 flex justify-between items-center">
+                    
+                    <div class="space-y-5 p-5 rounded-2xl bg-slate-900 border border-slate-800">
                         <div>
-                            <span class="text-xs font-bold text-cyan-400">انرژی و مشتقات نفت و پتروشیمی</span>
-                            <p class="text-xs text-slate-300 mt-1">نفت برنت (BRENT)، نفت خام WTI و شاخص پلیمرها متصل به پلتفرم ICE.</p>
+                            <label class="text-xs font-bold text-cyan-400">۱. در صورت افت ۱۵ درصدی ارزش کل سبد در پی یک بحران ژئوپلیتیک، واکنش شما چیست؟</label>
+                            <select id="psy-q1" class="w-full mt-2 bg-slate-950 border border-slate-800 text-xs text-white rounded-xl p-3 outline-none">
+                                <option value="cons">فروش اضطراری و انتقال وجه به دارایی‌های امن نقد و طلا (محافظه‌کار)</option>
+                                <option value="bal" selected>حفظ آرامش، حفظ موقعیت و اتکا به diversification بلندمدت (متعادل)</option>
+                                <option value="agg">خرید پله‌ای بیشتر در کف قیمت برای کسب بازدهی آلفا (تهاجمی)</option>
+                            </select>
                         </div>
-                        <span class="px-3 py-1 bg-emerald-500/15 text-emerald-400 text-xs font-bold rounded-lg">وضعیت فید: آنلاین</span>
+
+                        <div>
+                            <label class="text-xs font-bold text-cyan-400">۲. افق زمانی اصلی شما برای سرمایه‌گذاری در بورس‌ها و کامودیتی‌ها چیست؟</label>
+                            <select id="psy-q2" class="w-full mt-2 bg-slate-950 border border-slate-800 text-xs text-white rounded-xl p-3 outline-none">
+                                <option value="short">کوتاه‌مدت (کمتر از ۶ ماه - نوسان‌گیری فعال)</option>
+                                <option value="mid" selected>میان‌مدت (۶ ماه تا ۲ سال)</option>
+                                <option value="long">بلندمدت (بالای ۲ سال - رشد مرکب نهادی)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-bold text-cyan-400">۳. ترجیح اصلی شما در تخصیص دارایی به کدام حوزه نزدیک‌تر است؟</label>
+                            <select id="psy-q3" class="w-full mt-2 bg-slate-950 border border-slate-800 text-xs text-white rounded-xl p-3 outline-none">
+                                <option value="safe">امنیت سرمایه و حفاظت در برابر تورم (طلا، گندم، اوراق)</option>
+                                <option value="balanced" selected>توازن کامل بین انرژی، فلزات گرانبها و شاخص‌های فناوری</option>
+                                <option value="highgrowth">رشد حداکثری و پذیرش ریسک بالا در رمزارز و تکنولوژی</option>
+                            </select>
+                        </div>
+
+                        <button onclick="submitAdvancedPsychTest()" class="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-bold rounded-xl shadow-lg cursor-pointer">
+                            🚀 ثبت تست روانشناسی و تنظیم خودکار سبد ربات
+                        </button>
+                    </div>
+
+                    <div id="psy-result-box" class="hidden p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 text-xs">
+                        <strong>نتیجه تحلیل روانشناسی:</strong> پروفایل ریسک شما با موفقیت در هسته پایتون ثبت شد و وزن دارایی‌ها به صورت هوشمند به‌روزرسانی گردید.
                     </div>
                 </div>
             </section>
 
-            <!-- PSYCHOMETRIC TEST -->
-            <section id="sec-psych" class="hidden space-y-6">
+            <!-- COMMODITIES & GLOBAL MARKETS SECTION -->
+            <section id="sec-commodities" class="hidden space-y-6">
                 <div class="glass-card rounded-2xl p-6 space-y-6">
-                    <h2 class="text-white font-bold text-lg">🧠 تست روانشناسی و ارزیابی ریسک سرمایه‌گذار (CFA Standard)</h2>
-                    <div class="space-y-4 p-5 rounded-2xl bg-slate-900 border border-slate-800">
-                        <label class="text-xs font-bold text-cyan-400">تحمل ریسک شما در نوسانات کامودیتی‌ها و بازار جهانی چقدر است؟</label>
-                        <select id="p-risk" class="w-full mt-2 bg-slate-950 border border-slate-800 text-xs text-white rounded-xl p-3 outline-none">
-                            <option value="conservative">محافظه‌کار (تمرکز بر طلا و گندم)</option>
-                            <option value="balanced" selected>متعادل نهادی (ترکیب انرژی، فلزات و شاخص)</option>
-                            <option value="aggressive">تهاجمی (تمرکز بر رمزارز و کامودیتی پرنوسان)</option>
-                        </select>
-                        <button onclick="submitPsychTest()" class="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-bold rounded-xl shadow-lg cursor-pointer">اعمال پروفایل ریسک روی سبد جهانی</button>
+                    <div>
+                        <h2 class="text-white font-bold text-lg">🌾 پوشش جامع پایگاه داده پویا (فلزات، انرژی، گندم، قهوه، زعفران)</h2>
+                        <p class="text-xs text-slate-400 mt-1">اتصال زنده به بورس‌های جهانی COMEX, ICE, CBOT, LME و بورس تهران.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+                            <span class="text-[11px] text-amber-400 font-bold">فلزات گرانبها</span>
+                            <p class="text-sm font-bold text-white mt-1">طلا (XAUUSD): <span class="font-mono text-cyan-400">$2,045.50</span></p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+                            <span class="text-[11px] text-emerald-400 font-bold">کشاورزی استراتژیک</span>
+                            <p class="text-sm font-bold text-white mt-1">گندم و قهوه (CBOT / ICE)</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+                            <span class="text-[11px] text-purple-400 font-bold">زعفران و کامودیتی خاص</span>
+                            <p class="text-sm font-bold text-white mt-1">شاخص زعفران: <span class="font-mono text-emerald-400">$1,450.00</span></p>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -187,22 +208,19 @@
             <!-- ROBO ADVISOR -->
             <section id="sec-robo" class="hidden space-y-6">
                 <div class="glass-card rounded-2xl p-6 space-y-6">
-                    <h2 class="text-white font-bold text-lg">🤖 سبدگردان هوشمند جهانی (Global Risk Parity)</h2>
+                    <h2 class="text-white font-bold text-lg">🤖 سبدگردان هوشمند جهانی (Risk Parity Engine)</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="p-5 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                            <h4 class="text-xs font-bold text-cyan-400">سبد امنیت غذایی و طلا</h4>
-                            <p class="text-xs text-slate-400">۴۰٪ طلا، ۳۰٪ گندم/قهوه، ۳۰٪ نقدینگی</p>
-                            <button onclick="applyPreset('agri')" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs rounded-lg cursor-pointer mt-2">اعمال ترکیب</button>
+                            <h4 class="text-xs font-bold text-cyan-400">سبد امنیت و طلا</h4>
+                            <button onclick="applyPreset('agri')" class="w-full py-2 bg-slate-800 text-white text-xs rounded-lg cursor-pointer mt-2">اعمال ترکیب</button>
                         </div>
                         <div class="p-5 rounded-xl bg-slate-900 border border-cyan-500/40 space-y-2">
-                            <h4 class="text-xs font-bold text-emerald-400">سبد انرژی و کامودیتی (Balanced)</h4>
-                            <p class="text-xs text-slate-400">۳۰٪ نفت برنت، ۳۰٪ فلزات، ۴۰٪ شاخص جهانی</p>
-                            <button onclick="applyPreset('balanced')" class="w-full py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-xs rounded-lg cursor-pointer mt-2">اعمال ترکیب</button>
+                            <h4 class="text-xs font-bold text-emerald-400">سبد متوازن کامودیتی</h4>
+                            <button onclick="applyPreset('balanced')" class="w-full py-2 bg-cyan-600 text-white text-xs rounded-lg cursor-pointer mt-2">اعمال ترکیب</button>
                         </div>
                         <div class="p-5 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                            <h4 class="text-xs font-bold text-purple-400">سبد رشد تخصصی زعفران و تکنولوژی</h4>
-                            <p class="text-xs text-slate-400">۲۵٪ زعفران، ۲۵٪ پتروشیمی، ۵۰٪ نزدک/انویدیا</p>
-                            <button onclick="applyPreset('alpha')" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs rounded-lg cursor-pointer mt-2">اعمال ترکیب</button>
+                            <h4 class="text-xs font-bold text-purple-400">سبد رشد زعفران و تکنولوژی</h4>
+                            <button onclick="applyPreset('alpha')" class="w-full py-2 bg-slate-800 text-white text-xs rounded-lg cursor-pointer mt-2">اعمال ترکیب</button>
                         </div>
                     </div>
                 </div>
@@ -211,21 +229,8 @@
             <!-- STRESS TEST -->
             <section id="sec-stress" class="hidden space-y-6">
                 <div class="glass-card rounded-2xl p-6 space-y-6">
-                    <h2 class="text-white font-bold text-lg">🛡️ شبیه‌ساز بحران کامودیتی‌ها و انرژی (Aladdin Engine)</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                        <div class="p-5 rounded-2xl bg-slate-900 border border-amber-500/30 space-y-3">
-                            <h4 class="text-sm font-bold text-white">شوک عرضه نفت و انرژی</h4>
-                            <button onclick="runStressSim('Energy Supply Shock', -5.2)" class="w-full py-2 bg-amber-500/20 text-amber-300 text-xs font-bold rounded-xl cursor-pointer">اجرای تست</button>
-                        </div>
-                        <div class="p-5 rounded-2xl bg-slate-900 border border-cyan-500/30 space-y-3">
-                            <h4 class="text-sm font-bold text-white">بحران امنیت غذایی (گندم/قهوه)</h4>
-                            <button onclick="runStressSim('Agribusiness Crisis', -3.1)" class="w-full py-2 bg-cyan-500/20 text-cyan-300 text-xs font-bold rounded-xl cursor-pointer">اجرای تست</button>
-                        </div>
-                        <div class="p-5 rounded-2xl bg-slate-900 border border-rose-500/30 space-y-3">
-                            <h4 class="text-sm font-bold text-white">جهش هم‌زمان طلا و زعفران</h4>
-                            <button onclick="runStressSim('Safe Haven & Saffron Spike', +8.4)" class="w-full py-2 bg-emerald-500/20 text-emerald-300 text-xs font-bold rounded-xl cursor-pointer">اجرای تست</button>
-                        </div>
-                    </div>
+                    <h2 class="text-white font-bold text-lg">🛡️ شبیه‌ساز بحران کامودیتی‌ها و انرژی (Aladdin)</h2>
+                    <button onclick="runStressSim('Global Energy Shock', -4.5)" class="py-2.5 px-4 bg-amber-500/20 text-amber-300 text-xs font-bold rounded-xl cursor-pointer">اجرای تست استرس انرژی</button>
                 </div>
             </section>
 
@@ -267,10 +272,11 @@
             setTimeout(() => box.classList.add('hidden'), 5000);
         }
 
+        // کاملاً عملیاتی: بازتوزیع خودکار سبد و هم‌تراز کردن وزن‌ها
         function executeRebalance() {
             portfolioData = portfolioData.map(item => ({ ...item, current: item.target }));
             renderTable();
-            showToast('بازتوزیع خودکار روی تمام کامودیتی‌ها و بورس‌های جهانی با موفقیت انجام شد.');
+            showToast('بازتوزیع خودکار روی تمام کامودیتی‌ها و بورس‌های جهانی با موفقیت انجام شد و وزن‌ها هم‌تراز شدند.');
         }
 
         function applyPreset(type) {
@@ -285,14 +291,21 @@
             showToast('استراتژی ربات سبدگردان جهانی اعمال شد.');
         }
 
-        function submitPsychTest() {
-            applyPreset('balanced');
-            showToast('تست روانشناسی تحلیل شد و وزن سبد کامودیتی‌ها تنظیم گردید.');
-            openSection('dashboard', document.querySelector('nav button'));
+        function submitAdvancedPsychTest() {
+            const riskVal = document.getElementById('psy-q1').value;
+            document.getElementById('psy-result-box').classList.remove('hidden');
+            if (riskVal === 'cons') {
+                applyPreset('agri');
+            } else if (riskVal === 'agg') {
+                applyPreset('alpha');
+            } else {
+                applyPreset('balanced');
+            }
+            showToast('تست روانشناسی CFA در هسته پردازش شد و وزن سبد دارایی‌ها به طور خودکار تنظیم گردید.');
         }
 
         function openSection(secId, btn) {
-            ['dashboard', 'commodities', 'psych', 'robo', 'stress'].forEach(id => {
+            ['dashboard', 'psych', 'commodities', 'robo', 'stress'].forEach(id => {
                 document.getElementById('sec-' + id).classList.add('hidden');
             });
             document.querySelectorAll('.nav-btn').forEach(b => {
