@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aurora Quant Platform | پلتفرم هوشمند مدیریت ثروت و تحلیل نهادی</title>
+    <title id="page-title">Aurora Quant Platform | پلتفرم هوشمند مدیریت ثروت</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -22,7 +22,7 @@
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center font-bold text-xl text-white shadow-lg shadow-cyan-500/30">A</div>
                 <div>
                     <h1 class="font-bold text-base tracking-wide text-white">AURORA <span class="text-cyan-400">QUANT</span></h1>
-                    <p class="text-[10px] text-gray-400">Institutional Wealth Tech</p>
+                    <p class="text-[10px] text-gray-400" data-i18n="subtitle">Institutional Wealth Tech</p>
                 </div>
             </div>
 
@@ -30,49 +30,58 @@
             <nav class="space-y-2 text-sm font-medium">
                 <a href="#" class="flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl bg-cyan-500/10 text-cyan-400 border-r-4 border-cyan-400">
                     <span>📊</span>
-                    <span>داشبورد مدیریت ثروت</span>
+                    <span data-i18n="nav_dashboard">داشبورد مدیریت ثروت</span>
                 </a>
                 <a href="#" class="flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl text-gray-400 sidebar-item transition">
                     <span>⚡</span>
-                    <span>تحلیل اسمارت‌مانی (SMC)</span>
+                    <span data-i18n="nav_smc">تحلیل اسمارت‌مانی (SMC)</span>
                 </a>
                 <a href="#" class="flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl text-gray-400 sidebar-item transition">
                     <span>🤖</span>
-                    <span>سبدگردان هوشمند (Robo)</span>
+                    <span data-i18n="nav_robo">سبدگردان هوشمند (Robo)</span>
                 </a>
                 <a href="#" class="flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl text-gray-400 sidebar-item transition">
                     <span>📈</span>
-                    <span>ژورنال معاملات</span>
+                    <span data-i18n="nav_journal">ژورنال معاملات</span>
                 </a>
                 <a href="#" class="flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl text-gray-400 sidebar-item transition">
                     <span>🔒</span>
-                    <span>گاوصندوق امنیتی و 2FA</span>
+                    <span data-i18n="nav_vault">گاوصندوق امنیتی و 2FA</span>
                 </a>
             </nav>
         </div>
 
-        <!-- Subscription Badge in Sidebar -->
+        <!-- Subscription Badge -->
         <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800 text-center">
-            <span class="inline-block px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded-full font-bold mb-2">پلن سازمانی (Active)</span>
-            <p class="text-xs text-gray-400">بروزرسانی ابری: فعال</p>
+            <span class="inline-block px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded-full font-bold mb-2" data-i18n="sub_active">پلن سازمانی (Active)</span>
+            <p class="text-xs text-gray-400" data-i18n="cloud_status">بروزرسانی ابری: فعال</p>
         </div>
     </aside>
 
     <!-- Main Content Area -->
     <div class="flex-1 flex flex-col min-h-screen overflow-y-auto">
 
-        <!-- Top Header -->
+        <!-- Top Header with Language Switcher -->
         <header class="glass-panel border-b border-gray-800 px-8 py-4 flex justify-between items-center sticky top-0 z-10">
             <div class="flex items-center space-x-4 space-x-reverse">
-                <span class="text-xs text-gray-400">وضعیت بازار: <strong class="text-emerald-400">● آنلاین (Live Feed)</strong></span>
+                <span class="text-xs text-gray-400"><span data-i18n="market_status">وضعیت بازار:</span> <strong class="text-emerald-400">● آنلاین (Live Feed)</strong></span>
             </div>
+            
             <div class="flex items-center space-x-4 space-x-reverse">
-                <button class="p-2 rounded-xl bg-gray-800/60 hover:bg-gray-800 text-gray-300 transition text-sm">🔔</button>
+                <!-- Language Selector Dropdown -->
+                <select id="lang-switcher" onchange="changeLanguage(this.value)" class="bg-gray-900 border border-gray-700 text-cyan-400 text-xs rounded-xl px-3 py-2 outline-none cursor-pointer">
+                    <option value="fa">فارسی (FA)</option>
+                    <option value="en">English (EN)</option>
+                    <option value="ar">العربية (AR)</option>
+                    <option value="tr">Türkçe (TR)</option>
+                    <option value="es">Español (ES)</option>
+                </select>
+
                 <div class="flex items-center space-x-3 space-x-reverse border-r border-gray-800 pr-4">
                     <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-cyan-600 to-blue-700 flex items-center justify-center font-bold text-white text-sm">AT</div>
                     <div class="text-right hidden sm:block">
                         <p class="text-xs font-bold text-white">امیرحسین انصاری</p>
-                        <p class="text-[10px] text-cyan-400">مدیر پورتفوی</p>
+                        <p class="text-[10px] text-cyan-400" data-i18n="user_role">مدیر پورتفوی</p>
                     </div>
                 </div>
             </div>
@@ -81,43 +90,45 @@
         <!-- Dashboard Body -->
         <main class="flex-1 p-8 space-y-8 max-w-7xl w-full mx-auto">
 
+            <!-- Notification Banner for Interactive Actions -->
+            <div id="action-alert" class="hidden p-4 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs flex justify-between items-center animate-pulse">
+                <span id="alert-text">عملیات با موفقیت انجام شد.</span>
+                <button onclick="document.getElementById('action-alert').classList.add('hidden')" class="text-cyan-400 font-bold px-2">✕</button>
+            </div>
+
             <!-- Top Metric Cards Grid -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- AAV Card -->
                 <div class="glass-panel rounded-2xl p-6 relative overflow-hidden shadow-xl">
-                    <div class="absolute -left-6 -top-6 w-24 h-24 bg-cyan-500/10 rounded-full blur-xl"></div>
-                    <p class="text-gray-400 text-xs font-medium">ارزش خالص دارایی‌ها (AAV)</p>
+                    <p class="text-gray-400 text-xs font-medium" data-i18n="card_aav">ارزش خالص دارایی‌ها (AAV)</p>
                     <div class="text-3xl font-bold text-white mt-2">$50,000.00</div>
                     <div class="mt-4 flex items-center justify-between text-xs border-t border-gray-800 pt-3">
-                        <span class="text-gray-400">بازدهی ماهانه:</span>
+                        <span class="text-gray-400" data-i18n="monthly_return">بازدهی ماهانه:</span>
                         <span class="text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded">+4.2% (+$2,100)</span>
                     </div>
                 </div>
 
-                <!-- Risk & Sharpe Card -->
                 <div class="glass-panel rounded-2xl p-6 relative overflow-hidden shadow-xl">
-                    <p class="text-gray-400 text-xs font-medium">شاخص‌های عملکرد ریسک</p>
+                    <p class="text-gray-400 text-xs font-medium" data-i18n="card_risk">شاخص‌های عملکرد ریسک</p>
                     <div class="grid grid-cols-2 gap-4 mt-3">
                         <div>
-                            <span class="text-[11px] text-gray-400">نسبت شارپ (Sharpe)</span>
+                            <span class="text-[11px] text-gray-400" data-i18n="sharpe_label">نسبت شارپ (Sharpe)</span>
                             <p class="text-xl font-bold text-cyan-400 mt-1">1.85</p>
                         </div>
                         <div>
-                            <span class="text-[11px] text-gray-400">امتیاز روانشناسی</span>
+                            <span class="text-[11px] text-gray-400" data-i18n="psych_label">امتیاز روانشناسی</span>
                             <p class="text-xl font-bold text-emerald-400 mt-1">8/10</p>
                         </div>
                     </div>
-                    <div class="mt-3 text-[11px] text-gray-400 border-t border-gray-800 pt-2">سطح ریسک: تعادل پویا (Growth)</div>
+                    <div class="mt-3 text-[11px] text-gray-400 border-t border-gray-800 pt-2" data-i18n="risk_level">سطح ریسک: تعادل پویا (Growth)</div>
                 </div>
 
-                <!-- Intermarket Macro Card -->
                 <div class="glass-panel rounded-2xl p-6 relative overflow-hidden shadow-xl">
-                    <p class="text-gray-400 text-xs font-medium">تحلیل همبستگی کلان (DXY)</p>
+                    <p class="text-gray-400 text-xs font-medium" data-i18n="card_dxy">تحلیل همبستگی کلان (DXY)</p>
                     <div class="mt-2 flex items-center justify-between">
-                        <span class="text-sm font-bold text-white">رژیم بازار: معکوس نرمال</span>
+                        <span class="text-sm font-bold text-white" data-i18n="dxy_regime">رژیم بازار: معکوس نرمال</span>
                         <span class="px-2 py-1 bg-blue-500/10 text-blue-400 text-[10px] rounded font-mono">-0.65 DXY</span>
                     </div>
-                    <p class="text-xs text-gray-400 mt-3 leading-relaxed">جریان نقدینگی نهادی به سمت طلا و رمزارز هدایت شده است.</p>
+                    <p class="text-xs text-gray-400 mt-3 leading-relaxed" data-i18n="dxy_desc">جریان نقدینگی نهادی به سمت طلا و رمزارز هدایت شده است.</p>
                 </div>
             </div>
 
@@ -125,11 +136,11 @@
             <div class="glass-panel rounded-2xl p-6 shadow-xl">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                     <div>
-                        <h3 class="text-white font-bold text-lg">سبد اختصاصی پیشنهادی (Robo-Advisor Rebalancing)</h3>
-                        <p class="text-xs text-gray-400">تخصیص هوشمند دارایی‌ها بر اساس مدل برابری ریسک و پرایس‌اکشن</p>
+                        <h3 class="text-white font-bold text-lg" data-i18n="robo_title">سبد اختصاصی پیشنهادی (Robo-Advisor Rebalancing)</h3>
+                        <p class="text-xs text-gray-400" data-i18n="robo_subtitle">تخصیص هوشمند دارایی‌ها بر اساس مدل برابری ریسک و پرایس‌اکشن</p>
                     </div>
-                    <button class="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-cyan-500/20 transition cursor-pointer">
-                        ⚡ اجرای خودکار بازتوزیع (Rebalance)
+                    <button onclick="triggerRebalance()" class="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-cyan-500/20 transition cursor-pointer">
+                        ⚡ <span data-i18n="btn_rebalance">اجرای خودکار بازتوزیع (Rebalance)</span>
                     </button>
                 </div>
 
@@ -138,11 +149,11 @@
                     <table class="w-full text-right text-sm">
                         <thead class="text-xs text-gray-400 uppercase border-b border-gray-800">
                             <tr>
-                                <th class="pb-3">نماد / دارایی</th>
-                                <th class="pb-3">وزن هدف</th>
-                                <th class="pb-3">وضعیت عمل</th>
-                                <th class="pb-3">پیشرفت تخصیص</th>
-                                <th class="pb-3 text-left">مبلغ تعدیل ($)</th>
+                                <th class="pb-3" data-i18n="th_asset">نماد / دارایی</th>
+                                <th class="pb-3" data-i18n="th_weight">وزن هدف</th>
+                                <th class="pb-3" data-i18n="th_status">وضعیت عمل</th>
+                                <th class="pb-3" data-i18n="th_progress">پیشرفت تخصیص</th>
+                                <th class="pb-3 text-left" data-i18n="th_amount">مبلغ تعدیل ($)</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-800/60 text-gray-300">
@@ -152,10 +163,8 @@
                                     <span>NVDA (سهم تکنولوژی)</span>
                                 </td>
                                 <td class="py-4 font-mono">30.0%</td>
-                                <td class="py-4"><span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded-lg font-bold">خرید (BUY)</span></td>
-                                <td class="py-4 w-32">
-                                    <div class="w-full bg-gray-800 rounded-full h-1.5"><div class="bg-emerald-400 h-1.5 rounded-full" style="width: 80%"></div></div>
-                                </td>
+                                <td class="py-4"><span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded-lg font-bold" data-i18n="badge_buy">خرید (BUY)</span></td>
+                                <td class="py-4 w-32"><div class="w-full bg-gray-800 rounded-full h-1.5"><div class="bg-emerald-400 h-1.5 rounded-full" style="width: 80%"></div></div></td>
                                 <td class="py-4 text-left font-mono text-emerald-400 font-bold">+$15,000.00</td>
                             </tr>
                             <tr>
@@ -164,10 +173,8 @@
                                     <span>NAS100 (شاخص فناوری)</span>
                                 </td>
                                 <td class="py-4 font-mono">30.0%</td>
-                                <td class="py-4"><span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded-lg font-bold">خرید (BUY)</span></td>
-                                <td class="py-4 w-32">
-                                    <div class="w-full bg-gray-800 rounded-full h-1.5"><div class="bg-emerald-400 h-1.5 rounded-full" style="width: 75%"></div></div>
-                                </td>
+                                <td class="py-4"><span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded-lg font-bold" data-i18n="badge_buy">خرید (BUY)</span></td>
+                                <td class="py-4 w-32"><div class="w-full bg-gray-800 rounded-full h-1.5"><div class="bg-emerald-400 h-1.5 rounded-full" style="width: 75%"></div></div></td>
                                 <td class="py-4 text-left font-mono text-emerald-400 font-bold">+$15,000.00</td>
                             </tr>
                             <tr>
@@ -176,10 +183,8 @@
                                     <span>BTCUSDT (رمزارز مرجع)</span>
                                 </td>
                                 <td class="py-4 font-mono">20.0%</td>
-                                <td class="py-4"><span class="px-2.5 py-1 bg-cyan-500/10 text-cyan-400 text-xs rounded-lg font-bold">حفظ (HOLD)</span></td>
-                                <td class="py-4 w-32">
-                                    <div class="w-full bg-gray-800 rounded-full h-1.5"><div class="bg-cyan-400 h-1.5 rounded-full" style="width: 100%"></div></div>
-                                </td>
+                                <td class="py-4"><span class="px-2.5 py-1 bg-cyan-500/10 text-cyan-400 text-xs rounded-lg font-bold" data-i18n="badge_hold">حفظ (HOLD)</span></td>
+                                <td class="py-4 w-32"><div class="w-full bg-gray-800 rounded-full h-1.5"><div class="bg-cyan-400 h-1.5 rounded-full" style="width: 100%"></div></div></td>
                                 <td class="py-4 text-left font-mono text-gray-400 font-bold">$0.00</td>
                             </tr>
                             <tr>
@@ -188,10 +193,8 @@
                                     <span>XAUUSD (طلای جهانی)</span>
                                 </td>
                                 <td class="py-4 font-mono">20.0%</td>
-                                <td class="py-4"><span class="px-2.5 py-1 bg-blue-500/10 text-blue-400 text-xs rounded-lg font-bold">تعدیل وزن</span></td>
-                                <td class="py-4 w-32">
-                                    <div class="w-full bg-gray-800 rounded-full h-1.5"><div class="bg-blue-400 h-1.5 rounded-full" style="width: 60%"></div></div>
-                                </td>
+                                <td class="py-4"><span class="px-2.5 py-1 bg-blue-500/10 text-blue-400 text-xs rounded-lg font-bold" data-i18n="badge_adjust">تعدیل وزن</span></td>
+                                <td class="py-4 w-32"><div class="w-full bg-gray-800 rounded-full h-1.5"><div class="bg-blue-400 h-1.5 rounded-full" style="width: 60%"></div></div></td>
                                 <td class="py-4 text-left font-mono text-blue-400 font-bold">+$10,000.00</td>
                             </tr>
                         </tbody>
@@ -199,59 +202,224 @@
                 </div>
             </div>
 
-            <!-- Bottom Grid: Live SMC Signals & AI Report Preview -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- SMC Signals -->
-                <div class="glass-panel rounded-2xl p-6 shadow-xl">
-                    <h4 class="text-white font-semibold mb-4 flex items-center justify-between">
-                        <span>سیگنال‌های زنده اسمارت‌مانی (SMC)</span>
-                        <span class="text-xs text-cyan-400">بروزرسانی لحظه‌ای</span>
-                    </h4>
-                    <div class="space-y-4">
-                        <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-xs font-bold text-cyan-400">XAUUSD (طلا)</span>
-                                <span class="text-[10px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-mono">CHOCH_BULLISH</span>
-                            </div>
-                            <p class="text-xs text-gray-400 leading-relaxed">تشخیص تغییر کاراکتر صعودی در محدوده عرضه. نقطه کنترل حجمی (POC): <strong class="text-white">$2,030.50</strong></p>
-                        </div>
-                        <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-xs font-bold text-purple-400">US30 (داو جونز)</span>
-                                <span class="text-[10px] bg-purple-500/10 text-purple-400 px-2 py-0.5 rounded font-mono">LIQUIDITY SWEEP</span>
-                            </div>
-                            <p class="text-xs text-gray-400 leading-relaxed">شناسایی تله اسمارت‌مانی بالای سقف قبلی و جمع‌آوری سفارش‌های فروش‌ستاپ (Sell-stops).</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- AI LLM Market Report -->
-                <div class="glass-panel rounded-2xl p-6 shadow-xl">
-                    <h4 class="text-white font-semibold mb-4 flex items-center justify-between">
-                        <span>گزارش هوش مصنوعی (AI Quant Report)</span>
-                        <span class="text-xs text-emerald-400">Claude / GPT-4 Bridge</span>
-                    </h4>
-                    <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800 space-y-3">
-                        <p class="text-xs text-cyan-300 font-semibold">خلاصه اجرایی مدیریت سرمایه:</p>
-                        <p class="text-xs text-gray-300 leading-relaxed">
-                            ساختار بازار در وضعیت انباشت و تاییدیه نهادی قرار دارد. به دلیل افت شاخص دلار (DXY)، ریسک سیستماتیک کاهش یافته و تخصیص سرمایه به سمت دارایی‌های رشدپذیر (Tech & Gold) با ضریب اطمینان ۱.۸۵ توصیه می‌شود.
-                        </p>
-                        <div class="pt-2 border-t border-gray-800 flex justify-between text-[11px] text-gray-400">
-                            <span>وضعیت امنیتی: AES-256 Secured</span>
-                            <span class="text-emerald-400">گزارش تایید شد</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </main>
 
         <!-- Footer -->
-        <footer class="text-center py-6 text-xs text-gray-500 border-t border-gray-800 mt-auto">
+        <footer class="text-center py-6 text-xs text-gray-500 border-t border-gray-800 mt-auto" data-i18n="footer">
             &copy; 2026 Aurora Quant Platform. تمامی حقوق محفوظ است. طراحی شده برای سرمایه‌گذاران نهادی و حرفه‌ای.
         </footer>
 
     </div>
 
+    <!-- JavaScript for Multi-Language & Interactive Actions -->
+    <script>
+        const translations = {
+            fa: {
+                subtitle: "Institutional Wealth Tech",
+                nav_dashboard: "داشبورد مدیریت ثروت",
+                nav_smc: "تحلیل اسمارت‌مانی (SMC)",
+                nav_robo: "سبدگردان هوشمند (Robo)",
+                nav_journal: "ژورنال معاملات",
+                nav_vault: "گاوصندوق امنیتی و 2FA",
+                sub_active: "پلن سازمانی (Active)",
+                cloud_status: "بروزرسانی ابری: فعال",
+                market_status: "وضعیت بازار:",
+                user_role: "مدیر پورتفوی",
+                card_aav: "ارزش خالص دارایی‌ها (AAV)",
+                monthly_return: "بازدهی ماهانه:",
+                card_risk: "شاخص‌های عملکرد ریسک",
+                sharpe_label: "نسبت شارپ (Sharpe)",
+                psych_label: "امتیاز روانشناسی",
+                risk_level: "سطح ریسک: تعادل پویا (Growth)",
+                card_dxy: "تحلیل همبستگی کلان (DXY)",
+                dxy_regime: "رژیم بازار: معکوس نرمال",
+                dxy_desc: "جریان نقدینگی نهادی به سمت طلا و رمزارز هدایت شده است.",
+                robo_title: "سبد اختصاصی پیشنهادی (Robo-Advisor Rebalancing)",
+                robo_subtitle: "تخصیص هوشمند دارایی‌ها بر اساس مدل برابری ریسک و پرایس‌اکشن",
+                btn_rebalance: "اجرای خودکار بازتوزیع (Rebalance)",
+                th_asset: "نماد / دارایی",
+                th_weight: "وزن هدف",
+                th_status: "وضعیت عمل",
+                th_progress: "پیشرفت تخصیص",
+                th_amount: "مبلغ تعدیل ($)",
+                badge_buy: "خرید (BUY)",
+                badge_hold: "حفظ (HOLD)",
+                badge_adjust: "تعدیل وزن",
+                footer: "© 2026 Aurora Quant Platform. تمامی حقوق محفوظ است. طراحی شده برای سرمایه‌گذاران نهادی و حرفه‌ای.",
+                alert_success: "موتور سبدگردان: بازتوزیع پرتفوی با موفقیت روی گره‌های ابری اعمال شد!"
+            },
+            en: {
+                subtitle: "Institutional Wealth Tech",
+                nav_dashboard: "Wealth Dashboard",
+                nav_smc: "Smart Money (SMC)",
+                nav_robo: "Robo-Advisor",
+                nav_journal: "Trading Journal",
+                nav_vault: "Security Vault & 2FA",
+                sub_active: "Enterprise Plan (Active)",
+                cloud_status: "Cloud Sync: Active",
+                market_status: "Market Status:",
+                user_role: "Portfolio Manager",
+                card_aav: "Net Asset Value (AAV)",
+                monthly_return: "Monthly Return:",
+                card_risk: "Risk Performance Metrics",
+                sharpe_label: "Sharpe Ratio",
+                psych_label: "Psychometric Score",
+                risk_level: "Risk Level: Dynamic Growth",
+                card_dxy: "Macro Correlation (DXY)",
+                dxy_regime: "Regime: Normal Inverse",
+                dxy_desc: "Institutional liquidity is shifting towards gold and crypto.",
+                robo_title: "Robo-Advisor Portfolio Rebalancing",
+                robo_subtitle: "Smart asset allocation based on risk parity models",
+                btn_rebalance: "Execute Auto-Rebalance",
+                th_asset: "Asset / Symbol",
+                th_weight: "Target Weight",
+                th_status: "Action Status",
+                th_progress: "Allocation Progress",
+                th_amount: "Adjustment ($)",
+                badge_buy: "BUY",
+                badge_hold: "HOLD",
+                badge_adjust: "ADJUST",
+                footer: "© 2026 Aurora Quant Platform. All rights reserved. Designed for institutional investors.",
+                alert_success: "Robo Engine: Portfolio successfully rebalanced across cloud nodes!"
+            },
+            ar: {
+                subtitle: "تكنولوجيا الثروة المؤسسية",
+                nav_dashboard: "لوحة تحكم الثروة",
+                nav_smc: "تحليل الأموال الذكية",
+                nav_robo: "المستشار الآلي",
+                nav_journal: "سجل التداول",
+                nav_vault: "خزنة الأمان و 2FA",
+                sub_active: "خطة المؤسسات (نشط)",
+                cloud_status: "مزامنة السحابة: نشط",
+                market_status: "حالة السوق:",
+                user_role: "مدير المحفظة",
+                card_aav: "صافي قيمة الأصول (AAV)",
+                monthly_return: "العائد الشهري:",
+                card_risk: "مقاييس الأداء والمخاطر",
+                sharpe_label: "نسبة شارب",
+                psych_label: "نقاط السلوك النفسي",
+                risk_level: "مستوى المخاطر: نمو ديناميكي",
+                card_dxy: "ارتباط مؤشر الدولار (DXY)",
+                dxy_regime: "النظام: عكسي طبيعي",
+                dxy_desc: "تتدفق السيولة المؤسسية نحو الذهب والعملات الرقمية.",
+                robo_title: "إعادة توازن المحفظة بواسطة المستشار الآلي",
+                robo_subtitle: "تخصيص ذكي للأصول بناءً على نماذج تكافؤ المخاطر",
+                btn_rebalance: "تنفيذ إعادة التوازن التلقائي",
+                th_asset: "الأصل / الرمز",
+                th_weight: "الوزن المستهدف",
+                th_status: "حالة الإجراء",
+                th_progress: "تقدم التخصيص",
+                th_amount: "التعديل ($)",
+                badge_buy: "شراء",
+                badge_hold: "احتفاظ",
+                badge_adjust: "تعديل",
+                footer: "© 2026 Aurora Quant Platform. جميع الحقوق محفوظة.",
+                alert_success: "محرك المستشار الآلي: تم إعادة توازن المحفظة بنجاح!"
+            },
+            tr: {
+                subtitle: "Kurumsal Varlık Teknolojisi",
+                nav_dashboard: "Varlık Yönetim Paneli",
+                nav_smc: "Akıllı Para Analizi (SMC)",
+                nav_robo: "Robot Danışman (Robo)",
+                nav_journal: "İşlem Günlüğü",
+                nav_vault: "Güvenlik Kasası ve 2FA",
+                sub_active: "Kurumsal Plan (Aktif)",
+                cloud_status: "Bulut Senkronizasyonu: Aktif",
+                market_status: "Piyasa Durumu:",
+                user_role: "Portföy Yöneticisi",
+                card_aav: "Net Varlık Değeri (AAV)",
+                monthly_return: "Aylık Getiri:",
+                card_risk: "Risk Performans Metrikleri",
+                sharpe_label: "Sharpe Oranı",
+                psych_label: "Psikometrik Skor",
+                risk_level: "Risk Seviyesi: Dinamik Büyüme",
+                card_dxy: "Makro Korelasyon (DXY)",
+                dxy_regime: "Rejim: Normal Ters",
+                dxy_desc: "Kurumsal likidite altın ve kriptoya yöneliyor.",
+                robo_title: "Robot Danışman Portföy Dengelemesi",
+                robo_subtitle: "Risk eşitliği modeline göre akıllı varlık dağılımı",
+                btn_rebalance: "Otomatik Dengelemeyi Çalıştır",
+                th_asset: "Varlık / Sembol",
+                th_weight: "Hedef Ağırlık",
+                th_status: "İşlem Durumu",
+                th_progress: "Dağılım İlerlemesi",
+                th_amount: "Düzeltme ($)",
+                badge_buy: "AL",
+                badge_hold: "TUT",
+                badge_adjust: "AYARLA",
+                footer: "© 2026 Aurora Quant Platform. Tüm hakları saklıdır.",
+                alert_success: "Robo Motoru: Portföy bulut düğümleri üzerinden başarıyla dengeledi!"
+            },
+            es: {
+                subtitle: "Tecnología de Riqueza Institucional",
+                nav_dashboard: "Panel de Riqueza",
+                nav_smc: "Dinero Inteligente (SMC)",
+                nav_robo: "Robo-Asesor",
+                nav_journal: "Diario de Trading",
+                nav_vault: "Bóveda de Seguridad y 2FA",
+                sub_active: "Plan Empresarial (Activo)",
+                cloud_status: "Sincronización en la nube: Activa",
+                market_status: "Estado del Mercado:",
+                user_role: "Gestor de Portafolio",
+                card_aav: "Valor Neto de Activos (AAV)",
+                monthly_return: "Retorno Mensual:",
+                card_risk: "Métricas de Rendimiento de Riesgo",
+                sharpe_label: "Ratio de Sharpe",
+                psych_label: "Puntuación Psicológica",
+                risk_level: "Nivel de Riesgo: Crecimiento Dinámico",
+                card_dxy: "Correlación Macro (DXY)",
+                dxy_regime: "Régimen: Inverso Normal",
+                dxy_desc: "La liquidez institucional se dirige hacia el oro y las criptomonedas.",
+                robo_title: "Reequilibrio de Portafolio Robo-Advisor",
+                robo_subtitle: "Asignación inteligente de activos basada en modelos de riesgo",
+                btn_rebalance: "Ejecutar Reequilibrio Automático",
+                th_asset: "Activo / Símbolo",
+                th_weight: "Peso Objetivo",
+                th_status: "Estado de Acción",
+                th_progress: "Progreso de Asignación",
+                th_amount: "Ajuste ($)",
+                badge_buy: "COMPRAR",
+                badge_hold: "MANTENER",
+                badge_adjust: "AJUSTAR",
+                footer: "© 2026 Aurora Quant Platform. Todos los derechos reservados.",
+                alert_success: "Motor Robo: ¡Portafolio rebalanceado exitosamente en los nodos cloud!"
+            }
+        };
+
+        function changeLanguage(lang) {
+            const t = translations[lang];
+            if (!t) return;
+
+            // Update text for all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) {
+                    el.textContent = t[key];
+                }
+            });
+
+            // Adjust text direction (RTL for Persian/Arabic, LTR for others)
+            const htmlRoot = document.getElementById('html-root');
+            if (lang === 'fa' || lang === 'ar') {
+                htmlRoot.setAttribute('dir', 'rtl');
+            } else {
+                htmlRoot.setAttribute('dir', 'ltr');
+            }
+        }
+
+        function triggerRebalance() {
+            const alertBox = document.getElementById('action-alert');
+            const alertText = document.getElementById('alert-text');
+            const currentLang = document.getElementById('lang-switcher').value;
+            
+            alertText.textContent = translations[currentLang].alert_success;
+            alertBox.classList.remove('hidden');
+
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                alertBox.classList.add('hidden');
+            }, 5000);
+        }
+    </script>
 </body>
 </html>
