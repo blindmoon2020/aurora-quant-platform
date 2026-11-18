@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: aurora_postgres_vault
+    environment:
+      POSTGRES_USER: aurora_admin
+      POSTGRES_PASSWORD: secure_institutional_password_2026
+      POSTGRES_DB: aurora_quant_core
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: aurora_redis_cache
+    ports:
+      - "6379:6379"
+
+  api:
+    build: .
+    container_name: aurora_quant_api
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://aurora_admin:secure_institutional_password_2026@db:5432/aurora_quant_core
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - db
+      - redis
+
+  celery_worker:
+    build: .
+    container_name: aurora_celery_worker
+    command: celery -A app.worker.celery_app worker --loglevel=info
+    environment:
+      - DATABASE_URL=postgresql://aurora_admin:secure_institutional_password_2026@db:5432/aurora_quant_core
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - db
+      - redis
+
+volumes:
+  postgres_data:
