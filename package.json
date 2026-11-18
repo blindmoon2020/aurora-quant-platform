@@ -1,0 +1,12 @@
+{
+  "name": "aurora-quant-platform",
+  "version": "3.0.0",
+  "description": "Institutional Wealth Management & Cyber Security Core",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
