@@ -3,16 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="page-title">Aurora Quant Platform | پلتفرم هوشمند مدیریت ثروت</title>
+    <title id="page-title">Aurora Quant Platform | سامانه جامع مدیریت ثروت و تحلیل کوانت</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Chart.js for Interactive Financial Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Font Vazirmatn -->
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Vazirmatn', sans-serif; background-color: #05070b; color: #f3f4f6; }
-        .glass-panel { background: rgba(13, 17, 23, 0.9); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .sidebar-item:hover, .sidebar-item.active { background: rgba(56, 189, 248, 0.1); color: #38bdf8; border-right: 3px solid #38bdf8; }
+        body { font-family: 'Vazirmatn', sans-serif; background-color: #030712; color: #f3f4f6; }
+        .glass-panel { background: rgba(13, 17, 23, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .sidebar-btn:hover, .sidebar-btn.active { background: rgba(56, 189, 248, 0.12); color: #38bdf8; border-right: 4px solid #38bdf8; }
     </style>
 </head>
-<body class="min-h-screen flex">
+<body class="min-h-screen flex selection:bg-cyan-500 selection:text-white">
 
     <!-- Sidebar Navigation -->
     <aside class="w-64 glass-panel border-l border-gray-800 hidden md:flex flex-col justify-between p-6 z-20">
@@ -28,23 +32,23 @@
 
             <!-- Navigation Links -->
             <nav class="space-y-2 text-sm font-medium">
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl bg-cyan-500/10 text-cyan-400 border-r-4 border-cyan-400 text-right cursor-pointer">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl bg-cyan-500/10 text-cyan-400 border-r-4 border-cyan-400 text-right cursor-pointer transition">
                     <span>📊</span>
                     <span data-i18n="nav_dashboard">داشبورد مدیریت ثروت</span>
                 </button>
-                <button onclick="switchTab('smc')" id="nav-smc" class="w-full flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl text-gray-400 sidebar-item transition text-right cursor-pointer">
+                <button onclick="switchTab('smc')" id="nav-smc" class="w-full flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl text-gray-400 sidebar-btn text-right cursor-pointer transition">
                     <span>⚡</span>
                     <span data-i18n="nav_smc">تحلیل اسمارت‌مانی (SMC)</span>
                 </button>
-                <button onclick="switchTab('robo')" id="nav-robo" class="w-full flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl text-gray-400 sidebar-item transition text-right cursor-pointer">
+                <button onclick="switchTab('robo')" id="nav-robo" class="w-full flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl text-gray-400 sidebar-btn text-right cursor-pointer transition">
                     <span>🤖</span>
                     <span data-i18n="nav_robo">سبدگردان هوشمند (Robo)</span>
                 </button>
-                <button onclick="switchTab('stress')" id="nav-stress" class="w-full flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl text-gray-400 sidebar-item transition text-right cursor-pointer">
+                <button onclick="switchTab('stress')" id="nav-stress" class="w-full flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl text-gray-400 sidebar-btn text-right cursor-pointer transition">
                     <span>🛡️</span>
                     <span data-i18n="nav_stress">سناریوی بحران (Stress Test)</span>
                 </button>
-                <button onclick="switchTab('vault')" id="nav-vault" class="w-full flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl text-gray-400 sidebar-item transition text-right cursor-pointer">
+                <button onclick="switchTab('vault')" id="nav-vault" class="w-full flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl text-gray-400 sidebar-btn text-right cursor-pointer transition">
                     <span>🔒</span>
                     <span data-i18n="nav_vault">گاوصندوق امنیتی و 2FA</span>
                 </button>
@@ -52,9 +56,9 @@
         </div>
 
         <!-- Subscription Badge -->
-        <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800 text-center">
+        <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800 text-center shadow-inner">
             <span class="inline-block px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded-full font-bold mb-2" data-i18n="sub_active">پلن سازمانی (Active)</span>
-            <p class="text-xs text-gray-400" data-i18n="cloud_status">بروزرسانی ابری: فعال</p>
+            <p class="text-xs text-gray-400" data-i18n="cloud_status">بروزرسانی ابری: فعال (Live)</p>
         </div>
     </aside>
 
@@ -64,11 +68,11 @@
         <!-- Top Header with Language Switcher -->
         <header class="glass-panel border-b border-gray-800 px-8 py-4 flex justify-between items-center sticky top-0 z-10">
             <div class="flex items-center space-x-4 space-x-reverse">
-                <span class="text-xs text-gray-400"><span data-i18n="market_status">وضعیت بازار:</span> <strong class="text-emerald-400">● آنلاین (Aladdin & Bloomberg Sync)</strong></span>
+                <span class="text-xs text-gray-400"><span data-i18n="market_status">وضعیت بازار:</span> <strong class="text-emerald-400">● آنلاین (Bloomberg & Aladdin Feed)</strong></span>
             </div>
             
             <div class="flex items-center space-x-4 space-x-reverse">
-                <!-- Language Selector -->
+                <!-- Language Selector Dropdown -->
                 <select id="lang-switcher" onchange="changeLanguage(this.value)" class="bg-gray-900 border border-gray-700 text-cyan-400 text-xs rounded-xl px-3 py-2 outline-none cursor-pointer">
                     <option value="fa">فارسی (FA)</option>
                     <option value="en">English (EN)</option>
@@ -78,7 +82,7 @@
                 </select>
 
                 <div class="flex items-center space-x-3 space-x-reverse border-r border-gray-800 pr-4">
-                    <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-cyan-600 to-blue-700 flex items-center justify-center font-bold text-white text-sm">AT</div>
+                    <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-cyan-600 to-blue-700 flex items-center justify-center font-bold text-white text-sm shadow-md">AT</div>
                     <div class="text-right hidden sm:block">
                         <p class="text-xs font-bold text-white">امیرحسین انصاری</p>
                         <p class="text-[10px] text-cyan-400" data-i18n="user_role">مدیر ارشد ثروت (CEO)</p>
@@ -87,17 +91,18 @@
             </div>
         </header>
 
-        <!-- Dynamic Content Body -->
+        <!-- Main Body Dynamic Views -->
         <main class="flex-1 p-8 space-y-8 max-w-7xl w-full mx-auto">
 
-            <!-- Notification Banner -->
-            <div id="action-alert" class="hidden p-4 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs flex justify-between items-center animate-pulse">
+            <!-- Interactive Notification Banner -->
+            <div id="action-alert" class="hidden p-4 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs flex justify-between items-center animate-pulse shadow-lg">
                 <span id="alert-text">عملیات با موفقیت انجام شد.</span>
-                <button onclick="document.getElementById('action-alert').classList.add('hidden')" class="text-cyan-400 font-bold px-2">✕</button>
+                <button onclick="document.getElementById('action-alert').classList.add('hidden')" class="text-cyan-400 font-bold px-2 cursor-pointer">✕</button>
             </div>
 
-            <!-- TAB 1: DASHBOARD -->
+            <!-- TAB 1: DASHBOARD & INTERACTIVE CHARTS -->
             <div id="tab-dashboard" class="space-y-8">
+                <!-- Top Metric Cards Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="glass-panel rounded-2xl p-6 relative overflow-hidden shadow-xl">
                         <p class="text-gray-400 text-xs font-medium" data-i18n="card_aav">ارزش خالص دارایی‌ها (AAV)</p>
@@ -132,331 +137,11 @@
                         <p class="text-xs text-gray-400 mt-3 leading-relaxed" data-i18n="dxy_desc">جریان نقدینگی نهادی به سمت طلا و رمزارز هدایت شده است.</p>
                     </div>
                 </div>
-            </div>
 
-            <!-- TAB 2: SMC ANALYSIS -->
-            <div id="tab-smc" class="hidden space-y-6">
-                <div class="glass-panel rounded-2xl p-6 shadow-xl">
-                    <h3 class="text-white font-bold text-lg mb-2" data-i18n="nav_smc">تحلیل اسمارت‌مانی (SMC)</h3>
-                    <p class="text-xs text-gray-400 mb-6">شناسایی ساختار بازار، تغییر کاراکتر (CHoCH) و نقاط کنترل حجمی (POC)</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-xs font-bold text-cyan-400">XAUUSD (طلا)</span>
-                                <span class="text-[10px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-mono">CHOCH_BULLISH</span>
-                            </div>
-                            <p class="text-xs text-gray-400">تشخیص تغییر کاراکتر صعودی در محدوده عرضه. نقطه کنترل حجمی (POC): <strong class="text-white">$2,030.50</strong></p>
-                        </div>
-                        <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-xs font-bold text-purple-400">US30 (داو جونز)</span>
-                                <span class="text-[10px] bg-purple-500/10 text-purple-400 px-2 py-0.5 rounded font-mono">LIQUIDITY SWEEP</span>
-                            </div>
-                            <p class="text-xs text-gray-400">شناسایی تله اسمارت‌مانی بالای سقف قبلی و جمع‌آوری سفارش‌های فروش‌ستاپ (Sell-stops).</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 3: ROBO ADVISOR -->
-            <div id="tab-robo" class="hidden space-y-6">
-                <div class="glass-panel rounded-2xl p-6 shadow-xl">
-                    <div class="flex justify-between items-center mb-6">
-                        <div>
-                            <h3 class="text-white font-bold text-lg" data-i18n="robo_title">سبد اختصاصی پیشنهادی (Robo-Advisor Rebalancing)</h3>
-                            <p class="text-xs text-gray-400" data-i18n="robo_subtitle">تخصیص هوشمند دارایی‌ها بر اساس مدل برابری ریسک</p>
-                        </div>
-                        <button onclick="triggerAction('rebalance')" class="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-bold rounded-xl shadow-lg cursor-pointer">⚡ اجرا</button>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-right text-sm">
-                            <thead class="text-xs text-gray-400 uppercase border-b border-gray-800">
-                                <tr>
-                                    <th class="pb-3" data-i18n="th_asset">نماد / دارایی</th>
-                                    <th class="pb-3" data-i18n="th_weight">وزن هدف</th>
-                                    <th class="pb-3" data-i18n="th_status">وضعیت عمل</th>
-                                    <th class="pb-3 text-left" data-i18n="th_amount">مبلغ تعدیل ($)</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-800/60 text-gray-300">
-                                <tr>
-                                    <td class="py-4 font-semibold text-white">NVDA (سهم تکنولوژی)</td>
-                                    <td class="py-4 font-mono">30.0%</td>
-                                    <td class="py-4"><span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded font-bold" data-i18n="badge_buy">خرید (BUY)</span></td>
-                                    <td class="py-4 text-left font-mono text-emerald-400 font-bold">+$15,000.00</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-4 font-semibold text-white">XAUUSD (طلای جهانی)</td>
-                                    <td class="py-4 font-mono">20.0%</td>
-                                    <td class="py-4"><span class="px-2.5 py-1 bg-blue-500/10 text-blue-400 text-xs rounded font-bold" data-i18n="badge_adjust">تعدیل وزن</span></td>
-                                    <td class="py-4 text-left font-mono text-blue-400 font-bold">+$10,000.00</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 4: STRESS TEST -->
-            <div id="tab-stress" class="hidden space-y-6">
-                <div class="glass-panel rounded-2xl p-6 shadow-xl">
-                    <h3 class="text-white font-bold text-lg mb-2" data-i18n="nav_stress">سناریوی بحران (Stress Test Scenario)</h3>
-                    <p class="text-xs text-gray-400 mb-6">ارزیابی پایداری پرتفوی در برابر شوک‌های کلان (مدل BlackRock Aladdin)</p>
-                    <div class="space-y-4">
-                        <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800 flex justify-between items-center">
-                            <div>
-                                <p class="text-xs font-bold text-white">Global Liquidity Crunch</p>
-                                <p class="text-[11px] text-gray-400">ریزش ۱۵٪ بازارهای سهام و رشد ۸٪ طلا</p>
-                            </div>
-                            <span class="text-xs font-mono text-amber-400 font-bold">New AAV: $47,850 (-4.3%)</span>
-                        </div>
-                        <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800 flex justify-between items-center">
-                            <div>
-                                <p class="text-xs font-bold text-white">Systemic Tech Sell-off</p>
-                                <p class="text-[11px] text-gray-400">ریزش ۲۲٪ سهام تکنولوژی و ۳۰٪ رمزارز</p>
-                            </div>
-                            <span class="text-xs font-mono text-red-400 font-bold">New AAV: $41,400 (-17.2%)</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 5: VAULT & 2FA -->
-            <div id="tab-vault" class="hidden space-y-6">
-                <div class="glass-panel rounded-2xl p-6 shadow-xl">
-                    <h3 class="text-white font-bold text-lg mb-2" data-i18n="nav_vault">گاوصندوق امنیتی و احراز هویت 2FA</h3>
-                    <p class="text-xs text-gray-400 mb-6">حفاظت از کلیدهای API و امضای دیجیتال درخواست‌های نهادی (AES-256)</p>
-                    <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800 space-y-3">
-                        <div class="flex justify-between items-center text-xs">
-                            <span class="text-gray-400">وضعیت گاوصندوق:</span>
-                            <span class="text-emerald-400 font-bold">فعال و رمزنگاری‌شده (Secure)</span>
-                        </div>
-                        <div class="flex justify-between items-center text-xs">
-                            <span class="text-gray-400">کلید امضا (HMAC-SHA256):</span>
-                            <span class="text-cyan-400 font-mono">AURORA_SEC_9982x...</span>
-                        </div>
-                        <button onclick="triggerAction('vault')" class="mt-4 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-cyan-400 text-xs rounded-xl font-bold cursor-pointer">🔄 تولید توکن امنیتی جدید</button>
-                    </div>
-                </div>
-            </div>
-
-        </main>
-
-        <!-- Footer -->
-        <footer class="text-center py-6 text-xs text-gray-500 border-t border-gray-800 mt-auto" data-i18n="footer">
-            &copy; 2026 Aurora Quant Platform. تمامی حقوق محفوظ است. الهام گرفته از استانداردهای بلک‌راک و بلومبرگ.
-        </footer>
-
-    </div>
-
-    <!-- JavaScript Engine -->
-    <script>
-        const translations = {
-            fa: {
-                subtitle: "Institutional Wealth Tech",
-                nav_dashboard: "داشبورد مدیریت ثروت",
-                nav_smc: "تحلیل اسمارت‌مانی (SMC)",
-                nav_robo: "سبدگردان هوشمند (Robo)",
-                nav_stress: "سناریوی بحران (Stress Test)",
-                nav_vault: "گاوصندوق امنیتی و 2FA",
-                sub_active: "پلن سازمانی (Active)",
-                cloud_status: "بروزرسانی ابری: فعال",
-                market_status: "وضعیت بازار:",
-                user_role: "مدیر ارشد ثروت (CEO)",
-                card_aav: "ارزش خالص دارایی‌ها (AAV)",
-                monthly_return: "بازدهی ماهانه:",
-                card_risk: "شاخص‌های ریسک و شارپ",
-                sharpe_label: "نسبت شارپ (Sharpe)",
-                psych_label: "امتیاز روانشناسی",
-                risk_level: "مقاومت پرتفوی در برابر بحران: ایمن",
-                card_dxy: "همبستگی کلان (DXY)",
-                dxy_regime: "رژیم بازار: معکوس نرمال",
-                dxy_desc: "جریان نقدینگی نهادی به سمت طلا و رمزارز هدایت شده است.",
-                robo_title: "سبد اختصاصی پیشنهادی (Robo-Advisor)",
-                robo_subtitle: "تخصیص هوشمند دارایی‌ها بر اساس مدل برابری ریسک",
-                th_asset: "نماد / دارایی",
-                th_weight: "وزن هدف",
-                th_status: "وضعیت عمل",
-                th_amount: "مبلغ تعدیل ($)",
-                badge_buy: "خرید (BUY)",
-                badge_adjust: "تعدیل وزن",
-                footer: "© 2026 Aurora Quant Platform. تمامی حقوق محفوظ است.",
-                alert_rebalance: "موتور سبدگردان: بازتوزیع پرتفوی با موفقیت روی گره‌های ابری اعمال شد!",
-                alert_vault: "گاوصندوق امنیتی: توکن جدید با موفقیت صادر و امضا شد!"
-            },
-            en: {
-                subtitle: "Institutional Wealth Tech",
-                nav_dashboard: "Wealth Dashboard",
-                nav_smc: "Smart Money (SMC)",
-                nav_robo: "Robo-Advisor",
-                nav_stress: "Stress Test Scenario",
-                nav_vault: "Security Vault & 2FA",
-                sub_active: "Enterprise Plan (Active)",
-                cloud_status: "Cloud Sync: Active",
-                market_status: "Market Status:",
-                user_role: "Chief Wealth Officer (CEO)",
-                card_aav: "Net Asset Value (AAV)",
-                monthly_return: "Monthly Return:",
-                card_risk: "Risk & Sharpe Metrics",
-                sharpe_label: "Sharpe Ratio",
-                psych_label: "Psychometric Score",
-                risk_level: "Portfolio Stress Resilience: Safe",
-                card_dxy: "Macro Correlation (DXY)",
-                dxy_regime: "Regime: Normal Inverse",
-                dxy_desc: "Institutional liquidity is shifting towards gold and crypto.",
-                robo_title: "Robo-Advisor Portfolio Rebalancing",
-                robo_subtitle: "Smart asset allocation based on risk parity models",
-                th_asset: "Asset / Symbol",
-                th_weight: "Target Weight",
-                th_status: "Action Status",
-                th_amount: "Adjustment ($)",
-                badge_buy: "BUY",
-                badge_adjust: "ADJUST",
-                footer: "© 2026 Aurora Quant Platform. All rights reserved.",
-                alert_rebalance: "Robo Engine: Portfolio successfully rebalanced across cloud nodes!",
-                alert_vault: "Security Vault: New HMAC token successfully generated!"
-            },
-            ar: {
-                subtitle: "تكنولوجيا الثروة المؤسسية",
-                nav_dashboard: "لوحة تحكم الثروة",
-                nav_smc: "تحليل الأموال الذكية",
-                nav_robo: "المستشار الآلي",
-                nav_stress: "اختبار الإجهاد",
-                nav_vault: "خزنة الأمان و 2FA",
-                sub_active: "خطة المؤسسات (نشط)",
-                cloud_status: "مزامنة السحابة: نشط",
-                market_status: "حالة السوق:",
-                user_role: "رئيس تنفيذ الثروة",
-                card_aav: "صافي قيمة الأصول (AAV)",
-                monthly_return: "العائد الشهري:",
-                card_risk: "مقاييس المخاطر وشارپ",
-                sharpe_label: "نسبة شارپ",
-                psych_label: "نقاط السلوك النفسي",
-                risk_level: "مرونة المحفظة ضد الأزمات: آمن",
-                card_dxy: "ارتباط مؤشر الدولار (DXY)",
-                dxy_regime: "النظام: عكسي طبيعي",
-                dxy_desc: "تتدفق السيولة المؤسسية نحو الذهب والعملات الرقمية.",
-                robo_title: "إعادة توازن المحفظة بواسطة المستشار الآلي",
-                robo_subtitle: "تخصيص ذكي للأصول",
-                th_asset: "الأصل / الرمز",
-                th_weight: "الوزن المستهدف",
-                th_status: "حالة الإجراء",
-                th_amount: "التعديل ($)",
-                badge_buy: "شراء",
-                badge_adjust: "تعديل",
-                footer: "© 2026 Aurora Quant Platform. جميع الحقوق محفوظة.",
-                alert_rebalance: "محرك المستشار الآلي: تم إعادة توازن المحفظة بنجاح!",
-                alert_vault: "خزنة الأمان: تم توليد رمز جديد بنجاح!"
-            },
-            tr: {
-                subtitle: "Kurumsal Varlık Teknolojisi",
-                nav_dashboard: "Varlık Yönetim Paneli",
-                nav_smc: "Akıllı Para Analizi (SMC)",
-                nav_robo: "Robot Danışman (Robo)",
-                nav_stress: "Stres Testi Senaryosu",
-                nav_vault: "Güvenlik Kasası ve 2FA",
-                sub_active: "Kurumsal Plan (Aktif)",
-                cloud_status: "Bulut Senkronizasyonu: Aktif",
-                market_status: "Piyasa Durumu:",
-                user_role: "Baş Varlık Yöneticisi (CEO)",
-                card_aav: "Net Varlık Değeri (AAV)",
-                monthly_return: "Aylık Getiri:",
-                card_risk: "Risk ve Sharpe Metrikleri",
-                sharpe_label: "Sharpe Oranı",
-                psych_label: "Psikometrik Skor",
-                risk_level: "Portföy Kriz Direnci: Güvenli",
-                card_dxy: "Makro Korelasyon (DXY)",
-                dxy_regime: "Rejim: Normal Ters",
-                dxy_desc: "Kurumsal likidite altın ve kriptoya yöneliyor.",
-                robo_title: "Robot Danışman Portföy Dengelemesi",
-                robo_subtitle: "Risk eşitliği modeline göre akıllı varlık dağılımı",
-                th_asset: "Varlık / Sembol",
-                th_weight: "Hedef Ağırlık",
-                th_status: "İşlem Durumu",
-                th_amount: "Düzeltme ($)",
-                badge_buy: "AL",
-                badge_adjust: "AYARLA",
-                footer: "© 2026 Aurora Quant Platform. Tüm hakları saklıdır.",
-                alert_rebalance: "Robo Motoru: Portföy başarıyla dengeledi!",
-                alert_vault: "Güvenlik Kasası: Yeni anahtar başarıyla oluşturuldu!"
-            },
-            es: {
-                subtitle: "Tecnología de Riqueza Institucional",
-                nav_dashboard: "Panel de Riqueza",
-                nav_smc: "Dinero Inteligente (SMC)",
-                nav_robo: "Robo-Asesor",
-                nav_stress: "Prueba de Estrés",
-                nav_vault: "Bóveda de Seguridad y 2FA",
-                sub_active: "Plan Empresarial (Activo)",
-                cloud_status: "Sincronización en la nube: Activa",
-                market_status: "Estado del Mercado:",
-                user_role: "Director de Riqueza (CEO)",
-                card_aav: "Valor Neto de Activos (AAV)",
-                monthly_return: "Retorno Mensual:",
-                card_risk: "Métricas de Riesgo y Sharpe",
-                sharpe_label: "Ratio de Sharpe",
-                psych_label: "Puntuación Psicológica",
-                risk_level: "Resiliencia ante crisis: Segura",
-                card_dxy: "Correlación Macro (DXY)",
-                dxy_regime: "Régimen: Inverso Normal",
-                dxy_desc: "La liquidez institucional se dirige hacia el oro y las criptomonedas.",
-                robo_title: "Reequilibrio de Portafolio Robo-Advisor",
-                robo_subtitle: "Asignación inteligente de activos",
-                th_asset: "Activo / Símbolo",
-                th_weight: "Peso Objetivo",
-                th_status: "Estado de Acción",
-                th_amount: "Ajuste ($)",
-                badge_buy: "COMPRAR",
-                badge_adjust: "AJUSTAR",
-                footer: "© 2026 Aurora Quant Platform. Todos los derechos reservados.",
-                alert_rebalance: "Motor Robo: ¡Portafolio rebalanceado exitosamente!",
-                alert_vault: "Bóveda: ¡Token de seguridad generado con éxito!"
-            }
-        };
-
-        function switchTab(tabId) {
-            // Hide all tabs
-            ['dashboard', 'smc', 'robo', 'stress', 'vault'].forEach(t => {
-                document.getElementById('tab-' + t).classList.add('hidden');
-                const navBtn = document.getElementById('nav-' + t);
-                navBtn.classList.remove('bg-cyan-500/10', 'text-cyan-400', 'border-r-4', 'border-cyan-400');
-                navBtn.classList.add('text-gray-400');
-            });
-
-            // Show selected tab
-            document.getElementById('tab-' + tabId).classList.remove('hidden');
-            const activeBtn = document.getElementById('nav-' + tabId);
-            activeBtn.classList.add('bg-cyan-500/10', 'text-cyan-400', 'border-r-4', 'border-cyan-400');
-            activeBtn.classList.remove('text-gray-400');
-        }
-
-        function changeLanguage(lang) {
-            const t = translations[lang];
-            if (!t) return;
-
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (t[key]) el.textContent = t[key];
-            });
-
-            const htmlRoot = document.getElementById('html-root');
-            htmlRoot.setAttribute('dir', (lang === 'fa' || lang === 'ar') ? 'rtl' : 'ltr');
-        }
-
-        function triggerAction(type) {
-            const alertBox = document.getElementById('action-alert');
-            const alertText = document.getElementById('alert-text');
-            const currentLang = document.getElementById('lang-switcher').value;
-
-            if (type === 'rebalance' || type === 'vault') {
-                alertText.textContent = translations[currentLang]['alert_' + type];
-            } else {
-                alertText.textContent = "عملیات سیستم ابری با موفقیت پردازش شد.";
-            }
-
-            alertBox.classList.remove('hidden');
-            setTimeout(() => { alertBox.classList.add('hidden'); }, 5000);
-        }
-    </script>
-</body>
-</html>
+                <!-- Interactive Financial Charts Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Main Growth Line Chart -->
+                    <div class="glass-panel rounded-2xl p-6 lg:col-span-2 shadow-xl flex flex-col justify-between">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-white font-bold text-sm" data-i18n="chart_growth_title">روند رشد ارزش خالص دارایی‌ها (AAV Growth)</h3>
+                            <span class="text-xs text-cyan-400 font-mono bg-cyan-500/10 px-2.
