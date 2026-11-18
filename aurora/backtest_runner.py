@@ -8,6 +8,7 @@ from typing import Dict, List
 import hashlib
 import hmac
 import base64
+import sys
 
 
 # --- 1. Stress Testing Engine (Aladdin Style) ---
@@ -126,4 +127,8 @@ def execute_full_institutional_pipeline() -> None:
 
 
 if __name__ == "__main__":
-    execute_full_institutional_pipeline()
+    try:
+        execute_full_institutional_pipeline()
+    except Exception as e:
+        print(f"[ERROR] Pipeline execution failed: {e}")
+        sys.exit(1)
