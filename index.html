@@ -134,4 +134,434 @@
 
                     <div class="glass-card rounded-2xl p-5">
                         <div class="flex justify-between items-start">
-                            <p class="text-slate-400 text-xs">نسبت شارپ /
+                            <p class="text-slate-400 text-xs">نسبت شارپ / سورتینو</p>
+                            <span class="px-2 py-0.5 bg-cyan-500/10 text-cyan-400 text-[10px] rounded font-bold">نهادی</span>
+                        </div>
+                        <div class="text-2xl font-extrabold text-cyan-400 mt-2 font-mono">1.85 <span class="text-sm text-slate-400">/ 2.41</span></div>
+                        <p class="text-[11px] text-slate-400 mt-2">حداکثر افت سرمایه (MDD): <span class="text-amber-400 font-bold">3.1% (ایمن)</span></p>
+                    </div>
+
+                    <div class="glass-card rounded-2xl p-5">
+                        <div class="flex justify-between items-start">
+                            <p class="text-slate-400 text-xs">ریسک در معرض خطر (VaR 95%)</p>
+                            <span class="px-2 py-0.5 bg-blue-500/10 text-blue-400 text-[10px] rounded font-bold">Barra Model</span>
+                        </div>
+                        <div id="kpi-var" class="text-2xl font-extrabold text-white mt-2 font-mono">$840.00</div>
+                        <p class="text-[11px] text-slate-400 mt-2">سقف مجاز روزانه پراپ: <span class="text-emerald-400 font-bold">امن</span></p>
+                    </div>
+
+                    <div class="glass-card rounded-2xl p-5">
+                        <div class="flex justify-between items-start">
+                            <p class="text-slate-400 text-xs">همبستگی کلان (DXY)</p>
+                            <span class="px-2 py-0.5 bg-purple-500/10 text-purple-400 text-[10px] rounded font-bold">-0.68</span>
+                        </div>
+                        <div class="text-lg font-bold text-white mt-2">معکوس نرمال (Risk-On)</div>
+                        <p class="text-[11px] text-slate-400 mt-2">جریان نقدینگی: <span class="text-cyan-400 font-bold">ورود به طلا و نزدک</span></p>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="glass-card rounded-2xl p-6 lg:col-span-2">
+                        <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
+                            <div>
+                                <h3 class="text-white font-bold text-sm">مقایسه بازدهی پرتفوی آرورا در برابر شاخص S&P 500</h3>
+                                <p class="text-[11px] text-slate-400">عملکرد تجمعی بر اساس حجم دارایی فعال</p>
+                            </div>
+                            <span class="px-3 py-1 rounded-lg bg-cyan-500/10 text-cyan-400 text-xs font-mono">Alpha: +6.8%</span>
+                        </div>
+                        <div class="h-72 w-full">
+                            <canvas id="growthChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-white font-bold text-sm">تخصیص وزنی دارایی‌ها (Addepar View)</h3>
+                            <p class="text-[11px] text-slate-400 mb-4">توزیع سرمایه بر اساس وزن هدف</p>
+                        </div>
+                        <div class="h-60 w-full flex items-center justify-center">
+                            <canvas id="donutChart"></canvas>
+                        </div>
+                        <div class="text-center text-[11px] text-slate-400 pt-2 border-t border-slate-800">
+                            وضعیت تعادل: <span id="balance-badge" class="text-amber-400 font-bold">نیازمند بازتوزیع جزئی</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Portfolio Table -->
+                <div class="glass-card rounded-2xl p-6">
+                    <div class="flex flex-wrap justify-between items-center gap-4 mb-5">
+                        <div>
+                            <h3 class="text-white font-bold text-base">سبد اختصاصی پیشنهادی (Robo-Advisor Rebalancing)</h3>
+                            <p class="text-xs text-slate-400">تخصیص هوشمند دارایی‌ها بر اساس مدل برابری ریسک</p>
+                        </div>
+                        <button type="button" onclick="executeRebalance()" class="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 active:scale-95 text-white text-xs font-bold rounded-xl shadow-lg shadow-cyan-500/25 transition cursor-pointer flex items-center gap-2">
+                            <span>⚡</span>
+                            <span>اجرای خودکار بازتوزیع (Rebalance)</span>
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right text-xs sm:text-sm">
+                            <thead class="text-slate-400 border-b border-slate-800">
+                                <tr>
+                                    <th class="pb-3">نماد / دارایی</th>
+                                    <th class="pb-3">وزن فعلی</th>
+                                    <th class="pb-3">وزن هدف</th>
+                                    <th class="pb-3">وضعیت عمل</th>
+                                    <th class="pb-3 text-left">مبلغ تعدیل ($)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="portfolio-tbody" class="divide-y divide-slate-800/60"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= SECTION 2: PSYCHOMETRIC TEST ================= -->
+            <section id="sec-psych" class="hidden space-y-6">
+                <div class="glass-card rounded-2xl p-6 space-y-6">
+                    <div>
+                        <h2 class="text-white font-bold text-lg">🧠 تست روانشناسی و ارزیابی ریسک سرمایه‌گذار (Psychometric Risk Assessment)</h2>
+                        <p class="text-xs text-slate-400 mt-1">پیش از ورود به بازار و تعیین وزن سبد، پروفایل ریسک‌پذیری خود را مشخص کنید تا ربات بر اساس آن تصمیم بگیرد.</p>
+                    </div>
+
+                    <div class="space-y-5 p-5 rounded-2xl bg-slate-900 border border-slate-800">
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-cyan-400">۱. در صورت افت ۱۰ درصدی ارزش کل سبد سرمایه در یک هفته، واکنش شما چیست؟</label>
+                            <select id="q1" class="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl p-3 outline-none">
+                                <option value="conservative">فروش سریع دارایی‌ها برای جلوگیری از زیان بیشتر (محافظه‌کار)</option>
+                                <option value="balanced" selected>حفظ آرامش و بررسی موقعیت طبق برنامه (متعادل)</option>
+                                <option value="aggressive">خرید بیشتر و استفاده از فرصت اصلاح بازار (تهاجمی)</option>
+                            </select>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-cyan-400">۲. افق زمانی اصلی شما برای سرمایه‌گذاری و مدیریت ثروت چقدر است؟</label>
+                            <select id="q2" class="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl p-3 outline-none">
+                                <option value="short">کوتاه‌مدت (کمتر از ۶ ماه - نوسان‌گیری فعال)</option>
+                                <option value="medium" selected>میان‌مدت (۶ ماه تا ۲ سال)</option>
+                                <option value="long">بلندمدت (بالای ۲ سال - رشد مرکب نهادی)</option>
+                            </select>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-cyan-400">۳. هدف اصلی شما از ورود به پلتفرم آرورا چیست؟</label>
+                            <select id="q3" class="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl p-3 outline-none">
+                                <option value="preservation">حفظ ارزش پول در برابر تورم و ریسک پایین</option>
+                                <option value="growth" selected>رشد متوازن سرمایه همراه با مدیریت ریسک هوشمند</option>
+                                <option value="alpha">کسب حداکثر بازدهی و سودآوری سریع (پراپ تریدینگ)</option>
+                            </select>
+                        </div>
+
+                        <button type="button" onclick="submitPsychTest()" class="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-bold rounded-xl shadow-lg cursor-pointer">
+                            🚀 ثبت پروفایل روانشناسی و اعمال خودکار روی سبد
+                        </button>
+                    </div>
+
+                    <div id="psych-result-box" class="hidden p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 text-xs">
+                        <strong id="psych-result-title">نتیجه ارزیابی:</strong> پروفایل شما با موفقیت ثبت شد و وزن سبد دارایی‌ها به صورت خودکار بر اساس آن بهینه‌سازی گردید.
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= SECTION 3: SMC ANALYSIS ================= -->
+            <section id="sec-smc" class="hidden space-y-6">
+                <div class="glass-card rounded-2xl p-6">
+                    <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+                        <div>
+                            <h2 class="text-white font-bold text-lg">موتور تحلیل اسمارت‌مانی و پرایس‌اکشن نهادی (SMC)</h2>
+                            <p class="text-xs text-slate-400">تشخیص ساختار بازار، تغییر کاراکتر (CHoCH) و نقطه‌زنی در حجم معاملات</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button type="button" onclick="updateSmcChart('XAUUSD')" class="px-4 py-2 bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 text-xs font-bold rounded-xl cursor-pointer">طلا (XAUUSD)</button>
+                            <button type="button" onclick="updateSmcChart('US30')" class="px-4 py-2 bg-purple-500/20 border border-purple-500/40 text-purple-300 text-xs font-bold rounded-xl cursor-pointer">داو جونز (US30)</button>
+                        </div>
+                    </div>
+                    <div class="h-72 w-full mb-6 bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                        <canvas id="smcChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= SECTION 4: ROBO ADVISOR ================= -->
+            <section id="sec-robo" class="hidden space-y-6">
+                <div class="glass-card rounded-2xl p-6 space-y-6">
+                    <div>
+                        <h2 class="text-white font-bold text-lg">موتور بهینه‌سازی سبدگردان هوشمند (Robo-Advisor Presets)</h2>
+                        <p class="text-xs text-slate-400">انتخاب استراتژی کلان سرمایه‌گذاری</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-5 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                            <h4 class="text-xs font-bold text-cyan-400">محافظه‌کارانه (Conservative)</h4>
+                            <p class="text-xs text-slate-400">تمرکز بر طلا و دارایی‌های امن</p>
+                            <button type="button" onclick="applyPreset('conservative')" class="mt-2 w-full py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs rounded-lg cursor-pointer">اعمال ترکیب</button>
+                        </div>
+                        <div class="p-5 rounded-xl bg-slate-900 border border-cyan-500/40 space-y-2">
+                            <h4 class="text-xs font-bold text-emerald-400">متعادل نهادی (Balanced)</h4>
+                            <p class="text-xs text-slate-400">توازن استاندارد بین تکنولوژی و طلا</p>
+                            <button type="button" onclick="applyPreset('balanced')" class="mt-2 w-full py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold rounded-lg cursor-pointer">اعمال ترکیب</button>
+                        </div>
+                        <div class="p-5 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                            <h4 class="text-xs font-bold text-purple-400">رشد تهاجمی (Alpha Growth)</h4>
+                            <p class="text-xs text-slate-400">تمرکز بر سهام رشدپذیر و رمزارز</p>
+                            <button type="button" onclick="applyPreset('aggressive')" class="mt-2 w-full py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs rounded-lg cursor-pointer">اعمال ترکیب</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= SECTION 5: STRESS TEST ================= -->
+            <section id="sec-stress" class="hidden space-y-6">
+                <div class="glass-card rounded-2xl p-6 space-y-6">
+                    <div>
+                        <h2 class="text-white font-bold text-lg">شبیه‌ساز بحران و تست استرس کلان (Aladdin Engine)</h2>
+                        <p class="text-xs text-slate-400">سنجش پایداری سرمایه شما در برابر شوک‌های سیستماتیک بازار</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <div class="p-5 rounded-2xl bg-slate-900/90 border border-amber-500/30 space-y-3">
+                            <h4 class="text-sm font-bold text-white">بحران نقدینگی جهانی</h4>
+                            <button type="button" onclick="runStressSim('Global Liquidity Crunch', -4.3)" class="w-full py-2.5 bg-amber-500/20 text-amber-300 text-xs font-bold rounded-xl cursor-pointer">اجرای تست</button>
+                        </div>
+                        <div class="p-5 rounded-2xl bg-slate-900/90 border border-cyan-500/30 space-y-3">
+                            <h4 class="text-sm font-bold text-white">جهش ژئوپلیتیک طلا</h4>
+                            <button type="button" onclick="runStressSim('Geopolitical Gold Spike', -2.6)" class="w-full py-2.5 bg-cyan-500/20 text-cyan-300 text-xs font-bold rounded-xl cursor-pointer">اجرای تست</button>
+                        </div>
+                        <div class="p-5 rounded-2xl bg-slate-900/90 border border-rose-500/30 space-y-3">
+                            <h4 class="text-sm font-bold text-white">سقوط بخش تکنولوژی</h4>
+                            <button type="button" onclick="runStressSim('Systemic Tech Sell-off', -17.2)" class="w-full py-2.5 bg-rose-500/20 text-rose-300 text-xs font-bold rounded-xl cursor-pointer">اجرای تست</button>
+                        </div>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs flex justify-between">
+                        <span>نتیجه شبیه‌سازی:</span>
+                        <span id="stress-res-text" class="font-mono text-cyan-400 font-bold">آماده برای اجرا</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= SECTION 6: SECURITY VAULT ================= -->
+            <section id="sec-vault" class="hidden space-y-6">
+                <div class="glass-card rounded-2xl p-6 space-y-6">
+                    <div>
+                        <h2 class="text-white font-bold text-lg">گاوصندوق امنیت سازمانی و احراز هویت 2FA</h2>
+                        <p class="text-xs text-slate-400">حفاظت از کلیدهای API و امضای دیجیتال تراکنش‌ها</p>
+                    </div>
+                    <div class="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+                        <div class="flex justify-between text-xs">
+                            <span class="text-slate-400">امضای دیجیتال (HMAC):</span>
+                            <span id="vault-token" class="text-emerald-400 font-mono">AURORA_SEC_9F82_ACTIVE</span>
+                        </div>
+                        <button type="button" onclick="rotateSecurityKey()" class="py-2.5 px-4 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold rounded-xl cursor-pointer">🔄 چرخش کلید امنیتی</button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="text-center py-5 text-[11px] text-slate-500 border-t border-slate-800/80 mt-auto">
+            &copy; 2026 Aurora Quant Platform — طراحی شده برای عزیز انصاری.
+        </footer>
+    </div>
+
+    <!-- JavaScript Engine -->
+    <script>
+        let totalAAV = 50000;
+        let portfolioData = [
+            { symbol: 'NVDA (سهم تکنولوژی)', current: 22, target: 30, status: 'خرید (BUY)', badgeClass: 'bg-emerald-500/15 text-emerald-400' },
+            { symbol: 'NAS100 (شاخص فناوری)', current: 24, target: 30, status: 'خرید (BUY)', badgeClass: 'bg-emerald-500/15 text-emerald-400' },
+            { symbol: 'BTCUSDT (رمزارز مرجع)', current: 20, target: 20, status: 'حفظ (HOLD)', badgeClass: 'bg-cyan-500/15 text-cyan-400' },
+            { symbol: 'XAUUSD (طلای جهانی)', current: 34, target: 20, status: 'کاهش وزن (TRIM)', badgeClass: 'bg-amber-500/15 text-amber-400' }
+        ];
+
+        let growthChart, donutChart, smcChart;
+
+        function renderTable() {
+            const tbody = document.getElementById('portfolio-tbody');
+            tbody.innerHTML = portfolioData.map(item => {
+                const diffVal = ((item.target - item.current) / 100) * totalAAV;
+                const diffStr = (diffVal >= 0 ? '+$' : '-$') + Math.abs(diffVal).toLocaleString(undefined, {maximumFractionDigits: 0});
+                const diffClass = diffVal > 0 ? 'text-emerald-400' : (diffVal < 0 ? 'text-amber-400' : 'text-slate-400');
+                return `
+                    <tr class="hover:bg-slate-900/50 transition">
+                        <td class="py-3.5 font-bold text-white">${item.symbol}</td>
+                        <td class="py-3.5 font-mono text-slate-300">${item.current}%</td>
+                        <td class="py-3.5 font-mono text-cyan-400 font-bold">${item.target}%</td>
+                        <td class="py-3.5"><span class="px-2.5 py-1 rounded-lg text-xs font-bold ${item.badgeClass}">${item.status}</span></td>
+                        <td class="py-3.5 text-left font-mono font-bold ${diffClass}">${diffStr}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function showToast(message) {
+            const box = document.getElementById('toast-box');
+            document.getElementById('toast-msg').textContent = message;
+            box.classList.remove('hidden');
+            setTimeout(() => box.classList.add('hidden'), 5000);
+        }
+
+        // Change AAV dynamically
+        function promptChangeAAV() {
+            const newval = prompt("مقدار جدید ارزش خالص دارایی‌ها (AAV) را بر حسب دلار وارد کنید:", totalAAV);
+            if (newval && !isNaN(newval)) {
+                totalAAV = parseFloat(newval);
+                document.getElementById('kpi-aav').textContent = '$' + totalAAV.toLocaleString(undefined, {minimumFractionDigits: 2});
+                document.getElementById('kpi-var').textContent = '$' + (totalAAV * 0.0168).toLocaleString(undefined, {maximumFractionDigits: 2});
+                renderTable();
+                showToast('مبلغ کل دارایی با موفقیت به $' + totalAAV.toLocaleString() + ' به‌روز شد و تمام محاسبات جدول تطبیق یافت.');
+            }
+        }
+
+        // Psychometric Test Handler
+        function submitPsychTest() {
+            const riskLevel = document.getElementById('q1').value;
+            const box = document.getElementById('psych-result-box');
+            const title = document.getElementById('psych-result-title');
+            
+            box.classList.remove('hidden');
+            if (riskLevel === 'conservative') {
+                applyPreset('conservative');
+                title.textContent = "نتیجه تست (پروفایل محافظه‌کار): وزن طلا به ۵۰٪ افزایش یافت.";
+            } else if (riskLevel === 'aggressive') {
+                applyPreset('aggressive');
+                title.textContent = "نتیجه تست (پروفایل تهاجمی): وزن سهام تکنولوژی و رمزارز افزایش یافت.";
+            } else {
+                applyPreset('balanced');
+                title.textContent = "نتیجه تست (پروفایل متعادل نهادی): تخصیص سبد در حالت استاندارد تنظیم شد.";
+            }
+            showToast('تست روانشناسی تحلیل شد و وزن سبد دارایی‌ها به صورت خودکار بازتوزیع گردید.');
+        }
+
+        // Tab Navigation
+        function openSection(secId, btnElement) {
+            ['dashboard', 'psych', 'smc', 'robo', 'stress', 'vault'].forEach(id => {
+                document.getElementById('sec-' + id).classList.add('hidden');
+            });
+            document.querySelectorAll('.nav-btn').forEach(b => {
+                b.classList.remove('active');
+                b.classList.add('text-slate-400');
+            });
+
+            document.getElementById('sec-' + secId).classList.remove('hidden');
+            btnElement.classList.add('active');
+            btnElement.classList.remove('text-slate-400');
+
+            if (secId === 'smc' && !smcChart) initSmcChart();
+        }
+
+        function executeRebalance() {
+            portfolioData = portfolioData.map(item => ({
+                ...item,
+                current: item.target,
+                status: 'متعادل شد (SYNCED)',
+                badgeClass: 'bg-emerald-500/20 text-emerald-300'
+            }));
+            renderTable();
+            document.getElementById('balance-badge').textContent = 'کاملاً متعادل (100% Optimal)';
+            document.getElementById('balance-badge').className = 'text-emerald-400 font-bold';
+            showToast('بازتوزیع هوشمند انجام شد و تمام وزن‌ها به سطح هدف رسیدند.');
+        }
+
+        function applyPreset(type) {
+            if (type === 'conservative') {
+                portfolioData[0].target = 20; portfolioData[1].target = 20; portfolioData[2].target = 10; portfolioData[3].target = 50;
+            } else if (type === 'aggressive') {
+                portfolioData[0].target = 40; portfolioData[1].target = 30; portfolioData[2].target = 20; portfolioData[3].target = 10;
+            } else {
+                portfolioData[0].target = 30; portfolioData[1].target = 30; portfolioData[2].target = 20; portfolioData[3].target = 20;
+            }
+            renderTable();
+        }
+
+        function runStressSim(name, pct) {
+            const newVal = totalAAV * (1 + pct/100);
+            document.getElementById('stress-res-text').textContent = `سناریو: ${name} | ارزش جدید: $${newVal.toLocaleString(undefined, {maximumFractionDigits:0})} (${pct}%)`;
+            showToast('تست استرس روی سرمایه $' + totalAAV.toLocaleString() + ' محاسبه شد.');
+        }
+
+        function rotateSecurityKey() {
+            const rnd = Math.random().toString(16).substring(2, 12).toUpperCase();
+            document.getElementById('vault-token').textContent = 'AURORA_' + rnd + '_SECURE';
+            showToast('کلید امنیتی گاوصندوق با موفقیت چرخش یافت.');
+        }
+
+        // Language Switcher Dictionary & Logic
+        const dict = {
+            fa: { dash: "داشبورد مدیریت ثروت", psych: "تست روانشناسی و ریسک", smc: "تحلیل اسمارت‌مانی (SMC)", robo: "سبدگردان هوشمند (Robo)", stress: "سناریوی بحران (Aladdin)", vault: "گاوصندوق امنیتی و 2FA" },
+            en: { dash: "Wealth Dashboard", psych: "Psychometric & Risk", smc: "Smart Money (SMC)", robo: "Robo-Advisor", stress: "Stress Test (Aladdin)", vault: "Security Vault & 2FA" },
+            ar: { dash: "لوحة تحكم الثروة", psych: "اختبار السلوك والمخاطر", smc: "الأموال الذكية", robo: "المستشار الآلي", stress: "اختبار الإجهاد", vault: "خزنة الأمان" },
+            tr: { dash: "Varlık Paneli", psych: "Psikometrik Test", smc: "Akıllı Para (SMC)", robo: "Robot Danışman", stress: "Stres Testi", vault: "Güvenlik Kasası" },
+            es: { dash: "Panel de Riqueza", psych: "Test Psicométrico", smc: "Dinero Inteligente", robo: "Robo-Asesor", stress: "Prueba de Estrés", vault: "Bóveda de Seguridad" }
+        };
+
+        function switchLang(lang) {
+            const root = document.getElementById('html-root');
+            root.setAttribute('dir', (lang === 'fa' || lang === 'ar') ? 'rtl' : 'ltr');
+            const d = dict[lang] || dict['en'];
+            document.getElementById('txt-dash').textContent = d.dash;
+            document.getElementById('txt-psych').textContent = d.psych;
+            document.getElementById('txt-smc').textContent = d.smc;
+            document.getElementById('txt-robo').textContent = d.robo;
+            document.getElementById('txt-stress').textContent = d.stress;
+            document.getElementById('txt-vault').textContent = d.vault;
+            showToast('زبان رابط کاربری تغییر یافت (' + lang.toUpperCase() + ')');
+        }
+
+        function initCharts() {
+            const ctx1 = document.getElementById('growthChart').getContext('2d');
+            growthChart = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان'],
+                    datasets: [
+                        { label: 'پرتفوی آرورا', data: [42000, 43400, 44900, 46200, 47100, 48300, 49100, 50000], borderColor: '#38bdf8', fill: true, backgroundColor: 'rgba(56, 189, 248, 0.1)', tension: 0.3 }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#cbd5e1' } } } }
+            });
+
+            const ctx2 = document.getElementById('donutChart').getContext('2d');
+            donutChart = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['NVDA', 'NAS100', 'BTCUSDT', 'XAUUSD'],
+                    datasets: [{ data: [22, 24, 20, 34], backgroundColor: ['#34d399', '#38bdf8', '#818cf8', '#fbbf24'], borderWidth: 0 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '68%', plugins: { legend: { position: 'bottom', labels: { color: '#cbd5e1', size: 11 } } } }
+            });
+        }
+
+        function initSmcChart() {
+            const ctx3 = document.getElementById('smcChart').getContext('2d');
+            smcChart = new Chart(ctx3, {
+                type: 'line',
+                data: {
+                    labels: ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00'],
+                    datasets: [{ label: 'XAUUSD Price', data: [2028, 2031, 2025, 2021, 2034, 2036, 2042], borderColor: '#fbbf24', fill: true, backgroundColor: 'rgba(251, 191, 36, 0.1)' }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#cbd5e1' } } } }
+            });
+        }
+
+        function updateSmcChart(asset) {
+            if (!smcChart) initSmcChart();
+            if (asset === 'US30') {
+                smcChart.data.datasets[0].label = 'US30 Index';
+                smcChart.data.datasets[0].data = [38400, 38450, 38380, 38320, 38510, 38580, 38690];
+                smcChart.data.datasets[0].borderColor = '#a855f7';
+            } else {
+                smcChart.data.datasets[0].label = 'XAUUSD Price';
+                smcChart.data.datasets[0].data = [2028, 2031, 2025, 2021, 2034, 2036, 2042];
+                smcChart.data.datasets[0].borderColor = '#fbbf24';
+            }
+            smcChart.update();
+            showToast('نمودار SMC برای ' + asset + ' به‌روز شد.');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderTable();
+            initCharts();
+        });
+    </script>
+</body>
+</html>
