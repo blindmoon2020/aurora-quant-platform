@@ -31,4 +31,584 @@
 
             <nav id="app-nav" class="flex md:flex-col gap-2 text-sm locked-nav">
                 <button type="button" onclick="openSection('dashboard', this)" class="nav-btn active flex items-center gap-3 px-4 py-3.5 rounded-xl text-right">
-                    <span>📊</span> <span data-i18
+                    <span>📊</span> <span data-i18n="nav_dash">داشبورد مدیریت ثروت</span>
+                </button>
+                <button type="button" onclick="openSection('commodities', this)" class="nav-btn text-slate-400 flex items-center gap-3 px-4 py-3.5 rounded-xl text-right">
+                    <span>🌾</span> <span data-i18n="nav_comm">کامودیتی‌ها و بورس‌های جهان</span>
+                </button>
+                <button type="button" onclick="openSection('analysis', this)" class="nav-btn text-slate-400 flex items-center gap-3 px-4 py-3.5 rounded-xl text-right">
+                    <span>📈</span> <span data-i18n="nav_analysis">موتور تحلیل تکنیکال و فاندامنتال</span>
+                </button>
+                <button type="button" onclick="openSection('robo', this)" class="nav-btn text-slate-400 flex items-center gap-3 px-4 py-3.5 rounded-xl text-right">
+                    <span>🤖</span> <span data-i18n="nav_robo">سبدگردان هوشمند جهانی</span>
+                </button>
+                <button type="button" onclick="openSection('stress', this)" class="nav-btn text-slate-400 flex items-center gap-3 px-4 py-3.5 rounded-xl text-right">
+                    <span>🛡️</span> <span data-i18n="nav_stress">شبیه‌ساز بحران کلان (Aladdin)</span>
+                </button>
+            </nav>
+        </div>
+
+        <div class="hidden md:block mt-8 p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+            <div class="flex justify-between text-[11px] text-slate-400"><span data-i18n="status_label">وضعیت حافظه هسته:</span> <span id="access-status" class="text-amber-400 font-bold">نیازمند آزمون KYC</span></div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col min-w-0">
+        <header class="glass-card border-b border-slate-800/80 px-6 py-4 flex flex-wrap justify-between items-center gap-4 sticky top-0 z-20">
+            <div class="flex items-center gap-3">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping" id="header-dot"></span>
+                <span class="text-xs text-slate-350"><span data-i18n="sys_status">وضعیت سامانه:</span> <strong id="header-status-text" class="text-amber-400">تکمیل تست روانشناسی رفتاری الزامی است</strong></span>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <!-- Multi-Language Selector (8 Languages: FA, EN, DE, IT, RU, AR, TR, ES) -->
+                <select id="lang-select" onchange="switchLang(this.value)" class="bg-slate-900 border border-slate-700 text-cyan-400 text-xs font-semibold rounded-xl px-3.5 py-2 outline-none cursor-pointer">
+                    <option value="fa">🇮🇷 فارسی (FA)</option>
+                    <option value="en">🇺🇸 English (EN)</option>
+                    <option value="de">🇩🇪 Deutsch (DE)</option>
+                    <option value="it">🇮🇹 Italiano (IT)</option>
+                    <option value="ru">🇷🇺 Русский (RU)</option>
+                    <option value="ar">🇸🇦 العربية (AR)</option>
+                    <option value="tr">Türkçe (TR)</option>
+                    <option value="es">Español (ES)</option>
+                </select>
+
+                <div class="flex items-center gap-3 border-r border-slate-800 pr-4">
+                    <div class="text-right">
+                        <p class="text-xs font-bold text-white">عزیز انصاری</p>
+                        <p class="text-[10px] text-cyan-400" data-i18n="ceo_title">مدیرعامل و معمار پرتفوی (CEO)</p>
+                    </div>
+                    <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-700 flex items-center justify-center font-bold text-white text-xs shadow-md">EA</div>
+                </div>
+            </div>
+        </header>
+
+        <div id="toast-box" class="hidden mx-6 mt-5 p-4 rounded-xl bg-cyan-950/90 border border-cyan-500/40 text-cyan-200 text-xs flex justify-between items-center shadow-xl">
+            <span id="toast-msg">عملیات با موفقیت انجام شد.</span>
+            <button onclick="document.getElementById('toast-box').classList.add('hidden')" class="text-cyan-400 font-bold px-2 cursor-pointer">✕</button>
+        </div>
+
+        <main class="p-6 space-y-6 max-w-[1440px] w-full mx-auto">
+
+            <!-- MANDATORY DEEP PSYCHOMETRIC GATE -->
+            <section id="sec-mandatory-psych" class="space-y-6">
+                <div class="glass-card rounded-2xl p-8 space-y-6 border border-cyan-500/30">
+                    <div class="border-b border-slate-800 pb-4">
+                        <span class="px-3 py-1 bg-cyan-500/10 text-cyan-400 text-xs font-bold rounded-lg" data-i18n="gate_badge">دروازه امنیتی انطباق و اقتصاد رفتاری (CFA Standard)</span>
+                        <h2 class="text-white font-extrabold text-xl mt-3" data-i18n="gate_title">ارزیابی عمیق و ریزبینانه روانشناسی مالی و ظرفیت ریسک سرمایه‌گذار</h2>
+                        <p class="text-xs text-slate-400 mt-1" data-i18n="gate_desc">مطابق استانداردهای نهادی مدیریت ثروت، کاربر موظف است پیش از دسترسی به پنل و مدیریت دارایی‌ها، این تست تخصصی رفتارشناسی را تکمیل نماید.</p>
+                    </div>
+
+                    <div class="space-y-5">
+                        <!-- Q1 -->
+                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                            <label class="text-xs font-bold text-cyan-400" data-i18n="q1_text">۱. ظرفیت عینی نقدینگی و پس‌انداز اضطراری: در صورت وقوع یک بحران سیستماتیک و افت ۲۵ درصدی کل دارایی‌ها، منابع مالی جاری شما تا چه مدت هزینه‌های زندگی را بدون نیاز به نقد کردن سبد پوشش می‌دهد؟</label>
+                            <select id="deep-q1" class="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl p-3 outline-none">
+                                <option value="1" data-i18n="q1_opt1">کمتر از ۳ ماه (نیاز به نقدشوندگی بالا و ریسک‌پذیری بسیار محدود)</option>
+                                <option value="2" selected data-i18n="q1_opt2">بین ۳ تا ۱۲ ماه (دارای پشتوانه پس‌انداز متعادل و پایدار)</option>
+                                <option value="3" data-i18n="q1_opt3">بیش از ۱۲ ماه (پشتوانه مالی مستقل و مصون از شوک‌های نقدی کوتاه‌مدت)</option>
+                            </select>
+                        </div>
+
+                        <!-- Q2 -->
+                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                            <label class="text-xs font-bold text-cyan-400" data-i18n="q2_text">۲. آستانه تحمل عاطفی و استرس نوسان (Emotional Tolerance): واکنش عصب‌شناختی و غریزی شما هنگام مشاهده‌ی زیان موقت سنگین در پنل معاملاتی چیست؟</label>
+                            <select id="deep-q2" class="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl p-3 outline-none">
+                                <option value="1" data-i18n="q2_opt1">اضطراب شدید، بی‌خوابی و اقدام فوری برای بستن پوزیشن‌ها به قیمت بازار (محافظه‌کار افراطی)</option>
+                                <option value="2" selected data-i18n="q2_opt2">حفظ خونسردی، تحلیل منطقی روند و پایبندی به استراتژی بلندمدت (متعادل نهادی)</option>
+                                <option value="3" data-i18n="q2_opt3">استقبال از ریزش به‌عنوان فرصت طلایی خرید در کف و میانگین‌کم کردن (آلفا / تهاجمی)</option>
+                            </select>
+                        </div>
+
+                        <!-- Q3 -->
+                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                            <label class="text-xs font-bold text-cyan-400" data-i18n="q3_text">۳. سوگیری شناختی زیان‌گریزی (Loss Aversion): در روانشناسی مالی، درد ناشی از ضرر معادل دو برابر لذت سود است. رویکرد شما در مدیریت این سوگیری چیست؟</label>
+                            <select id="deep-q3" class="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl p-3 outline-none">
+                                <option value="1" data-i18n="q3_opt1">جلوگیری از هرگونه ضرر حتی با پذیرش سود بسیار ناچیز در حد تورم</option>
+                                <option value="2" selected data-i18n="q3_opt2">پذیرش نوسان منطقی در ازای کسب بازدهی مرکب و متوازن در بلندمدت</option>
+                                <option value="3" data-i18n="q3_opt3">تمرکز کامل بر سودآوری بالا و پذیرش ریسک ساختاری در دارایی‌های رشدپذیر</option>
+                            </select>
+                        </div>
+
+                        <!-- Q4 -->
+                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                            <label class="text-xs font-bold text-cyan-400" data-i18n="q4_text">۴. افق زمانی و تعهد نقدینگی (Time Horizon): بازه زمانی واقعی که می‌توانید بدون برداشت وجه، سرمایه خود را در چرخه رشد مرکب نگه دارید چقدر است؟</label>
+                            <select id="deep-q4" class="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl p-3 outline-none">
+                                <option value="1" data-i18n="q4_opt1">کمتر از ۶ ماه (نوسان‌گیری فعال و نیاز زودهنگام به وجه نقد)</option>
+                                <option value="2" selected data-i18n="q4_opt2">بین ۶ ماه تا ۲ سال (سرمایه‌گذاری میان‌مدت شرکتی)</option>
+                                <option value="3" data-i18n="q4_opt3">بالای ۲ سال (رشد بلندمدت نهادی بدون وابستگی به نقدینگی جاری)</option>
+                            </select>
+                        </div>
+
+                        <!-- Q5 -->
+                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                            <label class="text-xs font-bold text-cyan-400" data-i18n="q5_text">۵. ساختار ترجیحی تخصیص دارایی (Asset Preference): تمایل اصلی شما در مواجهه با تورم جهانی و بازار کامودیتی‌ها به کدام سمت است؟</label>
+                            <select id="deep-q5" class="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl p-3 outline-none">
+                                <option value="1" data-i18n="q5_opt1">تمرکز انحصاری بر دارایی‌های امن (طلا، گندم و اوراق کم‌ریسک دولتی)</option>
+                                <option value="2" selected data-i18n="q5_opt2">سبد ترکیبی متوازن بین انرژی، فلزات، کامودیتی‌های کشاورزی و شاخص‌های معتبر</option>
+                                <option value="3" data-i18n="q5_opt3">تمرکز بالا بر فناوری‌های نوین، رمزارز و کامودیتی‌های با نوسان و بازدهی بالا</option>
+                            </select>
+                        </div>
+
+                        <button onclick="submitDeepPsychTest()" class="w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:opacity-90 text-white text-sm font-extrabold rounded-xl shadow-xl cursor-pointer transition" data-i18n="gate_submit">
+                            ✅ ثبت تست روانشناسی رفتاری و گشایش دسترسی به پلتفرم کوانت
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- DASHBOARD SECTION (Hidden until test passed) -->
+            <section id="sec-dashboard" class="hidden space-y-6">
+                <!-- Currency & Capital Input Bar -->
+                <div class="glass-card rounded-2xl p-5 flex flex-wrap justify-between items-center gap-4 border border-cyan-500/30">
+                    <div>
+                        <p class="text-xs text-slate-400" data-i18n="curr_bar_desc">مدیریت دستی سرمایه و انتخاب واحد پولی (هسته حافظه دائم)</p>
+                        <h3 class="text-white font-bold text-base mt-1" data-i18n="curr_bar_title">ارزش خالص دارایی‌ها (AAV) و ارز پایه</h3>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <select id="currency-select" onchange="updateCurrencySymbol()" class="bg-slate-900 border border-slate-700 text-cyan-400 text-xs font-bold rounded-xl px-3.5 py-2.5 outline-none cursor-pointer">
+                            <option value="USD">دلار آمریکا (USD - $)</option>
+                            <option value="IRR">ریال ایران (IRR)</option>
+                            <option value="SAR">ریال عربستان (SAR)</option>
+                            <option value="EUR">یورو (EUR - €)</option>
+                            <option value="RUB">روبل روسیه (RUB - ₽)</option>
+                        </select>
+                        <input type="number" id="manual-aav-input" value="50000" class="bg-slate-950 border border-slate-700 text-white font-mono text-xs rounded-xl px-4 py-2.5 w-40 outline-none focus:border-cyan-500" placeholder="مبلغ دلخواه...">
+                        <button onclick="applyManualCapital()" class="px-4 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold rounded-xl cursor-pointer transition" data-i18n="apply_capital_btn">اعمال سرمایه</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+                    <div class="glass-card rounded-2xl p-5">
+                        <p class="text-slate-400 text-xs" data-i18n="dash_aav">سرمایه فعال ثبت‌شده (AAV)</p>
+                        <div id="kpi-aav" class="text-2xl font-extrabold text-white mt-2 font-mono">$50,000.00</div>
+                        <p class="text-[11px] text-slate-400 mt-2"><span data-i18n="dash_profile">پروفایل رفتاری:</span> <span id="profile-tag" class="text-cyan-400 font-bold">تایید شده توسط هسته</span></p>
+                    </div>
+                    <div class="glass-card rounded-2xl p-5">
+                        <p class="text-slate-400 text-xs" data-i18n="dash_div">شاخص تنوع‌بخشی جهانی</p>
+                        <div class="text-2xl font-extrabold text-cyan-400 mt-2 font-mono">98.5 / 100</div>
+                        <p class="text-[11px] text-slate-400 mt-2"><span data-i18n="dash_inflation">پوشش تورم کامودیتی:</span> <span class="text-emerald-400 font-bold">حرفه‌ای</span></p>
+                    </div>
+                    <div class="glass-card rounded-2xl p-5">
+                        <p class="text-slate-400 text-xs" data-i18n="dash_var">ریسک VaR (95%)</p>
+                        <div id="kpi-var" class="text-2xl font-extrabold text-white mt-2 font-mono">$650.00</div>
+                        <p class="text-[11px] text-slate-400 mt-2"><span data-i18n="dash_prop">انطباق پراپ:</span> <span class="text-emerald-400 font-bold">۱۰۰٪ امن</span></p>
+                    </div>
+                    <div class="glass-card rounded-2xl p-5">
+                        <p class="text-slate-400 text-xs" data-i18n="dash_gateways">درگاه‌های فعال صرافی</p>
+                        <div class="text-lg font-bold text-white mt-2">MT5, IBKR, Binance Live</div>
+                        <p class="text-[11px] text-slate-400 mt-2"><span data-i18n="dash_latency">تأخیر فید:</span> <span class="text-cyan-400 font-bold">&lt; 15ms</span></p>
+                    </div>
+                </div>
+
+                <!-- PORTFOLIO TABLE & REBALANCE -->
+                <div class="glass-card rounded-2xl p-6">
+                    <div class="flex flex-wrap justify-between items-center gap-4 mb-4">
+                        <h3 class="text-white font-bold text-base" data-i18n="table_title">سبد سرمایه‌گذاری تطبیق‌یافته با تست روانشناسی</h3>
+                        <button onclick="executeRebalance()" class="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-bold rounded-xl shadow-lg cursor-pointer hover:opacity-90 transition" data-i18n="rebalance_btn">⚡ اجرای بازتوزیع خودکار سبد</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right text-xs sm:text-sm">
+                            <thead class="text-slate-400 border-b border-slate-800">
+                                <tr>
+                                    <th class="pb-3" data-i18n="th_asset">نماد / کامودیتی جهانی</th>
+                                    <th class="pb-3" data-i18n="th_exchange">بورس مرجع</th>
+                                    <th class="pb-3" data-i18n="th_cur">وزن فعلی</th>
+                                    <th class="pb-3" data-i18n="th_target">وزن هدف</th>
+                                    <th class="pb-3 text-left" data-i18n="th_price">مبلغ تعدیل ارز پایه</th>
+                                </tr>
+                            </thead>
+                            <tbody id="portfolio-tbody" class="divide-y divide-slate-800/60"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- COMMODITIES SECTION -->
+            <section id="sec-commodities" class="hidden space-y-6">
+                <div class="glass-card rounded-2xl p-6 space-y-6">
+                    <h2 class="text-white font-bold text-lg" data-i18n="comm_header">🌾 پوشش جامع کامودیتی‌ها و بورس‌های جهان</h2>
+                    <p class="text-xs text-slate-400" data-i18n="comm_desc">دسترسی به فلزات گرانبها، انرژی، گندم، قهوه، زعفران و مشتقات پتروشیمی.</p>
+                </div>
+            </section>
+
+            <!-- TECHNICAL ANALYSIS SECTION -->
+            <section id="sec-analysis" class="hidden space-y-6">
+                <div class="glass-card rounded-2xl p-6 space-y-6">
+                    <h2 class="text-white font-bold text-lg" data-i18n="analysis_header">📈 موتور تحلیل چندبعدی (تکنیکال، SMC، فیبوناتچی و فاندامنتال)</h2>
+                    <p class="text-xs text-slate-400" data-i18n="analysis_desc">بررسی ساختار قیمت، گره‌های حمایتی و تقویم اخبار کلان اقتصادی.</p>
+                    <div class="h-64 w-full bg-slate-950 p-4 rounded-xl border border-slate-800 flex items-center justify-center text-cyan-400 font-mono text-xs" data-i18n="analysis_box">
+                        [ نمودار تحلیلی زنده Multi-Model فعال است ]
+                    </div>
+                </div>
+            </section>
+
+            <!-- ROBO ADVISOR SECTION -->
+            <section id="sec-robo" class="hidden space-y-6">
+                <div class="glass-card rounded-2xl p-6 space-y-6">
+                    <h2 class="text-white font-bold text-lg" data-i18n="robo_header">🤖 سبدگردان هوشمند جهانی (Risk Parity Engine)</h2>
+                    <p class="text-xs text-slate-400" data-i18n="robo_desc">مدیریت تخصیص سرمایه بر اساس مدل Markowitz و نتایج آزمون رفتاری.</p>
+                </div>
+            </section>
+
+            <!-- STRESS TEST SECTION -->
+            <section id="sec-stress" class="hidden space-y-6">
+                <div class="glass-card rounded-2xl p-6 space-y-6">
+                    <h2 class="text-white font-bold text-lg" data-i18n="stress_header">🛡️ شبیه‌ساز بحران کلان (Aladdin Engine)</h2>
+                    <p class="text-xs text-slate-400" data-i18n="stress_desc">ارزیابی پایداری پرتفوی در شوک‌های نقدینگی و ژئوپلیتیک.</p>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="text-center py-5 text-[11px] text-slate-500 border-t border-slate-800/80 mt-auto">
+            &copy; 2026 Aurora Quant Platform — طراحی شده برای عزیز انصاری.
+        </footer>
+    </div>
+
+    <!-- JavaScript & Multi-Language Universal Dictionary (8 Languages) -->
+    <script>
+        let currentCurrency = 'USD';
+        let currencySymbol = '$';
+        let totalAAV = 50000;
+        
+        let portfolioData = [
+            { symbol: 'XAUUSD (طلای جهانی)', exchange: 'COMEX', current: 25, target: 30, basePrice: 2045.50 },
+            { symbol: 'BRENT (نفت برنت)', exchange: 'ICE', current: 20, target: 20, basePrice: 82.10 },
+            { symbol: 'WHEAT (گندم استراتژیک)', exchange: 'CBOT', current: 15, target: 20, basePrice: 654.20 },
+            { symbol: 'COFFEE (قهوه عربیکا)', exchange: 'ICE', current: 15, target: 10, basePrice: 182.40 },
+            { symbol: 'SAFFRON (شاخص زعفران)', exchange: 'Middle East', current: 10, target: 10, basePrice: 1450.00 },
+            { symbol: 'NAS100 (شاخص فناوری)', exchange: 'NASDAQ', current: 15, target: 10, basePrice: 18250.0 }
+        ];
+
+        const dict = {
+            fa: {
+                nav_dash: "داشبورد مدیریت ثروت", nav_comm: "کامودیتی‌ها و بورس‌های جهان", nav_analysis: "موتور تحلیل تکنیکال و فاندامنتال", nav_robo: "سبدگردان هوشمند جهانی", nav_stress: "شبیه‌ساز بحران کلان (Aladdin)",
+                status_label: "وضعیت حافظه هسته:", access_req: "نیازمند آزمون KYC", access_ok: "● تایید شده (Verified)",
+                sys_status: "وضعیت امنیتی هسته:", header_locked: "تکمیل تست روانشناسی رفتاری الزامی است", header_unlocked: "تست روانشناسی رفتاری تایید شد • دسترسی کامل به ترمینال فعال است",
+                ceo_title: "مدیرعامل و معمار پرتفوی (CEO)",
+                gate_badge: "دروازه امنیتی انطباق و اقتصاد رفتاری (CFA Institute Standard)",
+                gate_title: "ارزیابی عمیق و ریزبینانه روانشناسی مالی و ظرفیت ریسک سرمایه‌گذار",
+                gate_desc: "مطابق استانداردهای نهادی مدیریت ثروت، کاربر موظف است پیش از دسترسی به پنل و مدیریت دارایی‌ها، این تست تخصصی رفتارشناسی را تکمیل نماید.",
+                q1_text: "۱. ظرفیت عینی نقدینگی و پس‌انداز اضطراری: در صورت وقوع یک بحران سیستماتیک و افت ۲۵ درصدی کل دارایی‌ها، منابع مالی جاری شما تا چه مدت هزینه‌های زندگی را بدون نیاز به نقد کردن سبد پوشش می‌دهد؟",
+                q1_opt1: "کمتر از ۳ ماه (نیاز به نقدشوندگی بالا و ریسک‌پذیری بسیار محدود)", q1_opt2: "بین ۳ تا ۱۲ ماه (دارای پشتوانه پس‌انداز متعادل و پایدار)", q1_opt3: "بیش از ۱۲ ماه (دارای پشتوانه مالی قوی و مستقل از سبد)",
+                q2_text: "۲. آستانه تحمل عاطفی و استرس نوسان (Emotional Tolerance): واکنش عصب‌شناختی و غریزی شما هنگام مشاهده‌ی زیان موقت سنگین در پنل معاملاتی چیست؟",
+                q2_opt1: "اضطراب شدید، بی‌خوابی و اقدام فوری برای بستن پوزیشن‌ها به قیمت بازار (محافظه‌کار افراطی)", q2_opt2: "حفظ خونسردی، تحلیل منطقی روند و پایبندی به استراتژی بلندمدت (متعادل نهادی)", q2_opt3: "استقبال از ریزش به‌عنوان فرصت طلایی خرید در کف و میانگین‌کم کردن (آلفا / تهاجمی)",
+                q3_text: "۳. سوگیری شناختی زیان‌گریزی (Loss Aversion): در روانشناسی مالی، درد ناشی از ضرر معادل دو برابر لذت سود است. رویکرد شما در مدیریت این سوگیری چیست؟",
+                q3_opt1: "جلوگیری از هرگونه ضرر حتی با پذیرش سود بسیار ناچیز در حد تورم", q3_opt2: "پذیرش نوسان منطقی در ازای کسب بازدهی مرکب و متوازن در بلندمدت", q3_opt3: "تمرکز کامل بر سودآوری بالا و پذیرش ریسک ساختاری در دارایی‌های رشدپذیر",
+                q4_text: "۴. افق زمانی و تعهد نقدینگی (Time Horizon): بازه زمانی واقعی که می‌توانید بدون برداشت وجه، سرمایه خود را در چرخه رشد مرکب نگه دارید چقدر است؟",
+                q4_opt1: "کمتر از ۶ ماه (نوسان‌گیری فعال و نیاز زودهنگام به وجه نقد)", q4_opt2: "بین ۶ ماه تا ۲ سال (سرمایه‌گذاری میان‌مدت شرکتی)", q4_opt3: "بالای ۲ سال (رشد بلندمدت نهادی بدون وابستگی به نقدینگی جاری)",
+                q5_text: "۵. ساختار ترجیحی تخصیص دارایی (Asset Preference): تمایل اصلی شما در مواجهه با تورم جهانی و بازار کامودیتی‌ها به کدام سمت است؟",
+                q5_opt1: "تمرکز انحصاری بر دارایی‌های امن (طلا، گندم و اوراق کم‌ریسک دولتی)", q5_opt2: "سبد ترکیبی متوازن بین انرژی، فلزات، کامودیتی‌های کشاورزی و شاخص‌های معتبر", q5_opt3: "تمرکز بالا بر فناوری‌های نوین، رمزارز و کامودیتی‌های با نوسان و بازدهی بالا",
+                gate_submit: "✅ ثبت تست روانشناسی رفتاری و گشایش دسترسی به پلتفرم کوانت",
+                curr_bar_desc: "مدیریت دستی سرمایه و انتخاب واحد پولی (هسته حافظه دائم)", curr_bar_title: "ارزش خالص دارایی‌ها (AAV) و ارز پایه", apply_capital_btn: "اعمال سرمایه",
+                dash_aav: "سرمایه فعال ثبت‌شده (AAV)", dash_profile: "پروفایل رفتاری:", dash_div: "شاخص تنوع‌بخشی جهانی", dash_inflation: "پوشش تورم کامودیتی:", dash_var: "ریسک VaR (95%)", dash_prop: "انطباق پراپ:", dash_gateways: "درگاه‌های فعال صرافی", dash_latency: "تأخیر فید:",
+                table_title: "سبد سرمایه‌گذاری تطبیق‌یافته با تست روانشناسی", rebalance_btn: "⚡ اجرای بازتوزیع خودکار سبد",
+                th_asset: "نماد / کامودیتی جهانی", th_exchange: "بورس مرجع", th_cur: "وزن فعلی", th_target: "وزن هدف", th_price: "مبلغ تعدیل ارز پایه",
+                comm_header: "🌾 پوشش جامع کامودیتی‌ها و بورس‌های جهان", comm_desc: "دسترسی به فلزات گرانبها، انرژی، گندم، قهوه، زعفران و مشتقات پتروشیمی.",
+                analysis_header: "📈 موتور تحلیل چندبعدی (تکنیکال، SMC، فیبوناتچی و فاندامنتال)", analysis_desc: "بررسی ساختار قیمت، گره‌های حمایتی و تقویم اخبار کلان اقتصادی.", analysis_box: "[ نمودار تحلیلی زنده Multi-Model فعال است ]",
+                robo_header: "🤖 سبدگردان هوشمند جهانی (Risk Parity Engine)", robo_desc: "مدیریت تخصیص سرمایه بر اساس مدل Markowitz و نتایج آزمون رفتاری.",
+                stress_header: "🛡️ شبیه‌ساز بحران کلان (Aladdin Engine)", stress_desc: "ارزیابی پایداری پرتفوی در شوک‌های نقدینگی و ژئوپلیتیک."
+            },
+            en: {
+                nav_dash: "Wealth Dashboard", nav_comm: "Global Commodities & Exchanges", nav_analysis: "Technical & Fundamental Engine", nav_robo: "Global Robo-Advisor", nav_stress: "Macro Stress Simulator (Aladdin)",
+                status_label: "Core Memory Status:", access_req: "KYC Assessment Required", access_ok: "● Verified & Authorized",
+                sys_status: "Core Security Status:", header_locked: "Mandatory behavioral psych test required", header_unlocked: "Behavioral psych test verified • Full terminal access active",
+                ceo_title: "Chief Wealth Officer (CEO)",
+                gate_badge: "Mandatory KYC & Behavioral Compliance Gate",
+                gate_title: "Deep Economic Psychometric & Risk Capacity Assessment (CFA Institute Standard)",
+                gate_desc: "According to institutional wealth governance laws, access to the trading terminal and robo-advisor requires completion of this behavioral questionnaire.",
+                q1_text: "1. Objective Liquidity Capacity: In the event of a systematic crisis and a 25% drop in total assets, how long can your current financial resources cover living expenses without liquidating?",
+                q1_opt1: "Less than 3 months (High liquidity need & strict risk limit)", q1_opt2: "3 to 12 months (Stable balanced savings buffer)", q1_opt3: "More than 12 months (Independent financial backing)",
+                q2_text: "2. Emotional Tolerance & Volatility Stress: What is your neuro-cognitive reaction when witnessing heavy temporary losses in the trading panel?",
+                q2_opt1: "Severe anxiety, insomnia, and panic closing of positions (Ultra-conservative)", q2_opt2: "Maintaining composure, rational trend analysis, and long-term discipline (Balanced)", q2_opt3: "Welcoming market drops as golden dip-buying opportunities (Alpha / Aggressive)",
+                q3_text: "3. Loss Aversion Cognitive Bias: In behavioral finance, loss pain equals twice the pleasure of gain. What is your management approach?",
+                q3_opt1: "Avoiding any loss even with minimal inflation-matching returns", q3_opt2: "Accepting logical volatility for long-term compound balanced growth", q3_opt3: "Focusing on high returns and accepting structural risk in growth assets",
+                q4_text: "4. Time Horizon & Liquidity Commitment: How long can you keep capital locked in compound growth without withdrawals?",
+                q4_opt1: "Less than 6 months (Active scalping & near-term cash need)", q4_opt2: "6 months to 2 years (Medium-term corporate investment)", q4_opt3: "Over 2 years (Long-term institutional compounding without cash dependency)",
+                q5_text: "5. Preferred Asset Allocation Structure: What is your primary preference regarding global inflation and commodities?",
+                q5_opt1: "Exclusive focus on safe assets (Gold, wheat, secure government bonds)", q5_opt2: "Balanced multi-asset basket (Energy, metals, agriculture, and major indices)", q5_opt3: "High focus on modern tech, crypto, and high-volatility growth commodities",
+                gate_submit: "✅ Confirm Behavioral Psych Test & Open Quant Platform",
+                curr_bar_desc: "Manual Capital Management & Currency Base (Persistent Core Memory)", curr_bar_title: "Net Asset Value (AAV) & Base Currency", apply_capital_btn: "Apply Capital",
+                dash_aav: "Active Registered Capital (AAV)", dash_profile: "Behavioral Profile:", dash_div: "Global Diversification Index", dash_inflation: "Commodity Inflation Hedge:", dash_var: "VaR Risk (95%)", dash_prop: "Prop Compliance:", dash_gateways: "Active Exchange Gateways", dash_latency: "Feed Latency:",
+                table_title: "Portfolio Adapted to Psychometric Profile", rebalance_btn: "⚡ Execute Auto-Rebalance",
+                th_asset: "Asset / Global Commodity", th_exchange: "Reference Exchange", th_cur: "Current Weight", th_target: "Target Weight", th_price: "Base Currency Adjustment ($)",
+                comm_header: "🌾 Comprehensive Global Commodities & Exchanges", comm_desc: "Access to live precious metals, energy, wheat, coffee, saffron, and petrochemical derivatives.",
+                analysis_header: "📈 Multi-Model Analysis Engine (Technical, SMC, Fibonacci, Fundamental)", analysis_desc: "Reviewing price structure, support nodes, and macroeconomic news calendar.", analysis_box: "[ Live Multi-Model Analytical Chart Active ]",
+                robo_header: "🤖 Global Robo-Advisor (Risk Parity Engine)", robo_desc: "Automated capital allocation management based on Markowitz model and behavioral test results.",
+                stress_header: "🛡️ Macro Stress Simulator (Aladdin Engine)", stress_desc: "Evaluating portfolio resilience under liquidity and geopolitical shocks."
+            },
+            de: {
+                nav_dash: "Vermögens-Dashboard", nav_comm: "Globale Rohstoffe & Börsen", nav_analysis: "Technische & Fundamentale Engine", nav_robo: "Globaler Robo-Advisor", nav_stress: "Makro-Stresstest (Aladdin)",
+                status_label: "Kernspeicher-Status:", access_req: "KYC-Bewertung erforderlich", access_ok: "● Verifiziert & Autorisiert",
+                sys_status: "Kern-Sicherheitsstatus:", header_locked: "Obligatorischer Verhaltens-Psychotest erforderlich", header_unlocked: "Psychologischer Test verifiziert • Voller Terminalzugriff aktiv",
+                ceo_title: "Chief Wealth Officer (CEO)",
+                gate_badge: "Obligatorisches KYC- & Verhaltens-Compliance-Tor",
+                gate_title: "Tiefgehende ökonomische psychometrische Risiko- & Kapazitätsbewertung (CFA-Standard)",
+                gate_desc: "Gemäß institutionellen Vermögensverwaltungsrichtlinien ist der Zugriff auf das Handelsterminal an diesen Fragebogen gebunden.",
+                q1_text: "1. Objektive Liquiditätskapazität: Wie lange können Ihre Finanzmittel im Krisenfall die Lebenshaltungskosten decken?",
+                q1_opt1: "Weniger als 3 Monate", q1_opt2: "3 bis 12 Monate", q1_opt3: "Mehr als 12 Monate",
+                q2_text: "2. Emotionale Toleranz: Wie ist Ihre instinktive Reaktion bei vorübergehenden Verlusten im Handelspanel?",
+                q2_opt1: "Schwere Angst und panikartiges Schließen von Positionen", q2_opt2: "Rationale Trendanalyse und langfristige Disziplin", q2_opt3: "Begrüßung von Markteinbrüchen als Kaufchance",
+                q3_text: "3. Verlustaversion: Wie gehen Sie mit kognitiven Verzerrungen um?",
+                q3_opt1: "Vermeidung jeglichen Verlusts", q3_opt2: "Akzeptanz logischer Volatilität für langfristiges Wachstum", q3_opt3: "Fokus auf hohe Rendite in Wachstumsanlagen",
+                q4_text: "4. Zeithorizont: Wie lange können Sie Kapital in Zinseszins-Zyklen halten?",
+                q4_opt1: "Unter 6 Monaten", q4_opt2: "6 Monate bis 2 Jahre", q4_opt3: "Über 2 Jahre",
+                q5_text: "5. Bevorzugte Allokation: Was ist Ihre Präferenz bezüglich Rohstoffen?",
+                q5_opt1: "Fokus auf sichere Anlagen", q5_opt2: "Ausgewogener Multi-Asset-Korb", q5_opt3: "Fokus auf Technologie und Krypto",
+                gate_submit: "✅ Psychometrischen Test bestätigen & Plattform öffnen",
+                curr_bar_desc: "Manuelles Kapitalmanagement & Basiswährung", curr_bar_title: "Nettoinventarwert (AAV) & Basiswährung", apply_capital_btn: "Kapital anwenden",
+                dash_aav: "Aktives registriertes Kapital (AAV)", dash_profile: "Verhaltensprofil:", dash_div: "Globaler Diversifikationsindex", dash_inflation: "Rohstoff-Inflationshedge:", dash_var: "VaR-Risiko (95%)", dash_prop: "Prop-Compliance:", dash_gateways: "Aktive Börsen-Gateways", dash_latency: "Feed-Latenz:",
+                table_title: "An das psychometrische Profil angepasstes Portfolio", rebalance_btn: "⚡ Auto-Rebalancing ausführen",
+                th_asset: "Anlage / Rohstoff", th_exchange: "Referenzbörse", th_cur: "Aktuelles Gewicht", th_target: "Zielgewicht", th_price: "Basiswährungsanpassung",
+                comm_header: "🌾 Globale Rohstoffe & Börsen", comm_desc: "Echtzeit-Feed für Metalle, Energie, Weizen, Kaffee und Safran.",
+                analysis_header: "📈 Technische & Fundamentale Engine", analysis_desc: "Überprüfung der Preisstruktur und des Wirtschaftskalenders.", analysis_box: "[ Live Analyse-Chart aktiv ]",
+                robo_header: "🤖 Globaler Robo-Advisor", robo_desc: "Automatisierte Allokationsverwaltung basierend auf dem Markowitz-Modell.",
+                stress_header: "🛡️ Makro-Stresstest-Simulator", stress_desc: "Bewertung der Portfoliostabilität."
+            },
+            it: {
+                nav_dash: "Cruscotto Patrimoniale", nav_comm: "Materie Prime Globali", nav_analysis: "Engine Tecnica & Fondamentale", nav_robo: "Robo-Advisor Globale", nav_stress: "Simulatore di Stress (Aladdin)",
+                status_label: "Stato Memoria:", access_req: "Valutazione KYC Richiesta", access_ok: "● Verificato & Autorizzato",
+                sys_status: "Stato Sicurezza:", header_locked: "Test psicologico comportamentale obbligatorio", header_unlocked: "Test psicometrico verificato • Pieno accesso attivo",
+                ceo_title: "Chief Wealth Officer (CEO)",
+                gate_badge: "Portale Obbligatorio KYC & Conformità Comportamentale",
+                gate_title: "Valutazione Profonda Psicometria Economica & Capacità di Rischio (Standard CFA)",
+                gate_desc: "Secondo le normative di gestione patrimoniale, l'accesso al terminale richiede il completamento di questo questionario.",
+                q1_text: "1. Capacità di Liquidità: In caso di crisi e calo del 25%, per quanto tempo le risorse possono coprire le spese?",
+                q1_opt1: "Meno di 3 mesi", q1_opt2: "Da 3 a 12 mesi", q1_opt3: "Oltre 12 mesi",
+                q2_text: "2. Tolleranza Emotiva: Qual è la tua reazione di fronte a perdite temporanee?",
+                q2_opt1: "Ansia severa e chiusura rapida", q2_opt2: "Compostezza e analisi razionale", q2_opt3: "Opportunità di acquisto sui minimi",
+                q3_text: "3. Avversione alle Perdite: Come gestisci il rischio di perdita?",
+                q3_opt1: "Evitare qualsiasi perdita", q3_opt2: "Accettare volatilità logica per crescita a lungo termine", q3_opt3: "Focus su rendimenti elevati e asset di crescita",
+                q4_text: "4. Orizzonte Temporale: Per quanto tempo puoi vincolare il capitale?",
+                q4_opt1: "Meno di 6 mesi", q4_opt2: "Da 6 mesi a 2 anni", q4_opt3: "Oltre 2 anni",
+                q5_text: "5. Preferenza di Asset Allocation: Qual è la tua preferenza per l'inflazione?",
+                q5_opt1: "Focus esclusivo su asset sicuri (oro, grano)", q5_opt2: " paniere multi-asset bilanciato", q5_opt3: "Focus su tecnologia e cripto",
+                gate_submit: "✅ Conferma Test Psicometrico & Apri Piattaforma",
+                curr_bar_desc: "Gestione Manuale del Capitale & Valuta Base", curr_bar_title: "Valore Netto Attivo (AAV) & Valuta Base", apply_capital_btn: "Applica Capitale",
+                dash_aav: "Capitale Registrato Attivo (AAV)", dash_profile: "Profilo Comportamentale:", dash_div: "Indice di Diversificazione Globale", dash_inflation: "Copertura Inflazione:", dash_var: "Rischio VaR (95%)", dash_prop: "Conformità Prop:", dash_gateways: "Gateway Attivi", dash_latency: "Latenza:",
+                table_title: "Portafoglio Adattato al Profilo Psicometrico", rebalance_btn: "⚡ Esegui Riequilibrio Automatico",
+                th_asset: "Asset / Materia Prima", th_exchange: "Borsa di Riferimento", th_cur: "Peso Attuale", th_target: "Peso Obiettivo", th_price: "Regolazione Valuta Base",
+                comm_header: "🌾 Materie Prime e Borse Globali", comm_desc: "Accesso a metalli preziosi, energia, grano, caffè e zafferano.",
+                analysis_header: "📈 Engine di Analisi Tecnica e Fondamentale", analysis_desc: "Revisione della struttura dei prezzi e calendario macroeconomico.", analysis_box: "[ Grafico Analitico Live Attivo ]",
+                robo_header: "🤖 Robo-Advisor Globale (Risk Parity Engine)", robo_desc: "Gestione automatizzata basata sul modello Markowitz.",
+                stress_header: "🛡️ Simulatore di Stress Macro (Aladdin Engine)", stress_desc: "Valutazione della resilienza del portafoglio."
+            },
+            ru: {
+                nav_dash: "Панель управления", nav_comm: "Мировые сырьевые рынки", nav_analysis: "Технический и фундаментальный анализ", nav_robo: "Глобальный робо-советник", nav_stress: "Макро-стресс (Aladdin)",
+                status_label: "Статус памяти:", access_req: "Требуется оценка KYC", access_ok: "● Проверено",
+                sys_status: "Безопасность:", header_locked: "Обязательный поведенческий тест", header_unlocked: "Психологический тест пройден • Полный доступ активен",
+                ceo_title: "Главный управляющий (CEO)",
+                gate_badge: "Обязательный шлюз KYC и поведенческого соответствия",
+                gate_title: "Глубокая экономико-психометрическая оценка риска (Стандарт CFA)",
+                gate_desc: "Согласно правилам институционального управления, доступ к терминалу требует заполнения анкеты.",
+                q1_text: "1. Объективная емкость ликвидности: При кризисе и падении активов на 25%, как долго ваши ресурсы покроют расходы?",
+                q1_opt1: "Менее 3 месяцев", q1_opt2: "От 3 до 12 месяцев", q1_opt3: "Более 12 месяцев",
+                q2_text: "2. Эмоциональная толерантность: Ваша реакция при временных убытках в торговой панели?",
+                q2_opt1: "Сильная тревога и паническое закрытие позиций", q2_opt2: "Сохранение хладнокровия и дисциплины", q2_opt3: "Восприятие падений как возможностей для покупки",
+                q3_text: "3. Неприятие потерь: Ваш подход к управлению когнитивными искажениями?",
+                q3_opt1: "Избежание любых потерь", q3_opt2: "Принятие логичной волатильности для роста", q3_opt3: "Фокус на высокой доходности",
+                q4_text: "4. Временной горизонт: Как долго вы можете удерживать капитал?",
+                q4_opt1: "Менее 6 месяцев", q4_opt2: "От 6 месяцев до 2 лет", q4_opt3: "Более 2 лет",
+                q5_text: "5. Предпочтительное распределение: Ваше отношение к сырьевой инфляции?",
+                q5_opt1: "Фокус на безопасные активы", q5_opt2: "Сбалансированная мультикатегорийная корзина", q5_opt3: "Фокус на технологии и крипто",
+                gate_submit: "✅ Подтвердить тест и открыть платформу",
+                curr_bar_desc: "Ручное управление капиталом и базовая валюта", curr_bar_title: "Чистая стоимость активов (AAV)", apply_capital_btn: "Применить",
+                dash_aav: "Активный капитал (AAV)", dash_profile: "Профиль:", dash_div: "Индекс диверсификации", dash_inflation: "Хедж инфляции:", dash_var: "Риск VaR (95%)", dash_prop: "Соответствие:", dash_gateways: "Шлюзы", dash_latency: "Задержка:",
+                table_title: "Портфель под психометрический профиль", rebalance_btn: "⚡ Выполнить ребалансировку",
+                th_asset: "Актив / Сырье", th_exchange: "Биржа", th_cur: "Текущий вес", th_target: "Целевой вес", th_price: "Корректировка валюты",
+                comm_header: "🌾 Мировые сырьевые рынки", comm_desc: "Металлы, энергия, пшеница, кофе, шафран.",
+                analysis_header: "📈 Технический и фундаментальный анализ", analysis_desc: "Структура цен и календарь новостей.", analysis_box: "[ График активен ]",
+                robo_header: "🤖 Глобальный робо-советник", robo_desc: "Автоматизированное распределение.",
+                stress_header: "🛡️ Макро-стресс симулятор", stress_desc: "Оценка устойчивости."
+            },
+            ar: {
+                nav_dash: "لوحة تحكم الثروة", nav_comm: "السلع والأسواق العالمية", nav_analysis: "تحليل فني وأساسي", nav_robo: "المستشار الآلي العالمي", nav_stress: "محاكي الإجهاد (Aladdin)",
+                status_label: "حالة الذاكرة:", access_req: "تقييم KYC مطلوب", access_ok: "● تم التحقق",
+                sys_status: "حالة الأمان:", header_locked: "الاختبار النفسي السلوكي إلزامي", header_unlocked: "تم التحقق من الاختبار النفسي • الوصول الكامل نشط",
+                ceo_title: "رئيس تنفيذ الثروة (CEO)",
+                gate_badge: "بوابة الامتثال السلوكي الإلزامي KYC",
+                gate_title: "تقييم عميق لعلم النفس الاقتصادي وقدرة المخاطر (معيار CFA)",
+                gate_desc: "وفقاً لقواعد إدارة الثروات المؤسسية، يتطلب الوصول إلى المنصة إكمال هذا الاستبيان.",
+                q1_text: "1. القدرة المالية الموضوعية: في حالة حدوث أزمة وانخفاض بنسبة 25%، إلى متى تغطي مواردك النفقات؟",
+                q1_opt1: "أقل من 3 أشهر", q1_opt2: "من 3 إلى 12 شهراً", q1_opt3: "أكثر من 12 شهراً",
+                q2_text: "2. التسامح العاطفي: ما هي ردة فعل غريزتك عند خسائر مؤقتة؟",
+                q2_opt1: "قلق شديد وإغلاق سريع للفقاعات", q2_opt2: "حفظ الهدوء والانضباط على المدى الطويل", q2_opt3: "الترحيب بالانخفاضات كفرصة شراء",
+                q3_text: "3. تجنب الخسارة: ما هو نهجك في إدارة التحيز المعرفي؟",
+                q3_opt1: "تجنب أي خسارة", q3_opt2: "قبول التقلبات المنطقية للنمو المركب", q3_opt3: "التركيز على العائد المرتفع",
+                q4_text: "4. الأفق الزمني: إلى متى يمكنك الاحتفاظ برأس المال دون سحب؟",
+                q4_opt1: "أقل من 6 أشهر", q4_opt2: "من 6 أشهر إلى سنتين", q4_opt3: "أكثر من سنتين",
+                q5_text: "5. هيكل تخصيص الأصول المفضل: ما هو توجهك نحو تضخم السلع؟",
+                q5_opt1: "التركيز الحصري على الأصول الآمنة (الذهب، القمح)", q5_opt2: "سلة متوازنة متعددة الأصول", q5_opt3: "التركيز العالي على التكنولوجيا والعملات الرقمية",
+                gate_submit: "✅ تأكيد الاختبار النفسي وفتح المنصة",
+                curr_bar_desc: "إدارة رأس المال اليدوية وعملة الأساس", curr_bar_title: "صافي قيمة الأصول (AAV)", apply_capital_btn: "تطبيق رأس المال",
+                dash_aav: "رأس المال النشط المسجل (AAV)", dash_profile: "الملف السلوكي:", dash_div: "مؤشر التنويع العالمي", dash_inflation: "تحوط التضخم:", dash_var: "مخاطر VaR (95%)", dash_prop: "توافق البروب:", dash_gateways: "البوابات النشطة", dash_latency: "سرعة التحديث:",
+                table_title: "محفظة متوافقة مع الملف النفسي", rebalance_btn: "⚡ تنفيذ إعادة التوازن التلقائي",
+                th_asset: "الأصل / السلعة", th_exchange: "البورصة المرجعية", th_cur: "الوزن الحالي", th_target: "الوزن المستهدف", th_price: "تعديل عملة الأساس",
+                comm_header: "🌾 السلع والأسواق العالمية", comm_desc: "الوصول المباشر للمعادن الثمينة، الطاقة، القمح، والقهوة.",
+                analysis_header: "📈 تحليل فني وأساسي متعدد النماذج", analysis_desc: "مراجعة هياكل الأسعار والتقويم الاقتصادي.", analysis_box: "[ الرسم البياني التحليلي نشط ]",
+                robo_header: "🤖 المستشار الآلي العالمي", robo_desc: "إدارة تخصيص رأس المال استناداً إلى نموذج Markowitz.",
+                stress_header: "🛡️ محاكي الإجهاد الكلي", stress_desc: "تقييم مرونة المحفظة."
+            },
+            tr: {
+                nav_dash: "Varlık Paneli", nav_comm: "Küresel Emtia & Borsalar", nav_analysis: "Teknik ve Temel Analiz Motoru", nav_robo: "Küresel Robot Danışman", nav_stress: "Makro Stres Simülatörü",
+                status_label: "Çekirdek Bellek:", access_req: "KYC Değerlendirmesi Gerekli", access_ok: "● Doğrulandı",
+                sys_status: "Güvenlik Durumu:", header_locked: "Zorunlu psikolojik test gereklidir", header_unlocked: "Psikolojik test doğrulandı • Tam erişim aktif",
+                ceo_title: "CEO & Portföy Mimarı",
+                gate_badge: "Zorunlu KYC & Davranışsal Uyumluluk Kapısı",
+                gate_title: "Derin Ekonomik Psikometrik ve Risk Kapasitesi Değerlendirmesi (CFA Standardı)",
+                gate_desc: "Kurumsal varlık yönetimi kurallarına göre işlem terminaline erişim bu anketi gerektirir.",
+                q1_text: "1. Likidite Kapasitesi: Sistemik bir krizde %25 düşüş olursa, mevcut kaynaklarınız masrafları ne kadar süre karşılar?",
+                q1_opt1: "3 aydan az", q1_opt2: "3 ila 12 ay arası", q1_opt3: "12 aydan fazla",
+                q2_text: "2. Duygusal Tolerans: Geçici zararlar gördüğümüzde tepkiniz nedir?",
+                q2_opt1: "Şiddetli kaygı ve panikle pozisyon kapatma", q2_opt2: "Soğukkanlılık ve uzun vadeli disiplin", q2_opt3: "Düşüşleri alım fırsatı olarak görme",
+                q3_text: "3. Kayıp Korkusu: Bilişsel önyargı yönetiminiz nasıldır?",
+                q3_opt1: "Her türlü zarardan kaçınmak", q3_opt2: "Uzun vadeli büyüme için mantıklı volatilitesini kabul etmek", q3_opt3: "Yüksek getiriye odaklanmak",
+                q4_text: "4. Zaman Ufku: Sermayenizi ne kadar süre bağlı tutabilirsiniz?",
+                q4_opt1: "6 aydan az", q4_opt2: "6 ay - 2 yıl arası", q4_opt3: "2 yıldan fazla",
+                q5_text: "5. Tercih Edilen Dağılım: Emtia enflasyonuna yaklaşımınız nedir?",
+                q5_opt1: "Güvenli varlık odaklı", q5_opt2: "Dengeli çoklu varlık sepeti", q5_opt3: "Teknoloji ve kripto odaklı",
+                gate_submit: "✅ Psikometrik Testi Onayla ve Platformu Aç",
+                curr_bar_desc: "Manuel Sermaye Yönetimi ve Baz Para Birimi", curr_bar_title: "Net Varlık Değeri (AAV)", apply_capital_btn: "Sermayeyi Uygula",
+                dash_aav: "Aktif Kayıtlı Sermaye (AAV)", dash_profile: "Davranışsal Profil:", dash_div: "Küresel Çeşitlendirme Endeksi", dash_inflation: "Emtia Enflasyon Korunması:", dash_var: "VaR Riski (95%)", dash_prop: "Prop Uyumluluk:", dash_gateways: "Aktif Borsalar", dash_latency: "Gecikme:",
+                table_title: "Psikometrik Profile Uyarlanmış Portföy", rebalance_btn: "⚡ Otomatik Dengelemeyi Çalıştır",
+                th_asset: "Varlık / Emtia", th_exchange: "Referans Borsa", th_cur: "Mevcut Ağırlık", th_target: "Hedef Ağırlık", th_price: "Baz Para Ayarı",
+                comm_header: "🌾 Küresel Emtia ve Borsalar", comm_desc: "Değerli metaller, enerji, buğday, kahve, safran.",
+                analysis_header: "📈 Teknik ve Temel Analiz Motoru", analysis_desc: "Fiyat yapısı ve ekonomik takvim.", analysis_box: "[ Canlı Grafik Aktif ]",
+                robo_header: "🤖 Küresel Robot Danışman", robo_desc: "Markowitz modeline dayalı otomatik tahsis.",
+                stress_header: "🛡️ Makro Stres Simülatörü", stress_desc: "Portföy direncini değerlendirin."
+            },
+            es: {
+                nav_dash: "Panel de Riqueza", nav_comm: "Materias Primas Globales", nav_analysis: "Motor Técnico y Fundamental", nav_robo: "Robo-Asesor Global", nav_stress: "Simulador de Estrés (Aladdin)",
+                status_label: "Estado de Memoria:", access_req: "Evaluación KYC Requerida", access_ok: "● Verificado y Autorizado",
+                sys_status: "Seguridad:", header_locked: "Test psicológico obligatorio", header_unlocked: "Test psicométrico verificado • Acceso completo activo",
+                ceo_title: "Director Ejecutivo (CEO)",
+                gate_badge: "Puerta Obligatoria KYC y Cumplimiento Comportamental",
+                gate_title: "Evaluación Profunda de Psicometría Económica y Capacidad de Riesgo (Estándar CFA)",
+                gate_desc: "Según las leyes de gestión patrimonial, el acceso a la terminal requiere completar este cuestionario.",
+                q1_text: "1. Capacidad Financiera Objetiva: En caso de crisis y una caída del 25%, ¿cuánto tiempo cubren sus recursos los gastos?",
+                q1_opt1: "Menos de 3 meses", q1_opt2: "De 3 a 12 meses", q1_opt3: "Más de 12 meses",
+                q2_text: "2. Tolerancia Emocional y Estrés: ¿Cuál es su reacción ante pérdidas temporales en el panel?",
+                q2_opt1: "Ansiedad severa y cierre apresurado", q2_opt2: "Calma, análisis racional y disciplina a largo plazo", q2_opt3: "Bienvenida a las caídas como oportunidad de compra",
+                q3_text: "3. Aversión al Riesgo: ¿Cómo gestiona este sesgo cognitivo?",
+                q3_opt1: "Evitar cualquier pérdida", q3_opt2: "Aceptar volatilidad lógica para crecimiento compuesto", q3_opt3: "Enfoque en altos rendimientos",
+                q4_text: "4. Horizonte Temporal: ¿Cuánto tiempo puede mantener capital en crecimiento?",
+                q4_opt1: "Menos de 6 meses", q4_opt2: "De 6 meses a 2 años", q4_opt3: "Más de 2 años",
+                q5_text: "5. Asignación de Activos Preferida: ¿Cuál es su enfoque ante la inflación?",
+                q5_opt1: "Enfoque exclusivo en activos seguros (oro, trigo)", q5_opt2: "Cesta multi-activo equilibrada", q5_opt3: "Enfoque en tecnología y cripto",
+                gate_submit: "✅ Confirmar Test Psicométrico y Abrir Plataforma",
+                curr_bar_desc: "Gestión Manual de Capital y Moneda Base", curr_bar_title: "Valor Neto de Activos (AAV)", apply_capital_btn: "Aplicar Capital",
+                dash_aav: "Capital Registrado Activo (AAV)", dash_profile: "Perfil Comportamental:", dash_div: "Índice de Diversificación Global", dash_inflation: "Cobertura de Inflación:", dash_var: "Riesgo VaR (95%)", dash_prop: "Cumplimiento Prop:", dash_gateways: "Gateways Activos", dash_latency: "Latencia:",
+                table_title: "Portafolio Adaptado al Perfil Psicométrico", rebalance_btn: "⚡ Ejecutar Reequilibrio Automático",
+                th_asset: "Activo / Materia Prima", th_exchange: "Bolsa de Referencia", th_cur: "Peso Actual", th_target: "Peso Objetivo", th_price: "Ajuste de Moneda Base",
+                comm_header: "🌾 Materias Primas y Bolsas Globales", comm_desc: "Metales preciosos, energía, trigo, café, azafrán.",
+                analysis_header: "📈 Motor Técnico y Fundamental", analysis_desc: "Estructura de precios y calendario macro.", analysis_box: "[ Gráfico Activo ]",
+                robo_header: "🤖 Robo-Asesor Global", robo_desc: "Gestión automatizada basada en Markowitz.",
+                stress_header: "🛡️ Simulador de Estrés Macro", stress_desc: "Evaluación de resiliencia."
+            }
+        };
+
+        function renderTable() {
+            const tbody = document.getElementById('portfolio-tbody');
+            tbody.innerHTML = portfolioData.map(item => {
+                const diffVal = Math.abs(((item.target - item.current) / 100) * totalAAV);
+                const diffStr = (item.target >= item.current ? '+' : '-') + diffVal.toLocaleString(undefined, {maximumFractionDigits: 0}) + ' ' + currencySymbol;
+                return `
+                    <tr class="hover:bg-slate-900/50 transition">
+                        <td class="py-3.5 font-bold text-white">${item.symbol}</td>
+                        <td class="py-3.5 text-slate-400 text-xs">${item.exchange}</td>
+                        <td class="py-3.5 font-mono text-slate-300">${item.current}%</td>
+                        <td class="py-3.5 font-mono text-cyan-400 font-bold">${item.target}%</td>
+                        <td class="py-3.5 text-left font-mono text-emerald-400 font-bold">${diffStr}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function showToast(msg) {
+            const box = document.getElementById('toast-box');
+            document.getElementById('toast-msg').textContent = msg;
+            box.classList.remove('hidden');
+            setTimeout(() => box.classList.add('hidden'), 5000);
+        }
+
+        // FULLY OPERATIONAL DEEP PSYCHOMETRIC SUBMISSION & UNLOCK GATE
+        function submitDeepPsychTest() {
+            const q2Val = document.getElementById('deep-q2').value;
+            
+            // Unlock Sidebar Navigation
+            document.getElementById('app-nav').classList.remove('locked-nav');
+
+            // Update Header Status based on selected language
+            const currentLang = document.getElementById('lang-select').value;
+            const t = dict[currentLang] || dict['en'];
+
+            document.getElementById('header-dot').className = "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping";
+            document.getElementById('header-status-text').className = "text-emerald-400";
+            document.getElementById('header-status-text').textContent = t.header_unlocked;
+            document.getElementById('access-status').textContent = t.access_ok;
+            document.getElementById('access-status').className = "text-emerald-400 font-bold";
+
+            // Adjust Portfolio based on behavior score
+            if (q2Val === '1') {
+                document.getElementById('profile-tag').textContent = currentLang === 'fa' ? "محافظه‌کار افراطی (امنیت حداکثری)" : "Ultra-Conservative (Max Safety)";
+                portfolioData[0].target = 45; portfolioData[2].target = 25; portfolioData[5].target = 5;
+            } else if (q2Val === '3') {
+                document.getElementById('profile-tag').textContent = currentLang === 'fa' ? "تهاجمی / آلفا (رشد بالا در نوسان)" : "Aggressive / Alpha (High Growth)";
+                portfolioData[0].target = 10; portfolioData[5].target = 40;
+            } else {
+                document.getElementById('profile-tag').textContent = currentLang === 'fa' ? "متعادل نهادی (Balanced)" : "Balanced Institutional";
+            }
+
+            renderTable();
+
+            // Hide Gate and Show Dashboard
+            document.getElementById('sec-mandatory-psych').classList.add('hidden');
+            document.getElementById('sec-dashboard').classList.remove('hidden');
+
+            showToast(currentLang === 'fa' ? 'پروفایل روانشناسی مالی با موفقیت در هسته ثبت و سبد سرمایه بهینه شد.' : 'Behavioral psych profile successfully registered.');
+        }
+
+        function executeRebalance() {
+            portfolioData = portfolioData.map(item => ({ ...item, current: item.target }));
+            renderTable();
+            showToast('بازتوزیع خودکار سبد جهانی با موفقیت اجرا شد.');
+        }
+
+        function openSection(secId, btn) {
+            ['dashboard', 'commodities', 'analysis', 'robo', 'stress'].forEach(id => {
+                const el = document.getElementById('sec-' + id);
+                if(el) el.classList.add('hidden');
+            });
+            document.querySelectorAll('.nav-btn').forEach(b => {
+                b.classList.remove('active');
+                b.classList.add('text-slate-400');
+            });
+            const targetSec = document.getElementById('sec-' + secId);
+            if(targetSec) targetSec.classList.remove('hidden');
+            btn.classList.add('active');
+            btn.classList.remove('text-slate-400');
+        }
+
+        // UNIVERSAL GLOBAL LANGUAGE SWITCHER (Works anywhere, anytime, including the test gate)
+        function switchLang(lang) {
+            const root = document.getElementById('html-root');
+            root.setAttribute('dir', (lang === 'fa' || lang === 'ar') ? 'rtl' : 'ltr');
+            const t = dict[lang] || dict['en'];
+            
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) el.textContent = t[key];
+            });
+
+            renderTable();
+            showToast(lang === 'de' ? 'Sprache aktualisiert: Deutsch' : (lang === 'it' ? 'Lingua aggiornata: Italiano' : 'Language updated: ' + lang.toUpperCase()));
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderTable();
+        });
+    </script>
+</body>
+</html>
