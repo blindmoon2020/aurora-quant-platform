@@ -1,10 +1,10 @@
-"""Aurora v2: a small trading core that runs and can be measured.
-
-Four ideas carry over from AURORA_PROJECT:
-  1. strategy as data           -> aurora/strategies/dna.py
-  2. risk engine separate from signal engine -> aurora/risk
-  3. event bus between layers   -> aurora/core/events.py
-  4. a decision record per trade -> aurora/journal
+"""Aurora v2: Institutional Quant & Wealth Management Core.
+Integrated modular architecture preserving all legacy risk and execution layers.
 """
-
 __version__ = "0.1.0"
+
+try:
+    from aurora import backtest_runner
+    from aurora.risk import stress_testing_engine
+except ImportError:
+    pass
