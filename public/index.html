@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aurora Quant Platform | سامانه جامع مدیریت ثروت نهادی و امنیت سایبری سطح سازمانی</title>
+    <title>Aurora Quant Platform | سامانه جامع مدیریت ثروت نهادی و هوش مالی چندبازاری</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -18,14 +18,14 @@
 </head>
 <body class="min-h-screen flex flex-col md:flex-row">
 
-    <!-- Sidebar Menu -->
+    <!-- Sidebar Menu (Locked until KYC pass) -->
     <aside class="w-full md:w-72 glass-card border-b md:border-b-0 md:border-l border-slate-800/80 flex flex-col justify-between p-5 z-30 shrink-0">
         <div>
             <div class="flex items-center gap-3 mb-8 pb-4 border-b border-slate-800/80">
                 <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-cyan-400 via-blue-600 to-indigo-700 flex items-center justify-center font-extrabold text-xl text-white shadow-lg">A</div>
                 <div>
                     <h1 class="font-extrabold text-lg tracking-wider text-white">AURORA <span class="text-cyan-400">QUANT</span></h1>
-                    <p class="text-[10px] text-slate-400">Enterprise Security Core v3.0</p>
+                    <p class="text-[10px] text-slate-400">Institutional Multi-Asset Core</p>
                 </div>
             </div>
 
@@ -33,20 +33,17 @@
                 <button type="button" onclick="openSection('dashboard', this)" class="nav-btn active flex items-center gap-3 px-4 py-3.5 rounded-xl text-right">
                     <span>📊</span> <span data-i18n="nav_dash">داشبورد مدیریت ثروت</span>
                 </button>
-                <button type="button" onclick="openSection('security', this)" class="nav-btn text-slate-400 flex items-center gap-3 px-4 py-3.5 rounded-xl text-right">
-                    <span>🔒</span> <span data-i18n="nav_security">امنیت سازمانی، Vault و Zero-Trust</span>
-                </button>
-                <button type="button" onclick="openSection('commodities', this)" class="nav-btn text-slate-400 flex items-center gap-3 px-4 py-3.5 rounded-xl text-right">
-                    <span>🌾</span> <span data-i18n="nav_comm">کامودیتی‌ها و بورس‌های جهان</span>
-                </button>
                 <button type="button" onclick="openSection('analysis', this)" class="nav-btn text-slate-400 flex items-center gap-3 px-4 py-3.5 rounded-xl text-right">
-                    <span>📈</span> <span data-i18n="nav_analysis">موتور تحلیل تکنیکال و فاندامنتال</span>
+                    <span>📈</span> <span data-i18n="nav_analysis">موتور تحلیل تخصصی بازارها (Gold/Oil/Agri)</span>
+                </button>
+                <button type="button" onclick="openSection('security', this)" class="nav-btn text-slate-400 flex items-center gap-3 px-4 py-3.5 rounded-xl text-right">
+                    <span>🔒</span> <span data-i18n="nav_security">امنیت سازمانی و رمزنگاری Vault</span>
                 </button>
                 <button type="button" onclick="openSection('robo', this)" class="nav-btn text-slate-400 flex items-center gap-3 px-4 py-3.5 rounded-xl text-right">
-                    <span>🤖</span> <span data-i18n="nav_robo">سبدگردان هوشمند (Aladdin/Markowitz)</span>
+                    <span>🤖</span> <span data-i18n="nav_robo">سبدگردان هوشمند (Risk Parity)</span>
                 </button>
                 <button type="button" onclick="openSection('stress', this)" class="nav-btn text-slate-400 flex items-center gap-3 px-4 py-3.5 rounded-xl text-right">
-                    <span>🛡️</span> <span data-i18n="nav_stress">شبیه‌ساز بحران کلان (Monte Carlo)</span>
+                    <span>🛡️</span> <span data-i18n="nav_stress">شبیه‌ساز بحران کلان (Aladdin)</span>
                 </button>
             </nav>
         </div>
@@ -65,7 +62,7 @@
             </div>
 
             <div class="flex items-center gap-4">
-                <!-- Multi-Language Selector (10 Languages: FA, EN, DE, IT, FR, ZH, RU, AR, TR, ES) -->
+                <!-- 10 Languages Selector -->
                 <select id="lang-select" onchange="switchLang(this.value)" class="bg-slate-900 border border-slate-700 text-cyan-400 text-xs font-semibold rounded-xl px-3.5 py-2 outline-none cursor-pointer">
                     <option value="fa">🇮🇷 فارسی (FA)</option>
                     <option value="en">🇺🇸 English (EN)</option>
@@ -101,58 +98,31 @@
                 <div class="glass-card rounded-2xl p-8 space-y-6 border border-cyan-500/30">
                     <div class="border-b border-slate-800 pb-4">
                         <span class="px-3 py-1 bg-cyan-500/10 text-cyan-400 text-xs font-bold rounded-lg" data-i18n="gate_badge">دروازه امنیتی انطباق و اقتصاد رفتاری (CFA Standard)</span>
-                        <h2 class="text-white font-extrabold text-xl mt-3" data-i18n="gate_title">ارزیابی عمیق و ریزبینانه روانشناسی مالی و ظرفیت ریسک سرمایه‌گذار</h2>
-                        <p class="text-xs text-slate-400 mt-1" data-i18n="gate_desc">مطابق قوانین امنیت سازمانی، پیش از گشایش پایانه معاملاتی و دسترسی به خزانه، تکمیل این ارزیابی الزامی است.</p>
+                        <h2 class="text-white font-extrabold text-xl mt-3" data-i18n="gate_title">ارزیابی عمیق روانشناسی مالی و ظرفیت ریسک سرمایه‌گذار چندبازاری</h2>
+                        <p class="text-xs text-slate-400 mt-1" data-i18n="gate_desc">مطابق استانداردهای نهادی، تکمیل این پرسشنامه رفتارشناسی جهت تنظیم الگوریتم تحلیل طلا، نفت و سهام الزامی است.</p>
                     </div>
 
                     <div class="space-y-5">
                         <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                            <label class="text-xs font-bold text-cyan-400" data-i18n="q1_text">۱. ظرفیت عینی نقدینگی و پس‌انداز اضطراری: در صورت وقوع بحران و افت ۲۵ درصدی دارایی‌ها، منابع مالی جاری شما تا چه مدت هزینه‌ها را پوشش می‌دهد؟</label>
+                            <label class="text-xs font-bold text-cyan-400">۱. ظرفیت عینی نقدینگی و پس‌انداز اضطراری در مواجهه با نوسانات کامودیتی‌ها:</label>
                             <select id="deep-q1" class="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl p-3 outline-none">
-                                <option value="1" data-i18n="q1_opt1">کمتر از ۳ ماه (نیاز به نقدشوندگی بالا)</option>
-                                <option value="2" selected data-i18n="q1_opt2">بین ۳ تا ۱۲ ماه (پس‌انداز متعادل)</option>
-                                <option value="3" data-i18n="q1_opt3">بیش از ۱۲ ماه (پشتوانه مالی مستقل)</option>
+                                <option value="1">کمتر از ۳ ماه (نیاز به نقدشوندگی و ریسک‌پذیری محدود)</option>
+                                <option value="2" selected>بین ۳ تا ۱۲ ماه (پس‌انداز متعادل شرکتی)</option>
+                                <option value="3">بیش از ۱۲ ماه (پشتوانه مستقل و بلندمدت)</option>
                             </select>
                         </div>
 
                         <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                            <label class="text-xs font-bold text-cyan-400" data-i18n="q2_text">۲. آستانه تحمل عاطفی و استرس نوسان: واکنش غریزی شما هنگام مشاهده زیان موقت در پنل معاملاتی چیست؟</label>
+                            <label class="text-xs font-bold text-cyan-400">۲. آستانه تحمل عاطفی هنگام افت موقت قیمت طلا یا شاخص‌های سهام:</label>
                             <select id="deep-q2" class="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl p-3 outline-none">
-                                <option value="1" data-i18n="q2_opt1">اضطراب شدید و بستن فوری پوزیشن‌ها</option>
-                                <option value="2" selected data-i18n="q2_opt2">حفظ خونسردی و پایبندی به استراتژی بلندمدت</option>
-                                <option value="3" data-i18n="q2_opt3">استقبال از ریزش به‌عنوان فرصت طلایی خرید در کف</option>
-                            </select>
-                        </div>
-
-                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                            <label class="text-xs font-bold text-cyan-400" data-i18n="q3_text">۳. سوگیری زیان‌گریزی (Loss Aversion): رویکرد شما در مدیریت ریسک چیست؟</label>
-                            <select id="deep-q3" class="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl p-3 outline-none">
-                                <option value="1" data-i18n="q3_opt1">جلوگیری از هرگونه ضرر حتی با سود ناچیز</option>
-                                <option value="2" selected data-i18n="q3_opt2">پذیرش نوسان منطقی برای بازدهی مرکب بلندمدت</option>
-                                <option value="3" data-i18n="q3_opt3">تمرکز بر سودآوری بالا در دارایی‌های رشدپذیر</option>
-                            </select>
-                        </div>
-
-                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                            <label class="text-xs font-bold text-cyan-400" data-i18n="q4_text">۴. افق زمانی و تعهد نقدینگی: بازه زمانی واقعی حفظ سرمایه چقدر است؟</label>
-                            <select id="deep-q4" class="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl p-3 outline-none">
-                                <option value="1" data-i18n="q4_opt1">کمتر از ۶ ماه (نوسان‌گیری فعال)</option>
-                                <option value="2" selected data-i18n="q4_opt2">بین ۶ ماه تا ۲ سال (میان‌مدت)</option>
-                                <option value="3" data-i18n="q4_opt3">بالای ۲ سال (رشد بلندمدت نهادی)</option>
-                            </select>
-                        </div>
-
-                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                            <label class="text-xs font-bold text-cyan-400" data-i18n="q5_text">۵. ساختار ترجیحی تخصیص دارایی: تمایل اصلی شما در مواجهه با تورم جهانی؟</label>
-                            <select id="deep-q5" class="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl p-3 outline-none">
-                                <option value="1" data-i18n="q5_opt1">تمرکز انحصاری بر دارایی‌های امن (طلا، گندم)</option>
-                                <option value="2" selected data-i18n="q5_opt2">سبد ترکیبی متوازن بین انرژی، فلزات و شاخص‌ها</option>
-                                <option value="3" data-i18n="q5_opt3">تمرکز بالا بر فناوری و رمزارز</option>
+                                <option value="1">اضطراب شدید و بستن فوری پوزیشن‌ها</option>
+                                <option value="2" selected>حفظ خونسردی و تحلیل ساختار بلندمدت روند</option>
+                                <option value="3">استقبال از ریزش به‌عنوان فرصت طلایی خرید در کف</option>
                             </select>
                         </div>
 
                         <button onclick="submitDeepPsychTest()" class="w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:opacity-90 text-white text-sm font-extrabold rounded-xl shadow-xl cursor-pointer transition" data-i18n="gate_submit">
-                            ✅ ثبت تست روانشناسی و گشایش دسترسی به پایانه امن کوانت
+                            ✅ تایید تست روانشناسی و گشایش پایانه تخصصی کوانت
                         </button>
                     </div>
                 </div>
@@ -186,19 +156,19 @@
                         <p class="text-[11px] text-slate-400 mt-2"><span data-i18n="dash_profile">پروفایل رفتاری:</span> <span id="profile-tag" class="text-cyan-400 font-bold">تایید شده توسط هسته</span></p>
                     </div>
                     <div class="glass-card rounded-2xl p-5">
-                        <p class="text-slate-400 text-xs" data-i18n="dash_div">شاخص تنوع‌بخشی جهانی</p>
+                        <p class="text-slate-400 text-xs">شاخص تنوع‌بخشی جهانی</p>
                         <div class="text-2xl font-extrabold text-cyan-400 mt-2 font-mono">98.5 / 100</div>
-                        <p class="text-[11px] text-slate-400 mt-2"><span data-i18n="dash_inflation">پوشش تورم کامودیتی:</span> <span class="text-emerald-400 font-bold">حرفه‌ای</span></p>
+                        <p class="text-[11px] text-slate-400 mt-2">پوشش ریسک تورم کامودیتی: <span class="text-emerald-400 font-bold">حرفه‌ای</span></p>
                     </div>
                     <div class="glass-card rounded-2xl p-5">
-                        <p class="text-slate-400 text-xs" data-i18n="dash_var">ریسک VaR (95%)</p>
+                        <p class="text-slate-400 text-xs">ریسک VaR (95%)</p>
                         <div id="kpi-var" class="text-2xl font-extrabold text-white mt-2 font-mono">$650.00</div>
-                        <p class="text-[11px] text-slate-400 mt-2"><span data-i18n="dash_prop">انطباق پراپ:</span> <span class="text-emerald-400 font-bold">۱۰۰٪ امن</span></p>
+                        <p class="text-[11px] text-slate-400 mt-2">انطباق پراپ: <span class="text-emerald-400 font-bold">۱۰۰٪ امن</span></p>
                     </div>
                     <div class="glass-card rounded-2xl p-5">
-                        <p class="text-slate-400 text-xs" data-i18n="dash_gateways">درگاه‌های فعال صرافی</p>
-                        <div class="text-lg font-bold text-white mt-2">MT5, IBKR, Binance Live</div>
-                        <p class="text-[11px] text-slate-400 mt-2"><span data-i18n="dash_latency">تأخیر فید:</span> <span class="text-cyan-400 font-bold">&lt; 15ms</span></p>
+                        <p class="text-slate-400 text-xs">درگاه‌های فید صرافی</p>
+                        <div class="text-lg font-bold text-white mt-2">MT5, IBKR, Bloomberg</div>
+                        <p class="text-[11px] text-slate-400 mt-2">تأخیر فید: <span class="text-cyan-400 font-bold">&lt; 15ms</span></p>
                     </div>
                 </div>
 
@@ -213,14 +183,45 @@
                             <thead class="text-slate-400 border-b border-slate-800">
                                 <tr>
                                     <th class="pb-3" data-i18n="th_asset">نماد / کامودیتی جهانی</th>
-                                    <th class="pb-3" data-i18n="th_exchange">بورس مرجع</th>
-                                    <th class="pb-3" data-i18n="th_cur">وزن فعلی</th>
-                                    <th class="pb-3" data-i18n="th_target">وزن هدف</th>
-                                    <th class="pb-3 text-left" data-i18n="th_price">مبلغ تعدیل ارز پایه</th>
+                                    <th class="pb-3">بورس مرجع</th>
+                                    <th class="pb-3">وزن فعلی</th>
+                                    <th class="pb-3">وزن هدف</th>
+                                    <th class="pb-3 text-left">مبلغ تعدیل ارز پایه</th>
                                 </tr>
                             </thead>
                             <tbody id="portfolio-tbody" class="divide-y divide-slate-800/60"></tbody>
                         </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MULTI-ASSET SPECIALIZED ANALYSIS SECTION -->
+            <section id="sec-analysis" class="hidden space-y-6">
+                <div class="glass-card rounded-2xl p-6 space-y-6 border border-cyan-500/30">
+                    <h2 class="text-white font-bold text-lg">📈 موتور تحلیل تخصصی و تفکیک‌شده بازارها (Multi-Asset Engine)</h2>
+                    <p class="text-xs text-slate-400">تحلیل تکنیکال و فاندامنتال اختصاصی متناسب با ساختار منحصر‌به‌فرد هر دارایی:</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                            <span class="text-xs font-bold text-amber-400">🥇 فلزات گرانبها (Gold / XAUUSD)</span>
+                            <p class="text-[11px] text-slate-300">تحلیل فاندامنتال: همبستگی معکوس با اوراق قرضه ۱۰ ساله و DXY. تکنیکال: تحلیل نواحی نقدینگی نایاب و Order Blocks.</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                            <span class="text-xs font-bold text-emerald-400">🛢️ انرژی و نفت (Brent / WTI)</span>
+                            <p class="text-[11px] text-slate-300">تحلیل فاندامنتال: گزارش‌های EIA، تراز اوپک‌پلاس و تنش‌های ژئوپلیتیک. تکنیکال: پرایس اکشن محدوده کانال‌های نوسانی.</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                            <span class="text-xs font-bold text-purple-400">🌾 کامودیتی‌های کشاورزی (Wheat / Coffee)</span>
+                            <p class="text-[11px] text-slate-300">تحلیل فاندامنتال: الگوهای فصلی برداشت، آب‌وهوا و هزینه‌های حمل‌ونقل. تکنیکال: تحلیل میانگین‌های متحرک بلندمدت.</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                            <span class="text-xs font-bold text-cyan-400">📈 شاخص‌های سهام (NASDAQ / S&P 500)</span>
+                            <p class="text-[11px] text-slate-300">تحلیل فاندامنتال: نرخ بهره فدرال رزرو و گزارش‌های درآمدی شرکت‌ها. تکنیکال: حجم معاملات و VWAP.</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                            <span class="text-xs font-bold text-blue-400">💱 جفت ارزها (Forex Majors)</span>
+                            <p class="text-[11px] text-slate-300">تحلیل فاندامنتال: واگرایی سیاست‌های بانک‌های مرکزی. تکنیکال: سشن‌های معاملاتی لندن و نیویورک.</p>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -230,48 +231,10 @@
                 <div class="glass-card rounded-2xl p-6 space-y-6 border border-emerald-500/30">
                     <div class="flex justify-between items-center border-b border-slate-800 pb-4">
                         <div>
-                            <span class="px-3 py-1 bg-emerald-500/10 text-emerald-400 text-xs font-bold rounded-lg">Enterprise Security & Governance Vault</span>
-                            <h2 class="text-white font-bold text-xl mt-2">🔒 امنیت سازمانی، رمزنگاری ابری و احراز هویت دو عاملی (2FA)</h2>
+                            <span class="px-3 py-1 bg-emerald-500/10 text-emerald-400 text-xs font-bold rounded-lg">Enterprise Security & Vault</span>
+                            <h2 class="text-white font-bold text-xl mt-2">🔒 امنیت سازمانی، رمزنگاری AES-256 و کلید سخت‌افزاری 2FA</h2>
                         </div>
-                        <span class="px-3 py-1 bg-emerald-500/20 text-emerald-300 text-xs font-bold rounded-full animate-pulse">● سیستم امنیتی فعال و ایمن</span>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                        <div class="p-5 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
-                            <span class="text-xs font-bold text-cyan-400">رمزنگاری پایگاه داده (AES-256)</span>
-                            <p class="text-xs text-slate-400">رعایت استاندارد Addepar و Bloomberg Vault جهت حفاظت کامل از کلیدهای API و اطلاعات حساس مشتریان.</p>
-                            <div class="text-[11px] text-emerald-400 font-bold">وضعیت: فعال و تایید شده</div>
-                        </div>
-                        <div class="p-5 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
-                            <span class="text-xs font-bold text-cyan-400">کلید سخت‌افزاری 2FA و FIDO2</span>
-                            <p class="text-xs text-slate-400">الزام تایید سخت‌افزاری برای هرگونه تغییر ساختار سبد و دسترسی به پایانه معاملاتی برخط.</p>
-                            <div class="text-[11px] text-emerald-400 font-bold">وضعیت: ایمن (Secure)</div>
-                        </div>
-                        <div class="p-5 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
-                            <span class="text-xs font-bold text-cyan-400">قفل اضطراب و ریسک (Panic Lock)</span>
-                            <p class="text-xs text-slate-400">قطع خودکار پوزیشن‌ها در صورت تخطی از حد ضرر روزانه پراپ تریدینگ مطابق قوانین Aladdin.</p>
-                            <div class="text-[11px] text-emerald-400 font-bold">وضعیت: فعال روی پورت MT5</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- COMMODITIES SECTION -->
-            <section id="sec-commodities" class="hidden space-y-6">
-                <div class="glass-card rounded-2xl p-6 space-y-6">
-                    <h2 class="text-white font-bold text-lg">🌾 پوشش جامع کامودیتی‌ها و بورس‌های جهان</h2>
-                    <p class="text-xs text-slate-400">دسترسی زنده به فلزات گرانبها، انرژی، گندم، قهوه، زعفران و مشتقات پتروشیمی در بورس‌های COMEX, ICE, CBOT.</p>
-                </div>
-            </section>
-
-            <!-- TECHNICAL & FUNDAMENTAL ANALYSIS SECTION -->
-            <section id="sec-analysis" class="hidden space-y-6">
-                <div class="glass-card rounded-2xl p-6 space-y-6">
-                    <h2 class="text-white font-bold text-lg">📈 موتور تحلیل چندبعدی (تکنیکال، SMC، فیبوناتچی و فاندامنتال)</h2>
-                    <p class="text-xs text-slate-400">بررسی ساختار قیمت، گره‌های حمایتی (Order Block) و تقویم اخبار کلان اقتصادی.</p>
-                    <div class="h-64 w-full bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col items-center justify-center text-cyan-400 font-mono text-xs gap-2">
-                        <span>[ نمودار تحلیلی زنده Multi-Model فعال است ]</span>
-                        <span class="text-[11px] text-slate-400">وضعیت اندیکاتورها: EMA200 صعودی • حجم نقدینگی تایید شده</span>
+                        <span class="px-3 py-1 bg-emerald-500/20 text-emerald-300 text-xs font-bold rounded-full animate-pulse">● سیستم حفاظتی فعال</span>
                     </div>
                 </div>
             </section>
@@ -296,11 +259,11 @@
         </main>
 
         <footer class="text-center py-5 text-[11px] text-slate-500 border-t border-slate-800/80 mt-auto">
-            &copy; 2026 Aurora Quant Platform — طراحی شده برای عزیز انصاری (امنیت نهادی تایید شده).
+            &copy; 2026 Aurora Quant Platform — طراحی شده برای عزیز انصاری (هسته چندبازاری تایید شده).
         </footer>
     </div>
 
-    <!-- JavaScript & Multi-Language Universal Dictionary (10 Languages including FR & ZH) -->
+    <!-- JavaScript & Universal Core Engine -->
     <script>
         let currentCurrency = 'USD';
         let currencySymbol = '$';
@@ -311,71 +274,47 @@
             { symbol: 'BRENT (نفت برنت)', exchange: 'ICE', current: 20, target: 20, basePrice: 82.10 },
             { symbol: 'WHEAT (گندم استراتژیک)', exchange: 'CBOT', current: 15, target: 20, basePrice: 654.20 },
             { symbol: 'COFFEE (قهوه عربیکا)', exchange: 'ICE', current: 15, target: 10, basePrice: 182.40 },
-            { symbol: 'SAFFRON (شاخص زعفران)', exchange: 'Middle East', current: 10, target: 10, basePrice: 1450.00 },
-            { symbol: 'NAS100 (شاخص فناوری)', exchange: 'NASDAQ', current: 15, target: 10, basePrice: 18250.0 }
+            { symbol: 'NAS100 (شاخص فناوری)', exchange: 'NASDAQ', current: 15, target: 10, basePrice: 18250.0 },
+            { symbol: 'EURUSD (جفت ارز اصلی)', exchange: 'FOREX', current: 10, target: 10, basePrice: 1.0850 }
         ];
 
         const dict = {
             fa: {
-                nav_dash: "داشبورد مدیریت ثروت", nav_security: "امنیت سازمانی، Vault و Zero-Trust", nav_comm: "کامودیتی‌ها و بورس‌های جهان", nav_analysis: "موتور تحلیل تکنیکال و فاندامنتال", nav_robo: "سبدگردان هوشمند (Aladdin/Markowitz)", nav_stress: "شبیه‌ساز بحران کلان (Monte Carlo)",
+                nav_dash: "داشبورد مدیریت ثروت", nav_analysis: "موتور تحلیل تخصصی بازارها", nav_security: "امنیت سازمانی و رمزنگاری Vault", nav_robo: "سبدگردان هوشمند (Risk Parity)", nav_stress: "شبیه‌ساز بحران کلان (Aladdin)",
                 status_label: "وضعیت حافظه هسته:", access_req: "نیازمند آزمون KYC", access_ok: "● تایید شده (Verified)",
-                sys_status: "وضعیت امنیتی هسته:", header_locked: "تکمیل تست روانشناسی رفتاری الزامی است", header_unlocked: "تست روانشناسی رفتاری تایید شد • دسترسی کامل به ترمینال فعال است",
+                sys_status: "وضعیت امنیتی هسته:", header_locked: "تکمیل تست روانشناسی رفتاری الزامی است", header_unlocked: "تست روانشناسی رفتاری تایید شد • دسترسی کامل به پایانه فعال است",
                 ceo_title: "مدیرعامل و معمار پرتفوی (CEO)",
                 gate_badge: "دروازه امنیتی انطباق و اقتصاد رفتاری (CFA Standard)",
-                gate_title: "ارزیابی عمیق و ریزبینانه روانشناسی مالی و ظرفیت ریسک سرمایه‌گذار",
-                gate_desc: "مطابق قوانین امنیت سازمانی، پیش از گشایش پایانه معاملاتی و دسترسی به خزانه، تکمیل این ارزیابی الزامی است.",
-                gate_submit: "✅ ثبت تست روانشناسی و گشایش دسترسی به پایانه امن کوانت",
+                gate_title: "ارزیابی عمیق روانشناسی مالی و ظرفیت ریسک سرمایه‌گذار چندبازاری",
+                gate_desc: "مطابق استانداردهای نهادی، تکمیل این پرسشنامه رفتارشناسی جهت تنظیم الگوریتم تحلیل طلا، نفت و سهام الزامی است.",
+                gate_submit: "✅ تایید تست روانشناسی و گشایش پایانه تخصصی کوانت",
                 curr_bar_desc: "مدیریت دستی سرمایه و انتخاب واحد پولی (هسته حافظه دائم)", curr_bar_title: "ارزش خالص دارایی‌ها (AAV) و ارز پایه", apply_capital_btn: "اعمال سرمایه",
-                dash_aav: "سرمایه فعال ثبت‌شده (AAV)", dash_profile: "پروفایل رفتاری:", dash_div: "شاخص تنوع‌بخشی جهانی", dash_inflation: "پوشش تورم کامودیتی:", dash_var: "ریسک VaR (95%)", dash_prop: "انطباق پراپ:", dash_gateways: "درگاه‌های فعال صرافی", dash_latency: "تأخیر فید:",
+                dash_aav: "سرمایه فعال ثبت‌شده (AAV)", dash_profile: "پروفایل رفتاری:", dash_div: "شاخص تنوع‌بخشی جهانی", dash_inflation: "پوشش تورم کامودیتی:", dash_var: "ریسک VaR (95%)", dash_prop: "انطباق پراپ:", dash_gateways: "درگاه‌های فعال فید", dash_latency: "تأخیر فید:",
                 table_title: "سبد سرمایه‌گذاری تطبیق‌یافته با تست روانشناسی", rebalance_btn: "⚡ اجرای بازتوزیع خودکار سبد",
-                th_asset: "نماد / کامودیتی جهانی", th_exchange: "بورس مرجع", th_cur: "وزن فعلی", th_target: "وزن هدف", th_price: "مبلغ تعدیل ارز پایه"
+                th_asset: "نماد / کامودیتی جهانی"
             },
             en: {
-                nav_dash: "Wealth Dashboard", nav_security: "Enterprise Security & Vault", nav_comm: "Global Commodities & Exchanges", nav_analysis: "Technical & Fundamental Engine", nav_robo: "Global Robo-Advisor", nav_stress: "Macro Stress Simulator",
-                status_label: "Core Memory Status:", access_req: "KYC Assessment Required", access_ok: "● Verified & Authorized",
-                sys_status: "Core Security Status:", header_locked: "Mandatory behavioral psych test required", header_unlocked: "Behavioral psych test verified • Full terminal access active",
+                nav_dash: "Wealth Dashboard", nav_analysis: "Multi-Asset Analysis Engine", nav_security: "Enterprise Security & Vault", nav_comm: "Global Commodities", nav_robo: "Global Robo-Advisor", nav_stress: "Macro Stress Simulator",
+                status_label: "Core Memory:", access_req: "KYC Required", access_ok: "● Verified & Authorized",
+                sys_status: "Security Status:", header_locked: "Mandatory behavioral psych test required", header_unlocked: "Psych test verified • Terminal active",
                 ceo_title: "Chief Wealth Officer (CEO)",
                 gate_badge: "Mandatory KYC & Behavioral Compliance Gate",
-                gate_title: "Deep Economic Psychometric & Risk Capacity Assessment (CFA Standard)",
-                gate_desc: "According to institutional security laws, completing this assessment is required before terminal access.",
-                gate_submit: "✅ Confirm Psych Test & Open Secure Quant Terminal",
-                curr_bar_desc: "Manual Capital Management & Currency Base", curr_bar_title: "Net Asset Value (AAV) & Base Currency", apply_capital_btn: "Apply Capital",
-                dash_aav: "Active Registered Capital (AAV)", dash_profile: "Behavioral Profile:", dash_div: "Global Diversification Index", dash_inflation: "Commodity Inflation Hedge:", dash_var: "VaR Risk (95%)", dash_prop: "Prop Compliance:", dash_gateways: "Active Exchange Gateways", dash_latency: "Feed Latency:",
+                gate_title: "Deep Economic Psychometric & Multi-Asset Risk Assessment",
+                gate_desc: "Completing this assessment is required to calibrate gold, oil, and equity algorithms.",
+                gate_submit: "✅ Confirm Psych Test & Open Quant Terminal",
+                curr_bar_desc: "Manual Capital Management & Currency Base", curr_bar_title: "Net Asset Value (AAV)", apply_capital_btn: "Apply Capital",
+                dash_aav: "Active Registered Capital (AAV)", dash_profile: "Behavioral Profile:", dash_div: "Diversification Index:", dash_inflation: "Inflation Hedge:", dash_var: "VaR Risk (95%):", dash_prop: "Prop Compliance:", dash_gateways: "Feed Gateways:", dash_latency: "Feed Latency:",
                 table_title: "Portfolio Adapted to Psychometric Profile", rebalance_btn: "⚡ Execute Auto-Rebalance",
-                th_asset: "Asset / Global Commodity", th_exchange: "Reference Exchange", th_cur: "Current Weight", th_target: "Target Weight", th_price: "Base Currency Adjustment ($)"
+                th_asset: "Asset / Commodity"
             },
-            fr: {
-                nav_dash: "Tableau de Bord", nav_security: "Sécurité & Vault", nav_comm: "Matières Premières", nav_analysis: "Moteur d'Analyse", nav_robo: "Robo-Conseiller", nav_stress: "Simulateur de Stress",
-                status_label: "Mémoire:", access_req: "KYC Requis", access_ok: "● Vérifié", sys_status: "Sécurité:", header_locked: "Test obligatoire", header_unlocked: "Vérifié • Accès actif", ceo_title: "PDG", gate_badge: "Porte KYC", gate_title: "Évaluation Psychométrique", gate_desc: "L'accès nécessite ce test.", gate_submit: "✅ Confirmer", curr_bar_desc: "Capital", curr_bar_title: "AAV", apply_capital_btn: "Appliquer", dash_aav: "Capital (AAV)", dash_profile: "Profil:", dash_div: "Div:", dash_inflation: "Inf:", dash_var: "VaR:", dash_prop: "Prop:", dash_gateways: "Gateways:", dash_latency: "Latence:", table_title: "Portefeuille Adapté", rebalance_btn: "⚡ Rééquilibrer", th_asset: "Actif", th_exchange: "Bourse", th_cur: "Poids Actuel", th_target: "Poids Cible", th_price: "Ajustement"
-            },
-            zh: {
-                nav_dash: "财富仪表盘", nav_security: "企业安全与金库 (Vault)", nav_comm: "全球大宗商品", nav_analysis: "分析引擎", nav_robo: "智能投顾", nav_stress: "宏观压力测试",
-                status_label: "核心内存:", access_req: "需要KYC", access_ok: "● 已验证", sys_status: "安全状态:", header_locked: "必须完成心理测试", header_unlocked: "测试已验证 • 终端访问激活", ceo_title: "首席执行官 (CEO)", gate_badge: "KYC网关", gate_title: "心理测验与风险评估", gate_desc: "访问终端前必须完成此评估。", gate_submit: "✅ 确认并打开终端", curr_bar_desc: "资本管理", curr_bar_title: "净资产值 (AAV)", apply_capital_btn: "应用资本", dash_aav: "活跃资本 (AAV)", dash_profile: "行为档案:", dash_div: "多元化:", dash_inflation: "通胀对冲:", dash_var: "VaR风险:", dash_prop: "自营合规:", dash_gateways: "网关:", dash_latency: "延迟:", table_title: "适应性投资组合", rebalance_btn: "⚡ 执行再平衡", th_asset: "资产/商品", th_exchange: "交易所", th_cur: "当前权重", th_target: "目标权重", th_price: "调整金额"
-            },
-            de: {
-                nav_dash: "Vermögen", nav_security: "Sicherheit", nav_comm: "Rohstoffe", nav_analysis: "Analyse", nav_robo: "Robo-Advisor", nav_stress: "Stresstest",
-                status_label: "Speicher:", access_req: "KYC nötig", access_ok: "● Verifiziert", sys_status: "Sicherheit:", header_locked: "Test nötig", header_unlocked: "Aktiv", ceo_title: "CEO", gate_badge: "KYC", gate_title: "Risiko", gate_desc: "Test ausfüllen.", gate_submit: "✅ Bestätigen", curr_bar_desc: "Kapital", curr_bar_title: "AAV", apply_capital_btn: "Anwenden", dash_aav: "AAV", dash_profile: "Profil:", dash_div: "Div:", dash_inflation: "Inf:", dash_var: "VaR:", dash_prop: "Prop:", dash_gateways: "Gate:", dash_latency: "Lat:", table_title: "Portfolio", rebalance_btn: "⚡ Rebalancing", th_asset: "Asset", th_exchange: "Börse", th_cur: "Aktuell", th_target: "Ziel", th_price: "Anpassung"
-            },
-            it: {
-                nav_dash: "Cruscotto", nav_security: "Sicurezza", nav_comm: "Commodity", nav_analysis: "Analisi", nav_robo: "Robo-Advisor", nav_stress: "Stress",
-                status_label: "Memoria:", access_req: "KYC Richiesto", access_ok: "● Verificato", sys_status: "Stato:", header_locked: "Test obbligatorio", header_unlocked: "Attivo", ceo_title: "CEO", gate_badge: "KYC", gate_title: "Valutazione", gate_desc: "Questionario richiesto.", gate_submit: "✅ Conferma", curr_bar_desc: "Capitale", curr_bar_title: "AAV", apply_capital_btn: "Applica", dash_aav: "AAV", dash_profile: "Profilo:", dash_div: "Div:", dash_inflation: "Inf:", dash_var: "VaR:", dash_prop: "Prop:", dash_gateways: "Gate:", dash_latency: "Latenza:", table_title: "Portafoglio", rebalance_btn: "⚡ Riequilibrio", th_asset: "Asset", th_exchange: "Borsa", th_cur: "Attuale", th_target: "Obiettivo", th_price: "Regolazione"
-            },
-            ru: {
-                nav_dash: "Панель", nav_security: "Безопасность", nav_comm: "Сырье", nav_analysis: "Анализ", nav_robo: "Робо-советник", nav_stress: "Стресс",
-                status_label: "Память:", access_req: "Нужен KYC", access_ok: "● Ок", sys_status: "Статус:", header_locked: "Тест", header_unlocked: "Активно", ceo_title: "CEO", gate_badge: "KYC", gate_title: "Оценка", gate_desc: "Заполните.", gate_submit: "✅ Ок", curr_bar_desc: "Капитал", curr_bar_title: "AAV", apply_capital_btn: "Применить", dash_aav: "AAV", dash_profile: "Профиль:", dash_div: "Див:", dash_inflation: "Инф:", dash_var: "VaR:", dash_prop: "Prop:", dash_gateways: "Шлюзы:", dash_latency: "Задержка:", table_title: "Портфель", rebalance_btn: "⚡ Ребалансировка", th_asset: "Актив", th_exchange: "Биржа", th_cur: "Тек.", th_target: "Цель", th_price: "Коррекция"
-            },
-            ar: {
-                nav_dash: "لوحة التحكم", nav_security: "الأمان", nav_comm: "السلع", nav_analysis: "التحليل", nav_robo: "المستشار", nav_stress: "الاختبار",
-                status_label: "الذاكرة:", access_req: "مطلوب KYC", access_ok: "● تحقق", sys_status: "الحالة:", header_locked: "مطلوب اختبار", header_unlocked: "نشط", ceo_title: "CEO", gate_badge: "KYC", gate_title: "تقييم", gate_desc: "أكمل الاستبيان.", gate_submit: "✅ تأكيد", curr_bar_desc: "رأس المال", curr_bar_title: "AAV", apply_capital_btn: "تطبيق", dash_aav: "AAV", dash_profile: "الملف:", dash_div: "التنويع:", dash_inflation: "التضخم:", dash_var: "VaR:", dash_prop: "Prop:", dash_gateways: "البوابات:", dash_latency: "التأخير:", table_title: "المحفظة", rebalance_btn: "⚡ إعادة التوازن", th_asset: "الأصل", th_exchange: "البورصة", th_cur: "الحالي", th_target: "المستهدف", th_price: "التعديل"
-            },
-            tr: {
-                nav_dash: "Panel", nav_security: "Güvenlik", nav_comm: "Emtia", nav_analysis: "Analiz", nav_robo: "Robot", nav_stress: "Stres",
-                status_label: "Bellek:", access_req: "KYC Gerekli", access_ok: "● Onay", sys_status: "Durum:", header_locked: "Test gerekli", header_unlocked: "Aktif", ceo_title: "CEO", gate_badge: "KYC", gate_title: "Değerlendirme", gate_desc: "Doldurun.", gate_submit: "✅ Onayla", curr_bar_desc: "Sermaye", curr_bar_title: "AAV", apply_capital_btn: "Uygula", dash_aav: "AAV", dash_profile: "Profil:", dash_div: "Div:", dash_inflation: "Enf:", dash_var: "VaR:", dash_prop: "Prop:", dash_gateways: "Ağ:", dash_latency: "Gecikme:", table_title: "Portföy", rebalance_btn: "⚡ Dengele", th_asset: "Varlık", th_exchange: "Borsa", th_cur: "Mevcut", th_target: "Hedef", th_price: "Ayar"
-            },
-            es: {
-                nav_dash: "Panel", nav_security: "Seguridad", nav_comm: "Commodities", nav_analysis: "Análisis", nav_robo: "Robo-Asesor", nav_stress: "Estrés",
-                status_label: "Memoria:", access_req: "KYC Requerido", access_ok: "● Verificado", sys_status: "Estado:", header_locked: "Test obligatorio", header_unlocked: "Activo", ceo_title: "CEO", gate_badge: "KYC", gate_title: "Evaluación", gate_desc: "Complete el test.", gate_submit: "✅ Confirmar", curr_bar_desc: "Capital", curr_bar_title: "AAV", apply_capital_btn: "Aplicar", dash_aav: "AAV", dash_profile: "Profil:", dash_div: "Div:", dash_inflation: "Inflación:", dash_var: "VaR:", dash_prop: "Prop:", dash_gateways: "Gateways:", dash_latency: "Latencia:", table_title: "Portafolio", rebalance_btn: "⚡ Reequilibrar", th_asset: "Activo", th_exchange: "Bolsa", th_cur: "Actual", th_target: "Objetivo", th_price: "Ajuste"
-            }
+            fr: { nav_dash: "Tableau de Bord", nav_analysis: "Moteur d'Analyse Multi-Actifs", nav_security: "Sécurité & Vault", nav_robo: "Robo-Conseiller", nav_stress: "Simulateur de Stress", status_label: "Mémoire:", access_req: "KYC Requis", access_ok: "● Vérifié", sys_status: "Sécurité:", header_locked: "Test requis", header_unlocked: "Actif", ceo_title: "PDG", gate_badge: "Porte KYC", gate_title: "Évaluation des Risques", gate_desc: "Test requis.", gate_submit: "✅ Confirmer", curr_bar_desc: "Capital", curr_bar_title: "AAV", apply_capital_btn: "Appliquer", dash_aav: "AAV", dash_profile: "Profil:", dash_div: "Div:", dash_inflation: "Inf:", dash_var: "VaR:", dash_prop: "Prop:", dash_gateways: "Passerelles:", dash_latency: "Latence:", table_title: "Portefeuille", rebalance_btn: "⚡ Rééquilibrer", th_asset: "Actif" },
+            zh: { nav_dash: "财富仪表盘", nav_analysis: "多资产分析引擎", nav_security: "企业安全与金库", nav_robo: "智能投顾", nav_stress: "宏观压力测试", status_label: "核心内存:", access_req: "需要KYC", access_ok: "● 已验证", sys_status: "安全状态:", header_locked: "必须完成心理测试", header_unlocked: "终端激活", ceo_title: "CEO", gate_badge: "KYC网关", gate_title: "风险评估", gate_desc: "需完成评估。", gate_submit: "✅ 确认", curr_bar_desc: "资本管理", curr_bar_title: "AAV", apply_capital_btn: "应用", dash_aav: "AAV", dash_profile: "档案:", dash_div: "多元化:", dash_inflation: "通胀:", dash_var: "VaR:", dash_prop: "合规:", dash_gateways: "网关:", dash_latency: "延迟:", table_title: "投资组合", rebalance_btn: "⚡ 再平衡", th_asset: "资产" },
+            de: { nav_dash: "Vermögen", nav_analysis: "Analyse-Engine", nav_security: "Sicherheit", nav_robo: "Robo-Advisor", nav_stress: "Stresstest", status_label: "Speicher:", access_req: "KYC", access_ok: "●", sys_status: "Status:", header_locked: "Test", header_unlocked: "Aktiv", ceo_title: "CEO", gate_badge: "KYC", gate_title: "Risiko", gate_desc: "Test.", gate_submit: "✅", curr_bar_desc: "Kapital", curr_bar_title: "AAV", apply_capital_btn: "Anwenden", dash_aav: "AAV", dash_profile: "Profil:", dash_div: "Div:", dash_inflation: "Inf:", dash_var: "VaR:", dash_prop: "Prop:", dash_gateways: "Gate:", dash_latency: "Lat:", table_title: "Portfolio", rebalance_btn: "⚡", th_asset: "Asset" },
+            it: { nav_dash: "Cruscotto", nav_analysis: "Analisi", nav_security: "Sicurezza", nav_robo: "Robo-Advisor", nav_stress: "Stress", status_label: "Memoria:", access_req: "KYC", access_ok: "●", sys_status: "Stato:", header_locked: "Test", header_unlocked: "Attivo", ceo_title: "CEO", gate_badge: "KYC", gate_title: "Valutazione", gate_desc: "Test.", gate_submit: "✅", curr_bar_desc: "Capitale", curr_bar_title: "AAV", apply_capital_btn: "Applica", dash_aav: "AAV", dash_profile: "Profilo:", dash_div: "Div:", dash_inflation: "Inf:", dash_var: "VaR:", dash_prop: "Prop:", dash_gateways: "Gate:", dash_latency: "Latenza:", table_title: "Portafoglio", rebalance_btn: "⚡", th_asset: "Asset" },
+            ru: { nav_dash: "Панель", nav_analysis: "Анализ", nav_security: "Безопасность", nav_robo: "Робо", nav_stress: "Стресс", status_label: "Память:", access_req: "KYC", access_ok: "●", sys_status: "Статус:", header_locked: "Тест", header_unlocked: "Ок", ceo_title: "CEO", gate_badge: "KYC", gate_title: "Оценка", gate_desc: "Тест.", gate_submit: "✅", curr_bar_desc: "Капитал", curr_bar_title: "AAV", apply_capital_btn: "Ок", dash_aav: "AAV", dash_profile: "Профиль:", dash_div: "Див:", dash_inflation: "Инф:", dash_var: "VaR:", dash_prop: "Prop:", dash_gateways: "Шлюзы:", dash_latency: "Задержка:", table_title: "Портфель", rebalance_btn: "⚡", th_asset: "Актив" },
+            ar: { nav_dash: "لوحة التحكم", nav_analysis: "التحليل", nav_security: "الأمان", nav_robo: "المستشار", nav_stress: "الاختبار", status_label: "الذاكرة:", access_req: "KYC", access_ok: "●", sys_status: "الحالة:", header_locked: "اختبار", header_unlocked: "نشط", ceo_title: "CEO", gate_badge: "KYC", gate_title: "تقييم", gate_desc: "مطلوب.", gate_submit: "✅", curr_bar_desc: "رأس المال", curr_bar_title: "AAV", apply_capital_btn: "تطبيق", dash_aav: "AAV", dash_profile: "الملف:", dash_div: "التنويع:", dash_inflation: "التضخم:", dash_var: "VaR:", dash_prop: "Prop:", dash_gateways: "البوابات:", dash_latency: "التأخير:", table_title: "المحفظة", rebalance_btn: "⚡", th_asset: "الأصل" },
+            tr: { nav_dash: "Panel", nav_analysis: "Analiz", nav_security: "Güvenlik", nav_robo: "Robot", nav_stress: "Stres", status_label: "Bellek:", access_req: "KYC", access_ok: "●", sys_status: "Durum:", header_locked: "Test", header_unlocked: "Aktif", ceo_title: "CEO", gate_badge: "KYC", gate_title: "Değerlendirme", gate_desc: "Test.", gate_submit: "✅", curr_bar_desc: "Sermaye", curr_bar_title: "AAV", apply_capital_btn: "Uygula", dash_aav: "AAV", dash_profile: "Profil:", dash_div: "Div:", dash_inflation: "Enf:", dash_var: "VaR:", dash_prop: "Prop:", dash_gateways: "Ağ:", dash_latency: "Gecikme:", table_title: "Portföy", rebalance_btn: "⚡", th_asset: "Varlık" },
+            es: { nav_dash: "Panel", nav_analysis: "Análisis", nav_security: "Seguridad", nav_robo: "Asesor", nav_stress: "Estrés", status_label: "Memoria:", access_req: "KYC", access_ok: "●", sys_status: "Estado:", header_locked: "Test", header_unlocked: "Activo", ceo_title: "CEO", gate_badge: "KYC", gate_title: "Evaluación", gate_desc: "Test.", gate_submit: "✅", curr_bar_desc: "Capital", curr_bar_title: "AAV", apply_capital_btn: "Aplicar", dash_aav: "AAV", dash_profile: "Perfil:", dash_div: "Div:", dash_inflation: "Inflación:", dash_var: "VaR:", dash_prop: "Prop:", dash_gateways: "Gateways:", dash_latency: "Latencia:", table_title: "Portafolio", rebalance_btn: "⚡", th_asset: "Activo" }
         };
 
         function updateCurrencySymbol() {
@@ -439,31 +378,31 @@
             document.getElementById('access-status').className = "text-emerald-400 font-bold";
 
             if (q2Val === '1') {
-                portfolioData[0].target = 45; portfolioData[2].target = 25; portfolioData[5].target = 5;
+                portfolioData[0].target = 45; portfolioData[2].target = 25;
             } else if (q2Val === '3') {
-                portfolioData[0].target = 10; portfolioData[5].target = 40;
+                portfolioData[0].target = 10; portfolioData[4].target = 35;
             } else {
-                portfolioData[0].target = 30; portfolioData[1].target = 20; portfolioData[5].target = 15;
+                portfolioData[0].target = 30; portfolioData[1].target = 20;
             }
 
             renderTable();
             document.getElementById('sec-mandatory-psych').classList.add('hidden');
             document.getElementById('sec-dashboard').classList.remove('hidden');
-            showToast('تست روانشناسی تایید و امضای دیجیتال Vault ثبت شد.');
+            showToast('تست روانشناسی تایید شد. پایانه تخصصی چندبازاری باز شد.');
         }
 
         function executeRebalance() {
             portfolioData = portfolioData.map(item => ({ ...item, current: item.target }));
             renderTable();
-            showToast('⚡ بازتوزیع خودکار سبد (Auto-Rebalance) با موفقیت اجرا شد؛ وزن‌ها هم‌تراز و مبالغ تعدیل صفر شدند.');
+            showToast('⚡ بازتوزیع خودکار سبد جهانی اجرا شد.');
         }
 
         function runStressSim() {
-            showToast('شبیه‌ساز بحران کلان (Monte Carlo / Aladdin): شوک منفی ۲۰٪ اعمال شد. مقاومت پرتفوی: ۹۲.۴٪ تایید شد.');
+            showToast('شبیه‌ساز بحران کلان (Aladdin): سناریوی شوک منفی ۲۰٪ اعمال شد. پایداری پرتفوی تایید شد.');
         }
 
         function openSection(secId, btn) {
-            ['dashboard', 'security', 'commodities', 'analysis', 'robo', 'stress'].forEach(id => {
+            ['dashboard', 'analysis', 'security', 'robo', 'stress'].forEach(id => {
                 const el = document.getElementById('sec-' + id);
                 if(el) el.classList.add('hidden');
             });
