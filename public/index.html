@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aurora Quant Platform | هسته هوشمند مدیریت ثروت و دارایی</title>
+    <title>Aurora Quant Platform | ثبت‌نام، احراز هویت و مدیریت هوشمند ثروت</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -24,7 +24,7 @@
                 <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-cyan-400 via-blue-600 to-indigo-700 flex items-center justify-center font-extrabold text-xl text-white shadow-lg">A</div>
                 <div>
                     <h1 class="font-extrabold text-lg tracking-wider text-white">AURORA <span class="text-cyan-400">QUANT</span></h1>
-                    <p class="text-[10px] text-slate-400">Smart Wealth & Security Core v3.2</p>
+                    <p class="text-[10px] text-slate-400">Persistent Onboarding & Wealth Core v4.0</p>
                 </div>
             </div>
 
@@ -33,10 +33,10 @@
                     <span>📊</span> <span>داشبورد مدیریت ثروت</span>
                 </button>
                 <button type="button" onclick="openSection('analysis', this)" class="nav-btn text-slate-400 flex items-center gap-3 px-4 py-3.5 rounded-xl text-right">
-                    <span>📈</span> <span>موتور تحلیل تخصصی بازارها</span>
+                    <span>📈</span> <span>موتور تحلیل چندبازاری</span>
                 </button>
                 <button type="button" onclick="openSection('security', this)" class="nav-btn text-slate-400 flex items-center gap-3 px-4 py-3.5 rounded-xl text-right">
-                    <span>🔒</span> <span>امنیت، حساب‌ها و ممیزی</span>
+                    <span>🔒</span> <span>احراز هویت، امنیت و حساب‌ها</span>
                 </button>
                 <button type="button" onclick="openSection('robo', this)" class="nav-btn text-slate-400 flex items-center gap-3 px-4 py-3.5 rounded-xl text-right">
                     <span>🤖</span> <span>سبدگردان هوشمند (Risk Parity)</span>
@@ -46,11 +46,11 @@
 
         <div class="mt-8 p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3">
             <div class="flex justify-between text-[11px] text-slate-400">
-                <span>وضعیت حافظه هسته:</span>
-                <span id="access-status" class="text-amber-400 font-bold">نیازمند آزمون KYC</span>
+                <span>وضعیت ثبت‌نام و قفل هسته:</span>
+                <span id="access-status" class="text-amber-400 font-bold">در انتظار ثبت‌نام</span>
             </div>
-            <button id="retest-psych-btn" type="button" onclick="unlockPsychForEdit()" class="hidden w-full py-2 px-3 bg-slate-800 hover:bg-slate-700 text-cyan-400 text-[11px] font-bold rounded-lg border border-cyan-500/30 cursor-pointer transition">
-                🔄 تغییر / بازنگری تست روانشناسی
+            <button id="retest-psych-btn" type="button" onclick="unlockProfileForEdit()" class="hidden w-full py-2 px-3 bg-slate-800 hover:bg-slate-700 text-cyan-400 text-[11px] font-bold rounded-lg border border-cyan-500/30 cursor-pointer transition">
+                🔄 ویرایش اطلاعات و بازنگری تست
             </button>
         </div>
     </aside>
@@ -60,7 +60,7 @@
         <header class="glass-card border-b border-slate-800/80 px-6 py-4 flex flex-wrap justify-between items-center gap-4 sticky top-0 z-20">
             <div class="flex items-center gap-3">
                 <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping" id="header-dot"></span>
-                <span class="text-xs text-slate-300">وضعیت هسته: <strong id="header-status-text" class="text-amber-400">در انتظار تکمیل تست روانشناسی</strong></span>
+                <span class="text-xs text-slate-300">وضعیت هسته: <strong id="header-status-text" class="text-amber-400">ثبت‌نام، احراز هویت و تست روانشناسی الزامی است</strong></span>
             </div>
 
             <div class="flex items-center gap-4">
@@ -74,10 +74,10 @@
                 </select>
                 <div class="flex items-center gap-3 border-r border-slate-800 pr-4">
                     <div class="text-right">
-                        <p class="text-xs font-bold text-white">عبدالعزیز انصاری</p>
-                        <p class="text-[10px] text-cyan-400">بنیان‌گذار و مدیریت دارایی (CEO)</p>
+                        <p id="header-user-name" class="text-xs font-bold text-white">کاربر جدید / مهمان</p>
+                        <p id="header-user-role" class="text-[10px] text-amber-400">نیازمند تکمیل KYC</p>
                     </div>
-                    <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-700 flex items-center justify-center font-bold text-white text-xs shadow-md">EA</div>
+                    <div id="header-user-avatar" class="w-9 h-9 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-700 flex items-center justify-center font-bold text-white text-xs shadow-md">AU</div>
                 </div>
             </div>
         </header>
@@ -89,55 +89,111 @@
 
         <main class="p-6 space-y-6 max-w-[1440px] w-full mx-auto">
 
-            <!-- DEEP PERSISTENT PSYCHOMETRIC ASSESSMENT -->
-            <section id="sec-mandatory-psych" class="space-y-6">
-                <div class="glass-card rounded-2xl p-8 space-y-6 border border-cyan-500/30">
+            <!-- REGISTRATION, KYC & FULL PSYCHOMETRIC ASSESSMENT -->
+            <section id="sec-onboarding" class="space-y-6">
+                <div class="glass-card rounded-2xl p-8 space-y-8 border border-cyan-500/30">
                     <div class="border-b border-slate-800 pb-4">
-                        <span class="px-3 py-1 bg-cyan-500/10 text-cyan-400 text-xs font-bold rounded-lg">قانون ماندگاری هسته • روانشناسی مالی و انضباط ریسک</span>
-                        <h2 class="text-white font-extrabold text-xl mt-3">ارزیابی روانشناسی معاملاتی، تحمل افت سرمایه (Drawdown) و ظرفیت ریسک</h2>
-                        <p class="text-xs text-slate-400 mt-1">نتیجه این آزمون در حافظه دائم ذخیره می‌شود و در به‌روزرسانی‌های بعدی تغییر نمی‌کند، مگر اینکه شخصاً بازنگری را فعال کنید.</p>
+                        <span class="px-3 py-1 bg-cyan-500/10 text-cyan-400 text-xs font-bold rounded-lg">ثبت‌نام رسمی، احراز هویت (KYC) و آزمون روانشناسی ماندگار</span>
+                        <h2 class="text-white font-extrabold text-xl mt-3">ایجاد حساب سرمایه‌گذاری، تایید هویت و ارزیابی کامل روانشناسی معاملاتی</h2>
+                        <p class="text-xs text-slate-400 mt-1">اطلاعات هویتی و نتیجه آزمون روانشناسی پس از تایید، در هسته قفل و ذخیره می‌شوند و با به‌روزرسانی کدها ریست نخواهند شد.</p>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                            <label class="text-xs font-bold text-cyan-400">۱. افق زمانی و پایداری نقدینگی:</label>
-                            <select id="deep-q1" class="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl p-3 outline-none">
-                                <option value="1">کوتاه‌مدت (کمتر از ۱ سال)</option>
-                                <option value="2" selected>میان‌مدت (۱ تا ۵ سال)</option>
-                                <option value="3">بلندمدت (بیش از ۵ سال)</option>
-                            </select>
+                    <!-- Step 1: Registration & KYC -->
+                    <div class="space-y-4">
+                        <h3 class="text-cyan-400 font-bold text-sm">بخش اول: ثبت‌نام و احراز هویت مشتری/کاربر</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                                <label class="text-xs font-bold text-slate-200">نام و نام خانوادگی *</label>
+                                <input type="text" id="reg-fullname" placeholder="مثال: عبدالعزیز انصاری" class="w-full bg-slate-950 border border-slate-700 text-xs text-white rounded-xl p-3 outline-none">
+                            </div>
+                            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                                <label class="text-xs font-bold text-slate-200">ایمیل یا شناسه ارتباطی *</label>
+                                <input type="text" id="reg-contact" placeholder="مثال: investor@aurora-quant.io" class="w-full bg-slate-950 border border-slate-700 text-xs text-white rounded-xl p-3 outline-none">
+                            </div>
+                            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                                <label class="text-xs font-bold text-slate-200">شناسه ملی / مرجع احراز هویت (ماسک می‌شود)</label>
+                                <input type="text" id="reg-national-id" placeholder="مثال: 2298207410" class="w-full bg-slate-950 border border-slate-700 text-xs text-white rounded-xl p-3 outline-none">
+                            </div>
                         </div>
 
-                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                            <label class="text-xs font-bold text-cyan-400">۲. واکنش رفتاری به افت سرمایه موقت:</label>
-                            <select id="deep-q2" class="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl p-3 outline-none">
-                                <option value="1">حفظ سرمایه با اولویت بالا و خروج محتاطانه</option>
-                                <option value="2" selected>پایبندی منضبط به قوانین مدیریت ریسک و بازتوزیع</option>
-                                <option value="3">بهره‌برداری فرصت‌طلبانه کنترل‌شده در نوسانات</option>
-                            </select>
-                        </div>
-
-                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                            <label class="text-xs font-bold text-cyan-400">۳. سقف مجاز افت سرمایه (Drawdown Tolerance):</label>
-                            <select id="deep-q3" class="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl p-3 outline-none">
-                                <option value="1">حداکثر ۲٪ روزانه / ۵٪ کل (محافظه‌کار)</option>
-                                <option value="2" selected>حداکثر ۳٪ روزانه / ۸٪ کل (متعادل)</option>
-                                <option value="3">حداکثر ۵٪ روزانه / ۱۲٪ کل (پویا)</option>
-                            </select>
-                        </div>
-
-                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                            <label class="text-xs font-bold text-cyan-400">۴. اولویت اصلی تخصیص دارایی:</label>
-                            <select id="deep-q4" class="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl p-3 outline-none">
-                                <option value="1">حفظ قدرت خرید و طلا/کالاهای پایه</option>
-                                <option value="2" selected>تعادل ریسک و بازده چندبازاری</option>
-                                <option value="3">رشد سرمایه در شاخص‌ها و کامودیتی‌ها</option>
-                            </select>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                            <label class="p-4 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" id="kyc-2fa" checked class="accent-cyan-500 w-4 h-4">
+                                <span>فعال‌سازی تایید دو مرحله‌ای (2FA)</span>
+                            </label>
+                            <label class="p-4 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" id="kyc-antiphishing" checked class="accent-cyan-500 w-4 h-4">
+                                <span>فعال‌سازی کد آنتی‌فیشینگ امنیتی</span>
+                            </label>
+                            <label class="p-4 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" id="kyc-terms" checked class="accent-cyan-500 w-4 h-4">
+                                <span>تایید قوانین مدیریت ریسک و انضباط سرمایه</span>
+                            </label>
                         </div>
                     </div>
 
-                    <button type="button" onclick="submitDeepPsychTest()" class="w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:opacity-90 text-white text-sm font-extrabold rounded-xl shadow-xl cursor-pointer transition">
-                        🔒 ثبت دائمی در هسته و فعال‌سازی پایانه AURORA
+                    <!-- Step 2: Comprehensive 6-Question Psychometric Assessment -->
+                    <div class="space-y-4 border-t border-slate-800 pt-6">
+                        <h3 class="text-cyan-400 font-bold text-sm">بخش دوم: آزمون جامع روانشناسی مالی و انضباط ریسک (۶ شاخص تخصصی)</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                                <label class="text-xs font-bold text-cyan-400">۱. افق زمانی سرمایه‌گذاری:</label>
+                                <select id="psych-q1" class="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl p-3 outline-none">
+                                    <option value="1">کوتاه‌مدت (کمتر از ۱ سال)</option>
+                                    <option value="2" selected>میان‌مدت (۱ تا ۵ سال)</option>
+                                    <option value="3">بلندمدت (بیش از ۵ سال)</option>
+                                </select>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                                <label class="text-xs font-bold text-cyan-400">۲. واکنش به افت موقت ارزش سبد:</label>
+                                <select id="psych-q2" class="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl p-3 outline-none">
+                                    <option value="1">محافظه‌کار و حساس به افت سرمایه</option>
+                                    <option value="2" selected>منضبط و پایبند به پلن بازتوزیع</option>
+                                    <option value="3">تحمل بالای نوسان برای رشد بیشتر</option>
+                                </select>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                                <label class="text-xs font-bold text-cyan-400">۳. سقف مجاز افت سرمایه (Drawdown):</label>
+                                <select id="psych-q3" class="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl p-3 outline-none">
+                                    <option value="1">حداکثر ۲٪ روزانه / ۵٪ کل</option>
+                                    <option value="2" selected>حداکثر ۳٪ روزانه / ۸٪ کل</option>
+                                    <option value="3">حداکثر ۵٪ روزانه / ۱۲٪ کل</option>
+                                </select>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                                <label class="text-xs font-bold text-cyan-400">۴. کنترل هیجان پس از زنجیره معاملات زیان‌ده:</label>
+                                <select id="psych-q4" class="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl p-3 outline-none">
+                                    <option value="1">توقف فوری فعالیت و بازبینی قوانین</option>
+                                    <option value="2" selected>کاهش حجم و ادامه طبق قاعده</option>
+                                    <option value="3">حفظ ریسک ثابت بدون تصمیم احساسی</option>
+                                </select>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                                <label class="text-xs font-bold text-cyan-400">۵. اولویت در سبد چندبازاری (طلا، انرژی، کشاورزی، شاخص):</label>
+                                <select id="psych-q5" class="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl p-3 outline-none">
+                                    <option value="1">حفظ ارزش و پوشش تورم (طلا و کالاهای پایه)</option>
+                                    <option value="2" selected>توازن هوشمند میان امنیت و بازده</option>
+                                    <option value="3">رشد سرمایه در شاخص‌ها و دارایی‌های پویا</option>
+                                </select>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                                <label class="text-xs font-bold text-cyan-400">۶. انضباط در اجرای حد ضرر و بازتوزیع دوره‌ای:</label>
+                                <select id="psych-q6" class="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl p-3 outline-none">
+                                    <option value="1">اجرای سخت‌گیرانه و بدون استثنا</option>
+                                    <option value="2" selected>اجرای منظم همراه با بازبینی دوره‌ای</option>
+                                    <option value="3">انعطاف کنترل‌شده بر اساس شرایط کلان</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="submitRegistrationAndPsych()" class="w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:opacity-90 text-white text-sm font-extrabold rounded-xl shadow-xl cursor-pointer transition">
+                        ✅ تکمیل ثبت‌نام، تایید هویت و قفل دائمی آزمون روانشناسی در هسته
                     </button>
                 </div>
             </section>
@@ -165,24 +221,24 @@
                     <div class="glass-card rounded-2xl p-5">
                         <p class="text-slate-400 text-xs">سرمایه فعال ثبت‌شده (AAV)</p>
                         <div id="kpi-aav" class="text-2xl font-extrabold text-white mt-2 font-mono">$50,000.00</div>
-                        <p class="text-[11px] text-emerald-400 mt-2 font-bold">● قفل‌شده در حافظه دائم</p>
+                        <p class="text-[11px] text-emerald-400 mt-2 font-bold">● ذخیره پایدار در هسته</p>
                     </div>
                     <div class="glass-card rounded-2xl p-5">
-                        <p class="text-slate-400 text-xs">پروفایل روانشناسی تثبیت‌شده</p>
-                        <div id="kpi-profile" class="text-lg font-extrabold text-cyan-400 mt-2">متعادل نهادی (Balanced)</div>
+                        <p class="text-slate-400 text-xs">پروفایل روانشناسی تاییدشده</p>
+                        <div id="kpi-profile" class="text-lg font-extrabold text-cyan-400 mt-2">متعادل نهادی</div>
                         <p id="kpi-dd-rule" class="text-[11px] text-slate-400 mt-2">سقف مجاز افت: ۳٪ روزانه / ۸٪ کل</p>
                     </div>
                     <div class="glass-card rounded-2xl p-5">
                         <p class="text-slate-400 text-xs">ریسک VaR (95%)</p>
                         <div id="kpi-var" class="text-2xl font-extrabold text-white mt-2 font-mono">$650.00</div>
-                        <p class="text-[11px] text-emerald-400 mt-2 font-bold">انطباق کامل با قوانین هسته</p>
+                        <p class="text-[11px] text-emerald-400 mt-2 font-bold">همسو با پروفایل رفتاری کاربر</p>
                     </div>
                 </div>
 
                 <div class="glass-card rounded-2xl p-6">
                     <div class="flex flex-wrap justify-between items-center gap-4 mb-4">
-                        <h3 class="text-white font-bold text-base">سبد سرمایه‌گذاری همسو با پروفایل روانشناسی</h3>
-                        <button type="button" onclick="executeRebalance()" class="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-bold rounded-xl shadow-lg cursor-pointer hover:opacity-90 transition">⚡ اجرای بازتوزیع خودکار سبد</button>
+                        <h3 class="text-white font-bold text-base">سبد پیشنهادی بر اساس پروفایل روانشناسی</h3>
+                        <button type="button" onclick="executeRebalance()" class="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-bold rounded-xl shadow-lg cursor-pointer hover:opacity-90 transition">⚡ اجرای بازتوزیع سبد</button>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-right text-xs sm:text-sm">
@@ -204,7 +260,7 @@
             <!-- MULTI-ASSET ANALYSIS -->
             <section id="sec-analysis" class="hidden space-y-6">
                 <div class="glass-card rounded-2xl p-6 space-y-5 border border-cyan-500/30">
-                    <h2 class="text-white font-bold text-lg">📈 موتور تحلیل تفکیک‌شده بازارها</h2>
+                    <h2 class="text-white font-bold text-lg">📈 موتور تحلیل چندبازاری</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
                         <div class="p-4 rounded-xl bg-slate-900 border border-slate-800"><strong class="text-amber-400 block mb-1">🥇 طلا (Gold)</strong>تحلیل کلان، نرخ بهره واقعی و جریان نقدینگی.</div>
                         <div class="p-4 rounded-xl bg-slate-900 border border-slate-800"><strong class="text-emerald-400 block mb-1">🛢️ انرژی و نفت</strong>عرضه و تقاضا، موجودی انبارها و ریسک‌های منطقه‌ای.</div>
@@ -213,24 +269,22 @@
                 </div>
             </section>
 
-            <!-- SECURITY & LINKED ACCOUNTS -->
+            <!-- SECURITY & IDENTITY -->
             <section id="sec-security" class="hidden space-y-6">
                 <div class="glass-card rounded-2xl p-6 space-y-5 border border-emerald-500/30">
-                    <h2 class="text-white font-bold text-lg">🔒 امنیت سایبری، کنترل دسترسی و حساب‌های متصل (ماسک‌شده)</h2>
-                    <p class="text-xs text-slate-400">اطلاعات هویتی و شماره‌حساب‌ها/شبا به‌صورت ماسک‌شده نمایش داده می‌شوند تا از افشای داده‌های حساس جلوگیری شود.</p>
-
+                    <h2 class="text-white font-bold text-lg">🔒 وضعیت هویت، امنیت و حساب‌های ماسک‌شده</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-                        <div class="p-4 rounded-xl bg-slate-900 border border-emerald-500/30">
-                            <span class="text-emerald-400 font-bold block mb-1">🛡️ تایید دو مرحله‌ای (2FA)</span>
-                            <span class="text-slate-300">فعال برای راستی‌آزمایی عملیات حساس</span>
+                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+                            <span class="text-slate-400 block mb-1">مشتری تاییدشده</span>
+                            <strong id="sec-client-name" class="text-white text-sm">-</strong>
                         </div>
-                        <div class="p-4 rounded-xl bg-slate-900 border border-cyan-500/30">
-                            <span class="text-cyan-400 font-bold block mb-1">🎣 کد آنتی‌فیشینگ</span>
-                            <span class="text-slate-300">فعال برای تایید اصالت پیام‌ها و اطلاع‌رسانی‌ها</span>
+                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+                            <span class="text-slate-400 block mb-1">شناسه هویتی ماسک‌شده</span>
+                            <strong id="sec-masked-id" class="text-cyan-400 font-mono text-sm">-</strong>
                         </div>
-                        <div class="p-4 rounded-xl bg-slate-900 border border-amber-500/30">
-                            <span class="text-amber-400 font-bold block mb-1">🏦 حساب‌های متصل (ماسک‌شده)</span>
-                            <span class="text-slate-300">TopChange • سامان • رسالت • ملت (تاییدشده)</span>
+                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+                            <span class="text-slate-400 block mb-1">کنترل‌های امنیتی</span>
+                            <strong id="sec-flags-summary" class="text-emerald-400 text-sm">-</strong>
                         </div>
                     </div>
 
@@ -241,7 +295,6 @@
                                     <th class="pb-3">ارائه‌دهنده / بانک</th>
                                     <th class="pb-3">عنوان حساب</th>
                                     <th class="pb-3">شناسه / شبای ماسک‌شده</th>
-                                    <th class="pb-3">کنترل امنیتی</th>
                                     <th class="pb-3 text-left">وضعیت</th>
                                 </tr>
                             </thead>
@@ -262,11 +315,16 @@
     </div>
 
     <script>
-        const STORAGE_KEY = 'AURORA_PERSISTENT_CORE_V3';
+        const STORAGE_KEY = 'AURORA_CORE_LOCKED_V4';
         let state = {
-            psychVerified: false,
-            q1: '2', q2: '2', q3: '2', q4: '2',
-            profileLabel: 'متعادل نهادی (Institutional Balanced)',
+            verified: false,
+            fullName: '',
+            contact: '',
+            maskedNationalId: '',
+            twoFa: true,
+            antiPhishing: true,
+            q1: '2', q2: '2', q3: '2', q4: '2', q5: '2', q6: '2',
+            profileLabel: 'متعادل نهادی',
             ddRule: 'سقف مجاز افت: ۳٪ روزانه / ۸٪ کل',
             currency: 'USD',
             aav: 50000,
@@ -278,12 +336,29 @@
                 { symbol: 'EURUSD (ارز)', exchange: 'FOREX', current: 15, target: 10 }
             ],
             maskedAccounts: [
-                { provider: 'TopChange', label: 'حساب اصلی معاملاتی/مبادله (2FA + Anti-Phishing)', refMasked: '**************58', securityTag: '2FA + Anti-Phishing', status: 'فعال و تاییدشده' },
-                { provider: 'بانک سامان', label: 'حساب بانکی متصل', refMasked: 'IR-72**********************3256', securityTag: 'تایید هویت شده', status: 'فعال و تاییدشده' },
-                { provider: 'قرض‌الحسنه رسالت', label: 'حساب بانکی متصل', refMasked: 'IR-24**********************0111', securityTag: 'تایید هویت شده', status: 'فعال و تاییدشده' },
-                { provider: 'بانک ملت', label: 'حساب بانکی متصل', refMasked: 'IR-************************8856', securityTag: 'تایید هویت شده', status: 'فعال و تاییدشده' }
+                { provider: 'TopChange', label: 'حساب اصلی متصل', refMasked: '**************58', status: 'فعال و تاییدشده' },
+                { provider: 'بانک سامان', label: 'حساب بانکی تاییدشده', refMasked: 'IR-72**********************3256', status: 'فعال و تاییدشده' },
+                { provider: 'قرض‌الحسنه رسالت', label: 'حساب بانکی تاییدشده', refMasked: 'IR-24**********************0111', status: 'فعال و تاییدشده' },
+                { provider: 'بانک ملت', label: 'حساب بانکی تاییدشده', refMasked: 'IR-************************8856', status: 'فعال و تاییدشده' }
             ]
         };
+
+        function maskValue(raw, keepTail = 4) {
+            const clean = String(raw || '').trim();
+            if (!clean) return '****';
+            if (clean.length <= keepTail) return '*'.repeat(clean.length);
+            return '*'.repeat(clean.length - keepTail) + clean.slice(-keepTail);
+        }
+
+        function getInitials(name) {
+            const parts = String(name || 'AU').trim().split(/\s+/);
+            if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+            return cleanOrDefault(parts[0]).slice(0, 2).toUpperCase();
+        }
+
+        function cleanOrDefault(val) {
+            return val && val.length >= 2 ? val : 'AU';
+        }
 
         function loadCoreState() {
             const saved = localStorage.getItem(STORAGE_KEY);
@@ -304,10 +379,18 @@
         }
 
         function applyStateToUI() {
-            document.getElementById('deep-q1').value = state.q1;
-            document.getElementById('deep-q2').value = state.q2;
-            document.getElementById('deep-q3').value = state.q3;
-            document.getElementById('deep-q4').value = state.q4;
+            document.getElementById('reg-fullname').value = state.fullName;
+            document.getElementById('reg-contact').value = state.contact;
+            document.getElementById('kyc-2fa').checked = state.twoFa;
+            document.getElementById('kyc-antiphishing').checked = state.antiPhishing;
+
+            document.getElementById('psych-q1').value = state.q1;
+            document.getElementById('psych-q2').value = state.q2;
+            document.getElementById('psych-q3').value = state.q3;
+            document.getElementById('psych-q4').value = state.q4;
+            document.getElementById('psych-q5').value = state.q5;
+            document.getElementById('psych-q6').value = state.q6;
+
             document.getElementById('currency-select').value = state.currency;
             document.getElementById('manual-aav-input').value = state.aav;
 
@@ -318,61 +401,114 @@
             document.getElementById('kpi-dd-rule').textContent = state.ddRule;
             document.getElementById('robo-risk-summary').textContent = `پروفایل فعال: ${state.profileLabel} | ${state.ddRule}`;
 
-            if (state.psychVerified) {
+            if (state.verified && state.fullName) {
+                document.getElementById('header-user-name').textContent = state.fullName;
+                document.getElementById('header-user-role').textContent = `مشتری تاییدشده • ${state.profileLabel}`;
+                document.getElementById('header-user-role').className = "text-[10px] text-cyan-400";
+                document.getElementById('header-user-avatar').textContent = getInitials(state.fullName);
+
+                document.getElementById('sec-client-name').textContent = state.fullName;
+                document.getElementById('sec-masked-id').textContent = state.maskedNationalId || '****';
+                document.getElementById('sec-flags-summary').textContent = `${state.twoFa ? '2FA فعال' : '2FA غیرفعال'} • ${state.antiPhishing ? 'آنتی‌فیشینگ فعال' : 'آنتی‌فیشینگ غیرفعال'}`;
+
                 document.getElementById('app-nav').classList.remove('locked-nav');
-                document.getElementById('sec-mandatory-psych').classList.add('hidden');
+                document.getElementById('sec-onboarding').classList.add('hidden');
                 document.getElementById('sec-dashboard').classList.remove('hidden');
                 document.getElementById('retest-psych-btn').classList.remove('hidden');
+
                 document.getElementById('header-dot').className = "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping";
                 document.getElementById('header-status-text').className = "text-emerald-400";
-                document.getElementById('header-status-text').textContent = "تست روانشناسی در هسته قفل و فعال است";
-                document.getElementById('access-status').textContent = "● تایید دائمی (Locked)";
+                document.getElementById('header-status-text').textContent = "پروفایل تایید و در هسته قفل است";
+                document.getElementById('access-status').textContent = "● تایید و قفل دائمی";
                 document.getElementById('access-status').className = "text-emerald-400 font-bold";
             }
+
             renderTable();
             renderAccountsTable();
         }
 
-        function submitDeepPsychTest() {
-            state.q1 = document.getElementById('deep-q1').value;
-            state.q2 = document.getElementById('deep-q2').value;
-            state.q3 = document.getElementById('deep-q3').value;
-            state.q4 = document.getElementById('deep-q4').value;
+        function submitRegistrationAndPsych() {
+            const fullName = document.getElementById('reg-fullname').value.trim();
+            const contact = document.getElementById('reg-contact').value.trim();
+            const rawNationalId = document.getElementById('reg-national-id').value.trim();
+            const termsAccepted = document.getElementById('kyc-terms').checked;
 
-            const score = parseInt(state.q1) + parseInt(state.q2) + parseInt(state.q3) + parseInt(state.q4);
-            if (score <= 6) {
+            if (!fullName || !contact) {
+                showToast('⚠️ لطفاً نام و نام خانوادگی و ایمیل/شناسه ارتباطی را وارد کنید.');
+                return;
+            }
+            if (!termsAccepted) {
+                showToast('⚠️ برای تکمیل ثبت‌نام، تایید قوانین مدیریت ریسک الزامی است.');
+                return;
+            }
+
+            state.fullName = fullName;
+            state.contact = contact;
+            if (rawNationalId) {
+                state.maskedNationalId = maskValue(rawNationalId, 4);
+            } else if (!state.maskedNationalId) {
+                state.maskedNationalId = 'KYC-VERIFIED-****';
+            }
+
+            state.twoFa = document.getElementById('kyc-2fa').checked;
+            state.antiPhishing = document.getElementById('kyc-antiphishing').checked;
+
+            state.q1 = document.getElementById('psych-q1').value;
+            state.q2 = document.getElementById('psych-q2').value;
+            state.q3 = document.getElementById('psych-q3').value;
+            state.q4 = document.getElementById('psych-q4').value;
+            state.q5 = document.getElementById('psych-q5').value;
+            state.q6 = document.getElementById('psych-q6').value;
+
+            const totalScore =
+                parseInt(state.q1) + parseInt(state.q2) + parseInt(state.q3) +
+                parseInt(state.q4) + parseInt(state.q5) + parseInt(state.q6);
+
+            if (totalScore <= 9) {
                 state.profileLabel = 'محافظه‌کار نهادی (Ultra-Conservative)';
                 state.ddRule = 'سقف مجاز افت: ۲٪ روزانه / ۵٪ کل';
-                state.portfolio[0].target = 45; state.portfolio[2].target = 25; state.portfolio[3].target = 10;
-            } else if (score >= 10) {
+                state.portfolio[0].target = 45;
+                state.portfolio[2].target = 25;
+                state.portfolio[3].target = 10;
+            } else if (totalScore >= 15) {
                 state.profileLabel = 'رشد تهاجمی هوشمند (Dynamic Alpha)';
                 state.ddRule = 'سقف مجاز افت: ۵٪ روزانه / ۱۲٪ کل';
-                state.portfolio[0].target = 15; state.portfolio[3].target = 40; state.portfolio[1].target = 25;
+                state.portfolio[0].target = 15;
+                state.portfolio[3].target = 40;
+                state.portfolio[1].target = 25;
             } else {
                 state.profileLabel = 'متعادل نهادی (Institutional Balanced)';
                 state.ddRule = 'سقف مجاز افت: ۳٪ روزانه / ۸٪ کل';
-                state.portfolio[0].target = 30; state.portfolio[1].target = 20; state.portfolio[2].target = 20; state.portfolio[3].target = 20;
+                state.portfolio[0].target = 30;
+                state.portfolio[1].target = 20;
+                state.portfolio[2].target = 20;
+                state.portfolio[3].target = 20;
             }
 
-            state.psychVerified = true;
+            state.verified = true;
             saveCoreState();
             applyStateToUI();
 
+            const normalizedScore = Math.max(1, Math.min(12, Math.round((totalScore / 18) * 12)));
             fetch('/api/v3/auth/verify-psych', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ risk_score: score, client_name: 'عبدالعزیز انصاری', force_override: true })
+                body: JSON.stringify({
+                    risk_score: normalizedScore,
+                    client_name: state.fullName,
+                    force_override: true
+                })
             }).catch(() => {});
 
-            showToast('✅ نتیجه تست روانشناسی برای همیشه در هسته ذخیره و قفل شد.');
+            showToast('✅ ثبت‌نام، احراز هویت و آزمون روانشناسی در هسته ذخیره و قفل شد.');
         }
 
-        function unlockPsychForEdit() {
+        function unlockProfileForEdit() {
             ['dashboard', 'analysis', 'security', 'robo'].forEach(id => {
                 document.getElementById('sec-' + id).classList.add('hidden');
             });
-            document.getElementById('sec-mandatory-psych').classList.remove('hidden');
-            showToast('حالت بازنگری فعال شد: پس از تغییر گزینه‌ها روی ثبت دائمی کلیک کنید.');
+            document.getElementById('sec-onboarding').classList.remove('hidden');
+            showToast('حالت ویرایش فعال شد: پس از اصلاح اطلاعات روی دکمه تایید و قفل کلیک کنید.');
         }
 
         function updateCurrencySymbol() {
@@ -424,14 +560,13 @@
                     <td class="py-3.5 font-bold text-white">${acc.provider}</td>
                     <td class="py-3.5 text-slate-300 text-xs">${acc.label}</td>
                     <td class="py-3.5 font-mono text-cyan-400 text-xs">${acc.refMasked}</td>
-                    <td class="py-3.5 text-emerald-400 text-xs font-bold">${acc.securityTag}</td>
                     <td class="py-3.5 text-left text-emerald-400 text-xs font-bold">${acc.status}</td>
                 </tr>
             `).join('');
         }
 
         function openSection(secId, btn) {
-            ['mandatory-psych', 'dashboard', 'analysis', 'security', 'robo'].forEach(id => {
+            ['onboarding', 'dashboard', 'analysis', 'security', 'robo'].forEach(id => {
                 document.getElementById('sec-' + id).classList.add('hidden');
             });
             document.querySelectorAll('.nav-btn').forEach(b => {
