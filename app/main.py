@@ -1,12 +1,14 @@
+import logging
 import math
 import os
-from typing import Optional, List, Dict
-from fastapi import FastAPI, Depends, HTTPException, Query
-from fastapi.staticfiles import StaticFiles
-from sqlalchemy.orm import Session
-from pydantic import BaseModel, Field
+from typing import Dict, List, Optional
 
-from app.database import engine, Base, get_db
+from fastapi import Depends, FastAPI, HTTPException, Query, Request
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
+
+from app.database import Base, engine, get_db
 from app.models import ClientPortfolioModel, ImmutableAuditLog, LinkedAccountModel
 from app.worker import execute_async_rebalance
 
@@ -14,18 +16,34 @@ try:
     from app.risk_engine import (
         align_risk_with_psych_profile as _external_align_risk,
         build_correlation_matrix as _external_corr_matrix,
+        compute_portfolio_var as _external_compute_var,
     )
 except ImportError:
     _external_align_risk = None
     _external_corr_matrix = None
+    _external_compute_var = None
 
-Base.metadata.create_all(bind=engine)
+logger = logging.getLogger("aurora.main")
+
+try:
+    Base.metadata.create_all(bind=engine)
+except Exception as exc:
+    logger.warning(f"[AURORA CORE] Database metadata initialization deferred: {exc}")
 
 app = FastAPI(
     title="Aurora Institutional Quant API",
-    version="3.3.0",
-    description="Persistent Core API for Aurora Smart Wealth & Multi-Asset Platform"
+    version="3.4.0",
+    description="Persistent Core API for Aurora Smart Wealth & Multi-Asset Platform",
 )
+
+
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("X-Frame-Options", "DENY")
+    response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    return response
 
 
 class PsychTestRequest(BaseModel):
@@ -50,13 +68,14 @@ class LinkedAccountCreateRequest(BaseModel):
 
 
 def resolve_risk_config(score: int) -> dict:
-    if score <= 6:
+    clamped = max(1, min(12, int(score)))
+    if clamped <= 6:
         return {
             "profile": "Ultra-Conservative",
             "daily_dd_limit_pct": 2.0,
             "max_dd_limit_pct": 5.0,
         }
-    if score >= 10:
+    if clamped >= 10:
         return {
             "profile": "Dynamic Alpha",
             "daily_dd_limit_pct": 5.0,
@@ -70,42 +89,55 @@ def resolve_risk_config(score: int) -> dict:
 
 
 def _fallback_align_risk(psych_score: int, aav_capital: float) -> dict:
-    cfg = resolve_risk_config(psych_score)
-    if psych_score <= 6:
+    clamped_score = max(1, min(12, int(psych_score)))
+    cfg = resolve_risk_config(clamped_score)
+    if clamped_score <= 6:
         weights = [0.45, 0.15, 0.25, 0.10, 0.05]
         herd_guard = "فعال — محدودیت سخت‌گیرانه در برابر نوسانات ناگهانی"
-    elif psych_score >= 10:
+        glass_box_reasoning = "اولویت حفظ سرمایه و کنترل شدید افت روزانه بر اساس پروفایل محافظه‌کارانه."
+    elif clamped_score >= 10:
         weights = [0.15, 0.25, 0.15, 0.40, 0.05]
         herd_guard = "فعال — کنترل اهرم و هشدار تمرکز بیش از حد"
+        glass_box_reasoning = "تخصیص پویاتر با حفظ سقف‌های تعریف‌شده برای جلوگیری از افت کنترل‌نشده."
     else:
         weights = [0.30, 0.20, 0.20, 0.20, 0.10]
         herd_guard = "فعال — تعادل میان حفظ سرمایه و بازده هدف"
+        glass_box_reasoning = "توازن نظام‌مند میان نقدشوندگی، طلا/کالا و شاخص‌ها بر اساس پروفایل متعادل."
 
     vols = [0.012, 0.018, 0.015, 0.020, 0.009]
-    portfolio_vol = math.sqrt(max(0.0, sum((w * v) ** 2 for w, v in zip(weights, vols))))
-    var_95 = round(aav_capital * portfolio_vol * 1.65, 2)
+    if _external_compute_var:
+        var_95 = _external_compute_var(aav_capital, weights, vols, confidence_z=1.65)
+    else:
+        portfolio_vol = math.sqrt(max(0.0, sum((w * v) ** 2 for w, v in zip(weights, vols))))
+        var_95 = round(aav_capital * portfolio_vol * 1.65, 2)
+
+    daily_loss_cap = round(aav_capital * (cfg["daily_dd_limit_pct"] / 100.0), 2)
     max_loss_amount = round(aav_capital * (cfg["max_dd_limit_pct"] / 100.0), 2)
 
     return {
         "risk_profile": cfg["profile"],
         "daily_dd_limit_pct": cfg["daily_dd_limit_pct"],
         "max_dd_limit_pct": cfg["max_dd_limit_pct"],
+        "daily_loss_cap_amount": daily_loss_cap,
         "max_loss_stress_amount": max_loss_amount,
         "var_95": var_95,
         "behavioral_herd_guard": herd_guard,
+        "glass_box_reasoning": glass_box_reasoning,
     }
 
 
 def _fallback_corr_matrix(symbols: List[str]) -> Dict[str, Dict[str, float]]:
     matrix: Dict[str, Dict[str, float]] = {}
     for s1 in symbols:
+        u1 = s1.upper()
         matrix[s1] = {}
         for s2 in symbols:
+            u2 = s2.upper()
             if s1 == s2:
                 matrix[s1][s2] = 1.0
-            elif ("XAU" in s1 and "USD" in s2) or ("USD" in s1 and "XAU" in s2):
+            elif ("XAU" in u1 and "USD" in u2) or ("USD" in u1 and "XAU" in u2):
                 matrix[s1][s2] = -0.35
-            elif ("BRENT" in s1 and "WHEAT" in s2) or ("WHEAT" in s1 and "BRENT" in s2):
+            elif ("BRENT" in u1 and "WHEAT" in u2) or ("WHEAT" in u1 and "BRENT" in u2):
                 matrix[s1][s2] = 0.25
             else:
                 matrix[s1][s2] = 0.15
@@ -140,7 +172,7 @@ def set_verified_lock(portfolio: ClientPortfolioModel, locked: bool = True) -> N
 
 @app.get("/health")
 def health_check():
-    return {"status": "ok", "service": "aurora-quant-core", "version": "3.3.0"}
+    return {"status": "ok", "service": "aurora-quant-core", "version": "3.4.0"}
 
 
 @app.post("/api/v3/auth/verify-psych")
