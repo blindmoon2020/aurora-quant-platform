@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aurora Quant Platform | ثبت‌نام، احراز هویت و مدیریت هوشمند ثروت</title>
+    <title>Aurora Quant Platform | مدیریت هوشمند ثروت و ریسک</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -24,29 +24,29 @@
                 <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-cyan-400 via-blue-600 to-indigo-700 flex items-center justify-center font-extrabold text-xl text-white shadow-lg">A</div>
                 <div>
                     <h1 class="font-extrabold text-lg tracking-wider text-white">AURORA <span class="text-cyan-400">QUANT</span></h1>
-                    <p class="text-[10px] text-slate-400">Persistent Onboarding & Wealth Core v4.0</p>
+                    <p class="text-[10px] text-slate-400">Smart Wealth & Risk Glass-Box v3.4</p>
                 </div>
             </div>
 
             <nav id="app-nav" class="flex md:flex-col gap-2 text-sm locked-nav">
                 <button type="button" onclick="openSection('dashboard', this)" class="nav-btn active flex items-center gap-3 px-4 py-3.5 rounded-xl text-right">
-                    <span>📊</span> <span>داشبورد مدیریت ثروت</span>
+                    <span>📊</span> <span>داشبورد و سناریوی ضرر</span>
                 </button>
                 <button type="button" onclick="openSection('analysis', this)" class="nav-btn text-slate-400 flex items-center gap-3 px-4 py-3.5 rounded-xl text-right">
-                    <span>📈</span> <span>موتور تحلیل چندبازاری</span>
+                    <span>📈</span> <span>تحلیل چندبازاری و همبستگی</span>
                 </button>
                 <button type="button" onclick="openSection('security', this)" class="nav-btn text-slate-400 flex items-center gap-3 px-4 py-3.5 rounded-xl text-right">
                     <span>🔒</span> <span>احراز هویت، امنیت و حساب‌ها</span>
                 </button>
                 <button type="button" onclick="openSection('robo', this)" class="nav-btn text-slate-400 flex items-center gap-3 px-4 py-3.5 rounded-xl text-right">
-                    <span>🤖</span> <span>سبدگردان هوشمند (Risk Parity)</span>
+                    <span>🤖</span> <span>سبدگردان و جعبه شیشه‌ای</span>
                 </button>
             </nav>
         </div>
 
         <div class="mt-8 p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3">
             <div class="flex justify-between text-[11px] text-slate-400">
-                <span>وضعیت ثبت‌نام و قفل هسته:</span>
+                <span>وضعیت قفل هسته:</span>
                 <span id="access-status" class="text-amber-400 font-bold">در انتظار ثبت‌نام</span>
             </div>
             <button id="retest-psych-btn" type="button" onclick="unlockProfileForEdit()" class="hidden w-full py-2 px-3 bg-slate-800 hover:bg-slate-700 text-cyan-400 text-[11px] font-bold rounded-lg border border-cyan-500/30 cursor-pointer transition">
@@ -60,7 +60,7 @@
         <header class="glass-card border-b border-slate-800/80 px-6 py-4 flex flex-wrap justify-between items-center gap-4 sticky top-0 z-20">
             <div class="flex items-center gap-3">
                 <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping" id="header-dot"></span>
-                <span class="text-xs text-slate-300">وضعیت هسته: <strong id="header-status-text" class="text-amber-400">ثبت‌نام، احراز هویت و تست روانشناسی الزامی است</strong></span>
+                <span class="text-xs text-slate-300">وضعیت هسته: <strong id="header-status-text" class="text-amber-400">ثبت‌نام، احراز هویت و آزمون روانشناسی الزامی است</strong></span>
             </div>
 
             <div class="flex items-center gap-4">
@@ -98,7 +98,6 @@
                         <p class="text-xs text-slate-400 mt-1">اطلاعات هویتی و نتیجه آزمون روانشناسی پس از تایید، در هسته قفل و ذخیره می‌شوند و با به‌روزرسانی کدها ریست نخواهند شد.</p>
                     </div>
 
-                    <!-- Step 1: Registration & KYC -->
                     <div class="space-y-4">
                         <h3 class="text-cyan-400 font-bold text-sm">بخش اول: ثبت‌نام و احراز هویت مشتری/کاربر</h3>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -132,7 +131,6 @@
                         </div>
                     </div>
 
-                    <!-- Step 2: Comprehensive 6-Question Psychometric Assessment -->
                     <div class="space-y-4 border-t border-slate-800 pt-6">
                         <h3 class="text-cyan-400 font-bold text-sm">بخش دوم: آزمون جامع روانشناسی مالی و انضباط ریسک (۶ شاخص تخصصی)</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -198,7 +196,7 @@
                 </div>
             </section>
 
-            <!-- DASHBOARD SECTION -->
+            <!-- DASHBOARD & DRAWDOWN SCENARIOS -->
             <section id="sec-dashboard" class="hidden space-y-6">
                 <div class="glass-card rounded-2xl p-5 flex flex-wrap justify-between items-center gap-4 border border-cyan-500/30">
                     <div>
@@ -231,13 +229,30 @@
                     <div class="glass-card rounded-2xl p-5">
                         <p class="text-slate-400 text-xs">ریسک VaR (95%)</p>
                         <div id="kpi-var" class="text-2xl font-extrabold text-white mt-2 font-mono">$650.00</div>
-                        <p class="text-[11px] text-emerald-400 mt-2 font-bold">همسو با پروفایل رفتاری کاربر</p>
+                        <p id="kpi-herd-guard" class="text-[11px] text-emerald-400 mt-2 font-bold">محافظ رفتار گلّه‌ای فعال</p>
+                    </div>
+                </div>
+
+                <!-- Drawdown Scenarios & Expectations -->
+                <div class="glass-card rounded-2xl p-6 border border-amber-500/20 space-y-4">
+                    <h3 class="text-white font-bold text-base">⚠️ سناریوهای شفاف افت سرمایه (Drawdown Scenarios) و مدیریت انتظارات</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
+                            <span class="text-amber-400 font-bold block">سناریوی سقف افت روزانه (Daily Drawdown Cap)</span>
+                            <p id="scenario-daily-dd" class="text-white font-mono text-sm font-bold">-</p>
+                            <p class="text-slate-400">در صورت رسیدن افت روزانه به این آستانه، ورود ریسک جدید محدود می‌شود تا از تصمیم هیجانی جلوگیری شود.</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
+                            <span class="text-rose-400 font-bold block">سناریوی سقف افت کل / استرس (Max Stress Drawdown)</span>
+                            <p id="scenario-max-dd" class="text-white font-mono text-sm font-bold">-</p>
+                            <p class="text-slate-400">نمایش حداکثر افت برنامه‌ریزی‌شده در شرایط نوسان شدید برای حفظ انضباط سرمایه.</p>
+                        </div>
                     </div>
                 </div>
 
                 <div class="glass-card rounded-2xl p-6">
                     <div class="flex flex-wrap justify-between items-center gap-4 mb-4">
-                        <h3 class="text-white font-bold text-base">سبد پیشنهادی بر اساس پروفایل روانشناسی</h3>
+                        <h3 class="text-white font-bold text-base">سبد پیشنهادی همسو با پروفایل روانشناسی</h3>
                         <button type="button" onclick="executeRebalance()" class="px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-bold rounded-xl shadow-lg cursor-pointer hover:opacity-90 transition">⚡ اجرای بازتوزیع سبد</button>
                     </div>
                     <div class="overflow-x-auto">
@@ -257,14 +272,18 @@
                 </div>
             </section>
 
-            <!-- MULTI-ASSET ANALYSIS -->
+            <!-- MULTI-ASSET ANALYSIS & CORRELATION -->
             <section id="sec-analysis" class="hidden space-y-6">
                 <div class="glass-card rounded-2xl p-6 space-y-5 border border-cyan-500/30">
-                    <h2 class="text-white font-bold text-lg">📈 موتور تحلیل چندبازاری</h2>
+                    <h2 class="text-white font-bold text-lg">📈 موتور تحلیل چندبازاری و همبستگی پایه</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800"><strong class="text-amber-400 block mb-1">🥇 طلا (Gold)</strong>تحلیل کلان، نرخ بهره واقعی و جریان نقدینگی.</div>
-                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800"><strong class="text-emerald-400 block mb-1">🛢️ انرژی و نفت</strong>عرضه و تقاضا، موجودی انبارها و ریسک‌های منطقه‌ای.</div>
-                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800"><strong class="text-purple-400 block mb-1">🌾 کشاورزی و شاخص‌ها</strong>تنوع‌بخشی فصلی و مدیریت نوسان سبد.</div>
+                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800"><strong class="text-amber-400 block mb-1">🥇 طلا (XAUUSD)</strong>پوشش ریسک تورم و همبستگی منفی نسبی با شاخص دلار.</div>
+                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800"><strong class="text-emerald-400 block mb-1">🛢️ انرژی و نفت (BRENT)</strong>پایش عرضه، تقاضا و نوسانات ژئوپلیتیک.</div>
+                        <div class="p-4 rounded-xl bg-slate-900 border border-slate-800"><strong class="text-purple-400 block mb-1">🌾 کشاورزی و شاخص‌ها (WHEAT / NAS100)</strong>تنوع‌بخشی میان‌بازاری برای کاهش تمرکز تک‌دارایی.</div>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs space-y-1">
+                        <strong class="text-cyan-400 block">منطق کنترل همبستگی و ضدهمگام‌سازی:</strong>
+                        <p class="text-slate-300">ترکیب دارایی‌ها با وزن‌های متفاوت و پایش همبستگی انجام می‌شود تا کل سبد به‌طور هم‌زمان در یک جهت آسیب‌پذیر نشود.</p>
                     </div>
                 </div>
             </section>
@@ -304,11 +323,15 @@
                 </div>
             </section>
 
-            <!-- ROBO ADVISOR -->
+            <!-- ROBO ADVISOR & GLASS-BOX -->
             <section id="sec-robo" class="hidden space-y-6">
-                <div class="glass-card rounded-2xl p-6 space-y-4">
-                    <h2 class="text-white font-bold text-lg">🤖 سبدگردان هوشمند (Risk Parity)</h2>
-                    <p id="robo-risk-summary" class="text-xs text-slate-400">تخصیص سرمایه تابع سقف افت ثبت‌شده در آزمون روانشناسی است.</p>
+                <div class="glass-card rounded-2xl p-6 space-y-4 border border-cyan-500/20">
+                    <h2 class="text-white font-bold text-lg">🤖 سبدگردان هوشمند و شفافیت «جعبه شیشه‌ای» (Glass-Box)</h2>
+                    <p id="robo-risk-summary" class="text-xs text-cyan-300 font-bold">تخصیص سرمایه تابع سقف افت ثبت‌شده در آزمون روانشناسی است.</p>
+                    <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs space-y-2">
+                        <span class="text-cyan-400 font-bold block">دلیل تصمیم‌گیری و تخصیص (Glass-Box Reasoning):</span>
+                        <p id="glass-box-reason-text" class="text-slate-300 leading-relaxed">-</p>
+                    </div>
                 </div>
             </section>
         </main>
@@ -324,8 +347,13 @@
             twoFa: true,
             antiPhishing: true,
             q1: '2', q2: '2', q3: '2', q4: '2', q5: '2', q6: '2',
+            psychScore12: 8,
             profileLabel: 'متعادل نهادی',
+            dailyDdPct: 3.0,
+            maxDdPct: 8.0,
             ddRule: 'سقف مجاز افت: ۳٪ روزانه / ۸٪ کل',
+            herdGuard: 'فعال — تعادل میان حفظ سرمایه و بازده هدف',
+            glassBoxReason: 'توازن نظام‌مند میان نقدشوندگی، طلا/کالا و شاخص‌ها بر اساس پروفایل ثبت‌شده انجام شده است.',
             currency: 'USD',
             aav: 50000,
             portfolio: [
@@ -353,11 +381,7 @@
         function getInitials(name) {
             const parts = String(name || 'AU').trim().split(/\s+/);
             if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
-            return cleanOrDefault(parts[0]).slice(0, 2).toUpperCase();
-        }
-
-        function cleanOrDefault(val) {
-            return val && val.length >= 2 ? val : 'AU';
+            return (parts[0] || 'AU').slice(0, 2).toUpperCase();
         }
 
         function loadCoreState() {
@@ -368,6 +392,9 @@
                 } catch (e) {}
             }
             applyStateToUI();
+            if (state.verified) {
+                syncRiskReportFromBackend();
+            }
         }
 
         function saveCoreState() {
@@ -395,11 +422,22 @@
             document.getElementById('manual-aav-input').value = state.aav;
 
             const sym = getCurrencySymbol(state.currency);
+            const dailyCapAmt = state.aav * (state.dailyDdPct / 100);
+            const maxCapAmt = state.aav * (state.maxDdPct / 100);
+
             document.getElementById('kpi-aav').textContent = state.aav.toLocaleString(undefined, { minimumFractionDigits: 2 }) + sym;
             document.getElementById('kpi-var').textContent = (state.aav * 0.013).toLocaleString(undefined, { maximumFractionDigits: 2 }) + sym;
             document.getElementById('kpi-profile').textContent = state.profileLabel;
             document.getElementById('kpi-dd-rule').textContent = state.ddRule;
+            document.getElementById('kpi-herd-guard').textContent = state.herdGuard;
+
+            document.getElementById('scenario-daily-dd').textContent =
+                `${state.dailyDdPct}% معادل ${dailyCapAmt.toLocaleString(undefined, { maximumFractionDigits: 2 })}${sym}`;
+            document.getElementById('scenario-max-dd').textContent =
+                `${state.maxDdPct}% معادل ${maxCapAmt.toLocaleString(undefined, { maximumFractionDigits: 2 })}${sym}`;
+
             document.getElementById('robo-risk-summary').textContent = `پروفایل فعال: ${state.profileLabel} | ${state.ddRule}`;
+            document.getElementById('glass-box-reason-text').textContent = state.glassBoxReason;
 
             if (state.verified && state.fullName) {
                 document.getElementById('header-user-name').textContent = state.fullName;
@@ -427,6 +465,23 @@
             renderAccountsTable();
         }
 
+        function syncRiskReportFromBackend() {
+            const q = state.fullName ? `?client_name=${encodeURIComponent(state.fullName)}` : '';
+            fetch(`/api/v3/portfolio/risk-report${q}`)
+                .then(res => res.ok ? res.json() : null)
+                .then(data => {
+                    if (!data || !data.risk_metrics) return;
+                    const rm = data.risk_metrics;
+                    if (typeof rm.daily_dd_limit_pct === 'number') state.dailyDdPct = rm.daily_dd_limit_pct;
+                    if (typeof rm.max_dd_limit_pct === 'number') state.maxDdPct = rm.max_dd_limit_pct;
+                    if (rm.behavioral_herd_guard) state.herdGuard = rm.behavioral_herd_guard;
+                    if (rm.glass_box_reasoning) state.glassBoxReason = rm.glass_box_reasoning;
+                    saveCoreState();
+                    applyStateToUI();
+                })
+                .catch(() => {});
+        }
+
         function submitRegistrationAndPsych() {
             const fullName = document.getElementById('reg-fullname').value.trim();
             const contact = document.getElementById('reg-contact').value.trim();
@@ -444,12 +499,7 @@
 
             state.fullName = fullName;
             state.contact = contact;
-            if (rawNationalId) {
-                state.maskedNationalId = maskValue(rawNationalId, 4);
-            } else if (!state.maskedNationalId) {
-                state.maskedNationalId = 'KYC-VERIFIED-****';
-            }
-
+            state.maskedNationalId = rawNationalId ? maskValue(rawNationalId, 4) : (state.maskedNationalId || 'KYC-VERIFIED-****');
             state.twoFa = document.getElementById('kyc-2fa').checked;
             state.antiPhishing = document.getElementById('kyc-antiphishing').checked;
 
@@ -466,39 +516,53 @@
 
             if (totalScore <= 9) {
                 state.profileLabel = 'محافظه‌کار نهادی (Ultra-Conservative)';
+                state.dailyDdPct = 2.0;
+                state.maxDdPct = 5.0;
                 state.ddRule = 'سقف مجاز افت: ۲٪ روزانه / ۵٪ کل';
+                state.herdGuard = 'فعال — محدودیت سخت‌گیرانه در برابر نوسانات ناگهانی';
+                state.glassBoxReason = 'اولویت حفظ سرمایه و کنترل شدید افت روزانه بر اساس ظرفیت ریسک محافظه‌کارانه.';
                 state.portfolio[0].target = 45;
                 state.portfolio[2].target = 25;
                 state.portfolio[3].target = 10;
             } else if (totalScore >= 15) {
                 state.profileLabel = 'رشد تهاجمی هوشمند (Dynamic Alpha)';
+                state.dailyDdPct = 5.0;
+                state.maxDdPct = 12.0;
                 state.ddRule = 'سقف مجاز افت: ۵٪ روزانه / ۱۲٪ کل';
+                state.herdGuard = 'فعال — کنترل اهرم و هشدار تمرکز بیش از حد';
+                state.glassBoxReason = 'تخصیص پویاتر با حفظ سقف‌های تعریف‌شده برای جلوگیری از افت کنترل‌نشده.';
                 state.portfolio[0].target = 15;
                 state.portfolio[3].target = 40;
                 state.portfolio[1].target = 25;
             } else {
                 state.profileLabel = 'متعادل نهادی (Institutional Balanced)';
+                state.dailyDdPct = 3.0;
+                state.maxDdPct = 8.0;
                 state.ddRule = 'سقف مجاز افت: ۳٪ روزانه / ۸٪ کل';
+                state.herdGuard = 'فعال — تعادل میان حفظ سرمایه و بازده هدف';
+                state.glassBoxReason = 'توازن نظام‌مند میان نقدشوندگی، طلا/کالا و شاخص‌ها بر اساس پروفایل متعادل.';
                 state.portfolio[0].target = 30;
                 state.portfolio[1].target = 20;
                 state.portfolio[2].target = 20;
                 state.portfolio[3].target = 20;
             }
 
+            state.psychScore12 = Math.max(1, Math.min(12, Math.round((totalScore / 18) * 12)));
             state.verified = true;
             saveCoreState();
             applyStateToUI();
 
-            const normalizedScore = Math.max(1, Math.min(12, Math.round((totalScore / 18) * 12)));
             fetch('/api/v3/auth/verify-psych', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    risk_score: normalizedScore,
+                    risk_score: state.psychScore12,
                     client_name: state.fullName,
                     force_override: true
                 })
-            }).catch(() => {});
+            })
+            .then(() => syncRiskReportFromBackend())
+            .catch(() => {});
 
             showToast('✅ ثبت‌نام، احراز هویت و آزمون روانشناسی در هسته ذخیره و قفل شد.');
         }
@@ -523,7 +587,20 @@
                 state.aav = val;
                 saveCoreState();
                 applyStateToUI();
-                showToast('سرمایه پایه در حافظه دائم هسته ذخیره شد.');
+
+                fetch('/api/v3/portfolio/update-capital', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        new_aav: state.aav,
+                        currency: state.currency,
+                        client_name: state.fullName || 'عبدالعزیز انصاری'
+                    })
+                })
+                .then(() => syncRiskReportFromBackend())
+                .catch(() => {});
+
+                showToast('سرمایه پایه در حافظه دائم هسته ذخیره و سناریوی افت به‌روزرسانی شد.');
             }
         }
 
