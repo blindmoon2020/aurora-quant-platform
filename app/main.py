@@ -1,5 +1,6 @@
+import math
 import os
-from typing import Optional
+from typing import Optional, List, Dict
 from fastapi import FastAPI, Depends, HTTPException, Query
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
@@ -9,11 +10,20 @@ from app.database import engine, Base, get_db
 from app.models import ClientPortfolioModel, ImmutableAuditLog, LinkedAccountModel
 from app.worker import execute_async_rebalance
 
+try:
+    from app.risk_engine import (
+        align_risk_with_psych_profile as _external_align_risk,
+        build_correlation_matrix as _external_corr_matrix,
+    )
+except ImportError:
+    _external_align_risk = None
+    _external_corr_matrix = None
+
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Aurora Institutional Quant API",
-    version="3.2.0",
+    version="3.3.0",
     description="Persistent Core API for Aurora Smart Wealth & Multi-Asset Platform"
 )
 
@@ -59,6 +69,49 @@ def resolve_risk_config(score: int) -> dict:
     }
 
 
+def _fallback_align_risk(psych_score: int, aav_capital: float) -> dict:
+    cfg = resolve_risk_config(psych_score)
+    if psych_score <= 6:
+        weights = [0.45, 0.15, 0.25, 0.10, 0.05]
+        herd_guard = "فعال — محدودیت سخت‌گیرانه در برابر نوسانات ناگهانی"
+    elif psych_score >= 10:
+        weights = [0.15, 0.25, 0.15, 0.40, 0.05]
+        herd_guard = "فعال — کنترل اهرم و هشدار تمرکز بیش از حد"
+    else:
+        weights = [0.30, 0.20, 0.20, 0.20, 0.10]
+        herd_guard = "فعال — تعادل میان حفظ سرمایه و بازده هدف"
+
+    vols = [0.012, 0.018, 0.015, 0.020, 0.009]
+    portfolio_vol = math.sqrt(max(0.0, sum((w * v) ** 2 for w, v in zip(weights, vols))))
+    var_95 = round(aav_capital * portfolio_vol * 1.65, 2)
+    max_loss_amount = round(aav_capital * (cfg["max_dd_limit_pct"] / 100.0), 2)
+
+    return {
+        "risk_profile": cfg["profile"],
+        "daily_dd_limit_pct": cfg["daily_dd_limit_pct"],
+        "max_dd_limit_pct": cfg["max_dd_limit_pct"],
+        "max_loss_stress_amount": max_loss_amount,
+        "var_95": var_95,
+        "behavioral_herd_guard": herd_guard,
+    }
+
+
+def _fallback_corr_matrix(symbols: List[str]) -> Dict[str, Dict[str, float]]:
+    matrix: Dict[str, Dict[str, float]] = {}
+    for s1 in symbols:
+        matrix[s1] = {}
+        for s2 in symbols:
+            if s1 == s2:
+                matrix[s1][s2] = 1.0
+            elif ("XAU" in s1 and "USD" in s2) or ("USD" in s1 and "XAU" in s2):
+                matrix[s1][s2] = -0.35
+            elif ("BRENT" in s1 and "WHEAT" in s2) or ("WHEAT" in s1 and "BRENT" in s2):
+                matrix[s1][s2] = 0.25
+            else:
+                matrix[s1][s2] = 0.15
+    return matrix
+
+
 def mask_sensitive_value(value: str, visible_tail: int = 4) -> str:
     cleaned = "".join(ch for ch in value.strip() if not ch.isspace())
     if len(cleaned) <= visible_tail:
@@ -87,7 +140,7 @@ def set_verified_lock(portfolio: ClientPortfolioModel, locked: bool = True) -> N
 
 @app.get("/health")
 def health_check():
-    return {"status": "ok", "service": "aurora-quant-core", "version": "3.2.0"}
+    return {"status": "ok", "service": "aurora-quant-core", "version": "3.3.0"}
 
 
 @app.post("/api/v3/auth/verify-psych")
@@ -173,6 +226,28 @@ def get_portfolio_data(client_name: Optional[str] = Query(default=None), db: Ses
     }
 
 
+@app.get("/api/v3/portfolio/risk-report")
+def get_risk_report(client_name: Optional[str] = Query(default=None), db: Session = Depends(get_db)):
+    portfolio = get_client_record(db, client_name)
+    if not portfolio or not is_verified_and_locked(portfolio):
+        raise HTTPException(status_code=403, detail="Zero-Trust Access Denied: KYC Required")
+
+    score = getattr(portfolio, "psych_score", 8)
+    align_fn = _external_align_risk or _fallback_align_risk
+    corr_fn = _external_corr_matrix or _fallback_corr_matrix
+    metrics = align_fn(score, portfolio.aav_capital)
+    symbols = ["XAUUSD", "BRENT", "WHEAT", "NAS100", "EURUSD"]
+
+    return {
+        "client": portfolio.client_name,
+        "currency": portfolio.base_currency,
+        "aav": portfolio.aav_capital,
+        "risk_metrics": metrics,
+        "correlation_matrix": corr_fn(symbols),
+        "glass_box_note": "محاسبات ریسک، همبستگی و سقف افت سرمایه بر اساس پروفایل ثبت‌شده و بدون تصمیم هیجانی انجام شده است.",
+    }
+
+
 @app.post("/api/v3/portfolio/update-capital")
 def update_capital(data: CapitalUpdateRequest, db: Session = Depends(get_db)):
     portfolio = get_client_record(db, data.client_name)
@@ -212,12 +287,15 @@ def trigger_rebalance(client_name: Optional[str] = Query(default=None), db: Sess
     if not portfolio:
         raise HTTPException(status_code=404, detail="Portfolio not found")
 
-    task = execute_async_rebalance.delay(portfolio.id)
-    return {
-        "success": True,
-        "task_id": task.id,
-        "message": "Automated Rebalancing Task Dispatched",
-    }
+    try:
+        task = execute_async_rebalance.delay(portfolio.id)
+        return {
+            "success": True,
+            "task_id": task.id,
+            "message": "Automated Rebalancing Task Dispatched",
+        }
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail=f"Rebalance worker queue unavailable: {exc}")
 
 
 @app.get("/api/v3/security/accounts")
@@ -293,6 +371,35 @@ def register_linked_account(data: LinkedAccountCreateRequest, db: Session = Depe
             "is_verified": account.is_verified,
             "is_active": account.is_active,
         },
+    }
+
+
+@app.get("/api/v3/security/audit-logs")
+def get_audit_logs(
+    client_name: Optional[str] = Query(default=None),
+    limit: int = Query(default=50, ge=1, le=200),
+    db: Session = Depends(get_db),
+):
+    portfolio = get_client_record(db, client_name)
+    if not portfolio or not is_verified_and_locked(portfolio):
+        raise HTTPException(status_code=403, detail="Zero-Trust Access Denied: KYC Required")
+
+    query = db.query(ImmutableAuditLog)
+    if client_name:
+        query = query.filter(ImmutableAuditLog.client_name == client_name)
+    logs = query.order_by(ImmutableAuditLog.id.desc()).limit(limit).all()
+
+    return {
+        "client": portfolio.client_name,
+        "logs": [
+            {
+                "id": log.id,
+                "action_type": log.action_type,
+                "details": log.details,
+                "timestamp": log.timestamp.isoformat() if log.timestamp else None,
+            }
+            for log in logs
+        ],
     }
 
 
