@@ -23,6 +23,11 @@ except ImportError:
     _external_corr_matrix = None
     _external_compute_var = None
 
+try:
+    from app.execution_bridge import evaluate_execution_readiness as _external_eval_readiness
+except ImportError:
+    _external_eval_readiness = None
+
 logger = logging.getLogger("aurora.main")
 
 try:
@@ -32,7 +37,7 @@ except Exception as exc:
 
 app = FastAPI(
     title="Aurora Institutional Quant API",
-    version="3.4.0",
+    version="3.5.0",
     description="Persistent Core API for Aurora Smart Wealth & Multi-Asset Platform",
 )
 
@@ -86,6 +91,28 @@ def resolve_risk_config(score: int) -> dict:
         "daily_dd_limit_pct": 3.0,
         "max_dd_limit_pct": 8.0,
     }
+
+
+def _resolve_target_assets(score: int) -> List[dict]:
+    clamped = max(1, min(12, int(score)))
+    if clamped <= 6:
+        weights = [45, 15, 25, 10, 5]
+    elif clamped >= 10:
+        weights = [15, 25, 15, 40, 5]
+    else:
+        weights = [30, 20, 20, 20, 10]
+
+    meta = [
+        ("XAUUSD", "COMEX"),
+        ("BRENT", "ICE"),
+        ("WHEAT", "CBOT"),
+        ("NAS100", "NASDAQ"),
+        ("EURUSD", "FOREX"),
+    ]
+    return [
+        {"symbol": sym, "exchange": exch, "target": w}
+        for (sym, exch), w in zip(meta, weights)
+    ]
 
 
 def _fallback_align_risk(psych_score: int, aav_capital: float) -> dict:
@@ -144,6 +171,53 @@ def _fallback_corr_matrix(symbols: List[str]) -> Dict[str, Dict[str, float]]:
     return matrix
 
 
+def _fallback_eval_readiness(
+    client_name: str,
+    aav_capital: float,
+    risk_profile: str,
+    is_psych_locked: bool,
+    two_fa_enabled: bool,
+    anti_phishing_enabled: bool,
+    daily_dd_limit_pct: float,
+    max_dd_limit_pct: float,
+    linked_accounts_count: int,
+) -> dict:
+    blockers: List[str] = []
+    warnings: List[str] = []
+    if not is_psych_locked:
+        blockers.append("آزمون روانشناسی و پروفایل ریسک در هسته قفل نشده است.")
+    if not two_fa_enabled:
+        blockers.append("تایید دو مرحله‌ای (2FA) فعال نیست.")
+    if not anti_phishing_enabled:
+        warnings.append("کد آنتی‌فیشینگ فعال نیست.")
+    if aav_capital <= 0:
+        blockers.append("سرمایه فعال (AAV) معتبر نیست.")
+    if linked_accounts_count <= 0:
+        warnings.append("هنوز هیچ حساب متصل و تاییدشده‌ای ثبت نشده است.")
+
+    return {
+        "client_name": client_name,
+        "ready_for_controlled_execution": len(blockers) == 0,
+        "risk_profile": risk_profile,
+        "security_controls": {
+            "two_fa_enabled": bool(two_fa_enabled),
+            "anti_phishing_enabled": bool(anti_phishing_enabled),
+            "psych_locked": bool(is_psych_locked),
+            "withdrawal_blocked_by_policy": True,
+        },
+        "risk_guards": {
+            "daily_dd_limit_pct": daily_dd_limit_pct,
+            "max_dd_limit_pct": max_dd_limit_pct,
+            "daily_loss_guard_amount": round(max(0.0, aav_capital) * (daily_dd_limit_pct / 100.0), 2),
+            "max_loss_guard_amount": round(max(0.0, aav_capital) * (max_dd_limit_pct / 100.0), 2),
+            "max_single_order_cap_amount": round(max(0.0, aav_capital) * 0.10, 2),
+        },
+        "linked_accounts_count": int(linked_accounts_count),
+        "blockers": blockers,
+        "warnings": warnings,
+    }
+
+
 def mask_sensitive_value(value: str, visible_tail: int = 4) -> str:
     cleaned = "".join(ch for ch in value.strip() if not ch.isspace())
     if len(cleaned) <= visible_tail:
@@ -172,7 +246,7 @@ def set_verified_lock(portfolio: ClientPortfolioModel, locked: bool = True) -> N
 
 @app.get("/health")
 def health_check():
-    return {"status": "ok", "service": "aurora-quant-core", "version": "3.4.0"}
+    return {"status": "ok", "service": "aurora-quant-core", "version": "3.5.0"}
 
 
 @app.post("/api/v3/auth/verify-psych")
@@ -238,6 +312,7 @@ def get_portfolio_data(client_name: Optional[str] = Query(default=None), db: Ses
     if not portfolio or not is_verified_and_locked(portfolio):
         raise HTTPException(status_code=403, detail="Zero-Trust Access Denied: KYC Required")
 
+    score = getattr(portfolio, "psych_score", 8)
     return {
         "client": portfolio.client_name,
         "currency": portfolio.base_currency,
@@ -250,11 +325,7 @@ def get_portfolio_data(client_name: Optional[str] = Query(default=None), db: Ses
             "two_fa_enabled": portfolio.two_fa_enabled,
             "anti_phishing_enabled": portfolio.anti_phishing_enabled,
         },
-        "assets": [
-            {"symbol": "XAUUSD", "exchange": "COMEX", "target": 30},
-            {"symbol": "BRENT", "exchange": "ICE", "target": 20},
-            {"symbol": "NAS100", "exchange": "NASDAQ", "target": 15},
-        ],
+        "assets": _resolve_target_assets(score),
     }
 
 
@@ -328,6 +399,45 @@ def trigger_rebalance(client_name: Optional[str] = Query(default=None), db: Sess
         }
     except Exception as exc:
         raise HTTPException(status_code=503, detail=f"Rebalance worker queue unavailable: {exc}")
+
+
+@app.get("/api/v3/execution/readiness")
+def get_execution_readiness(client_name: Optional[str] = Query(default=None), db: Session = Depends(get_db)):
+    portfolio = get_client_record(db, client_name)
+    if not portfolio or not is_verified_and_locked(portfolio):
+        raise HTTPException(status_code=403, detail="Zero-Trust Access Denied: KYC Required")
+
+    acc_query = db.query(LinkedAccountModel)
+    if client_name:
+        acc_query = acc_query.filter(LinkedAccountModel.client_name == client_name)
+    linked_count = acc_query.count()
+
+    eval_fn = _external_eval_readiness or _fallback_eval_readiness
+    readiness = eval_fn(
+        client_name=portfolio.client_name,
+        aav_capital=portfolio.aav_capital,
+        risk_profile=portfolio.risk_profile,
+        is_psych_locked=is_verified_and_locked(portfolio),
+        two_fa_enabled=bool(getattr(portfolio, "two_fa_enabled", True)),
+        anti_phishing_enabled=bool(getattr(portfolio, "anti_phishing_enabled", True)),
+        daily_dd_limit_pct=float(getattr(portfolio, "daily_dd_limit_pct", 3.0)),
+        max_dd_limit_pct=float(getattr(portfolio, "max_dd_limit_pct", 8.0)),
+        linked_accounts_count=linked_count,
+    )
+
+    db.add(
+        ImmutableAuditLog(
+            client_name=portfolio.client_name,
+            action_type="EXECUTION_READINESS_CHECK",
+            details=(
+                f"Client={portfolio.client_name} | Ready={readiness['ready_for_controlled_execution']} "
+                f"| Accounts={linked_count}"
+            ),
+        )
+    )
+    db.commit()
+
+    return readiness
 
 
 @app.get("/api/v3/security/accounts")
